@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chnoua nattayeb ?</title>
+<meta name="description" id="metaDesc" content="">
+<style>
+:root{--bg:#f6f9fc;--ink:#12202f;--card:#fff;--line:#d3deea;--blue:#1f4e8c;--blue-ink:#fff;--red:#c4382a;--muted:#546579}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1824;--ink:#e8eff7;--card:#14253a;--line:#27405d;--blue:#6aa6ec;--blue-ink:#0d1824;--red:#ff7a68;--muted:#9db1c6}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+main,footer{max-width:680px;margin:0 auto;padding:20px}
+.langs{display:flex;gap:6px;justify-content:flex-end}
+.langs button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:4px 12px;border-radius:6px;cursor:pointer;font:inherit}
+.langs button[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
+h1{font:700 2.3rem/1.2 Georgia,"Segoe UI",Tahoma,serif;margin:.5em 0 .3em}
+.sub{color:var(--muted);margin:0 0 1.2em}
+label{font-weight:600}
+textarea{width:100%;margin-top:6px;padding:12px;border:2px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;resize:vertical}
+textarea:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit}
+.chip[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
+#go{width:100%;background:var(--red);color:#fff;border:0;border-radius:8px;padding:14px;font:700 1.1rem system-ui,Tahoma,sans-serif;cursor:pointer}
+#go:disabled{opacity:.6;cursor:wait}
+#msg{margin:14px 0;color:var(--muted)}
+#msg.err{color:var(--red);font-weight:600}
+.recipe{background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--blue);border-radius:8px;padding:16px 18px;margin:16px 0}
+.recipe h2{margin:0 0 4px;font:700 1.35rem Georgia,"Segoe UI",Tahoma,serif}
+.meta{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.recipe h3{font-size:1rem;margin:12px 0 4px}
+.recipe ul,.recipe ol{margin:0;padding-inline-start:22px}
+.ad{min-height:90px;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;margin:20px 0}
+footer{color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+  <div class="langs" role="group" aria-label="Language">
+    <button type="button" data-lang="ar">العربية</button>
+    <button type="button" data-lang="fr">Français</button>
+    <button type="button" data-lang="en">English</button>
+  </div>
+
+  <h1 id="tTitle"></h1>
+  <p class="sub" id="tSub"></p>
+
+  <label for="ing" id="tLabel"></label>
+  <textarea id="ing" rows="3" maxlength="300"></textarea>
+
+  <div class="chips" id="chips" role="group"></div>
+
+  <button id="go"></button>
+  <div id="msg" role="status" aria-live="polite"></div>
+  <div id="results"></div>
+
+  <div class="ad" id="tAd"></div>
+</main>
+<footer><span id="tFooter"></span> <a href="/privacy.html" id="tPriv" style="color:var(--blue)"></a></footer>
+
+<script>
+const T = {
+  ar: {
+    title: 'شنوّة نطيّب؟', page: 'شنوّة نطيّب؟ وصفات تونسية بالّي عندك في الدار',
+    desc: 'أكتب الحاجات اللي عندك في الفريجيدار وإلقى 3 وصفات تونسية. بالمجّان وبلا تسجيل.',
+    sub: 'أكتب الّي عندك في الفريجيدار ونلوّجولك على 3 وصفات.',
+    label: 'شنوّة عندك؟', ph: 'مثلا: بطاطا، طماطم، بصل، بيض',
+    go: 'شنوّة نطيّب؟', loading: 'نحضّرو في الوصفات…',
+    need: 'أكتب 3 حاجات على الأقل.', empty: 'ما لقيناش وصفة. أكتب مكوّنات (مثلا: بطاطا، بصل).',
+    extra: 'زيد عليهم', steps: 'كيفاش', ad: 'مساحة إعلانية',
+    priv: 'الخصوصية', footer: 'الوصفات مولّدة بالذكاء الاصطناعي: تأكّد دايما من الطبخ ومن الحساسية.',
+    chips: 'مكوّنات سريعة',
+    err: { rate: 'برشة طلبات في ساعة. جرّب بعد شوية.', invalid: 'أكتب 3 حاجات على الأقل (300 حرف كحد أقصى).', config: 'الموقع موش جاهز (مفتاح API ناقص).', unavailable: 'الخدمة موش متوفّرة توّا. عاود جرّب.', server: 'ما نجّمناش نكوّنو الوصفات. عاود جرّب.', network: 'مشكل في الاتصال. عاود جرّب.' }
+  },
+  fr: {
+    title: 'Chnoua nattayeb ?', page: 'Chnoua nattayeb ? Recettes tunisiennes avec ce que tu as chez toi',
+    desc: 'Écris les ingrédients de ton frigo et reçois 3 recettes tunisiennes. Gratuit, sans inscription.',
+    sub: 'Écris ce que tu as dans ton frigo et on te propose 3 recettes.',
+    label: 'Qu’est-ce que tu as ?', ph: 'Ex : pommes de terre, tomates, oignon, œufs',
+    go: 'Chnoua nattayeb ?', loading: 'On prépare les recettes…',
+    need: 'Écris au moins 3 ingrédients.', empty: 'Aucune recette trouvée. Écris des ingrédients (ex : pommes de terre, oignon).',
+    extra: 'À ajouter', steps: 'Préparation', ad: 'Espace publicitaire',
+    priv: 'Confidentialité', footer: 'Les recettes sont générées par IA : vérifie toujours la cuisson et les allergies.',
+    chips: 'Ingrédients rapides',
+    err: { rate: 'Trop de demandes en une heure. Réessaie plus tard.', invalid: 'Écris au moins 3 ingrédients (300 caractères maximum).', config: 'Le serveur n’est pas configuré (clé API manquante).', unavailable: 'Service momentanément indisponible. Réessaie.', server: 'Impossible de générer les recettes. Réessaie.', network: 'Problème de connexion. Réessaie.' }
+  },
+  en: {
+    title: 'Chnoua nattayeb? (What should I cook?)', page: 'Chnoua nattayeb? Tunisian recipes from what you have at home',
+    desc: 'Type the ingredients in your fridge and get 3 Tunisian recipes. Free, no sign-up.',
+    sub: 'Type what you have in your fridge and get 3 recipe ideas.',
+    label: 'What do you have?', ph: 'E.g. potatoes, tomatoes, onion, eggs',
+    go: 'What should I cook?', loading: 'Preparing recipes…',
+    need: 'Enter at least 3 ingredients.', empty: 'No recipe found. Enter some ingredients (e.g. potatoes, onion).',
+    extra: 'Also needed', steps: 'Method', ad: 'Advertising space',
+    priv: 'Privacy', footer: 'Recipes are AI-generated: always check cooking times and allergies.',
+    chips: 'Quick ingredients',
+    err: { rate: 'Too many requests this hour. Please try again later.', invalid: 'Enter at least 3 ingredients (300 characters max).', config: 'The server is not configured (missing API key).', unavailable: 'Service temporarily unavailable. Try again.', server: 'Could not generate recipes. Try again.', network: 'Connection problem. Try again.' }
+  }
+};
+
+const QUICK = [
+  { ar: 'بطاطا', fr: 'pommes de terre', en: 'potatoes' },
+  { ar: 'طماطم', fr: 'tomates', en: 'tomatoes' },
+  { ar: 'بصل', fr: 'oignon', en: 'onion' },
+  { ar: 'ثوم', fr: 'ail', en: 'garlic' },
+  { ar: 'فلفل', fr: 'poivron', en: 'peppers' },
+  { ar: 'دجاج', fr: 'poulet', en: 'chicken' },
+  { ar: 'لحم مفروم', fr: 'viande hachée', en: 'minced meat' },
+  { ar: 'بيض', fr: 'œufs', en: 'eggs' },
+  { ar: 'تن', fr: 'thon', en: 'tuna' },
+  { ar: 'جبن', fr: 'fromage', en: 'cheese' },
+  { ar: 'رز', fr: 'riz', en: 'rice' },
+  { ar: 'مقرونة', fr: 'pâtes', en: 'pasta' },
+  { ar: 'سميد', fr: 'semoule', en: 'semolina' },
+  { ar: 'عدس', fr: 'lentilles', en: 'lentils' },
+  { ar: 'حمص', fr: 'pois chiches', en: 'chickpeas' },
+  { ar: 'خبز', fr: 'pain', en: 'bread' }
+];
+
+const $ = id => document.getElementById(id);
+const ing = $('ing'), chips = $('chips'), go = $('go'), msg = $('msg'), results = $('results');
+let lang = 'fr';
+
+function initialLang() {
+  try { const s = localStorage.getItem('lang'); if (T[s]) return s; } catch (e) {}
+  const n = (navigator.language || 'fr').slice(0, 2);
+  return T[n] ? n : 'fr';
+}
+
+const list = () => ing.value.split(/[,،\n]/).map(s => s.trim()).filter(Boolean);
+
+function syncChips() {
+  const items = list().map(x => x.toLowerCase());
+  chips.querySelectorAll('.chip').forEach(c =>
+    c.setAttribute('aria-pressed', String(items.includes(c.textContent.toLowerCase()))));
+}
+
+function buildChips() {
+  chips.innerHTML = '';
+  QUICK.forEach(q => {
+    const name = q[lang];
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = name;
+    b.setAttribute('aria-pressed', 'false');
+    b.onclick = () => {
+      const items = list();
+      const i = items.findIndex(x => x.toLowerCase() === name.toLowerCase());
+      if (i >= 0) items.splice(i, 1); else items.push(name);
+      ing.value = items.join(lang === 'ar' ? '، ' : ', ');
+      syncChips();
+    };
+    chips.appendChild(b);
+  });
+  syncChips();
+}
+
+function setLang(l) {
+  lang = l;
+  const t = T[l];
+  try { localStorage.setItem('lang', l); } catch (e) {}
+  document.documentElement.lang = l === 'ar' ? 'ar-TN' : l;
+  document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  document.title = t.page;
+  $('metaDesc').setAttribute('content', t.desc);
+  $('tTitle').textContent = t.title;
+  $('tSub').textContent = t.sub;
+  $('tLabel').textContent = t.label;
+  ing.placeholder = t.ph;
+  go.textContent = t.go;
+  $('tAd').textContent = t.ad;
+  $('tFooter').textContent = t.footer;
+  $('tPriv').textContent = t.priv;
+  chips.setAttribute('aria-label', t.chips);
+  document.querySelectorAll('.langs button').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
+  msg.textContent = ''; msg.className = '';
+  results.innerHTML = '';
+  ing.value = '';
+  buildChips();
+}
+
+document.querySelectorAll('.langs button').forEach(b => b.onclick = () => setLang(b.dataset.lang));
+ing.addEventListener('input', syncChips);
+
+function el(tag, text, cls) {
+  const e = document.createElement(tag);
+  if (text != null) e.textContent = text;
+  if (cls) e.className = cls;
+  return e;
+}
+
+function render(recettes) {
+  const t = T[lang];
+  results.innerHTML = '';
+  recettes.forEach(r => {
+    const card = el('article', null, 'recipe');
+    card.appendChild(el('h2', r.nom || ''));
+    const meta = [r.temps, r.portions].filter(Boolean).join(' · ');
+    if (meta) card.appendChild(el('p', meta, 'meta'));
+    if (Array.isArray(r.en_plus) && r.en_plus.length) {
+      card.appendChild(el('h3', t.extra));
+      const ul = el('ul');
+      r.en_plus.forEach(x => ul.appendChild(el('li', String(x))));
+      card.appendChild(ul);
+    }
+    if (Array.isArray(r.etapes) && r.etapes.length) {
+      card.appendChild(el('h3', t.steps));
+      const ol = el('ol');
+      r.etapes.forEach(x => ol.appendChild(el('li', String(x))));
+      card.appendChild(ol);
+    }
+    results.appendChild(card);
+  });
+}
+
+go.onclick = async () => {
+  const t = T[lang];
+  const text = list().join(', ');
+  msg.className = '';
+  results.innerHTML = '';
+  if (text.length < 3) { msg.className = 'err'; msg.textContent = t.need; return; }
+  go.disabled = true;
+  msg.textContent = t.loading;
+  try {
+    const r = await fetch('/api/chnoua', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ingredients: text, lang })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { msg.className = 'err'; msg.textContent = t.err[d.error] || t.err.server; return; }
+    if (!d.recettes || !d.recettes.length) { msg.textContent = t.empty; return; }
+    msg.textContent = '';
+    render(d.recettes);
+  } catch (e) {
+    msg.className = 'err';
+    msg.textContent = t.err.network;
+  } finally {
+    go.disabled = false;
+  }
+};
+
+setLang(initialLang());
+</script>
+</body>
+</html>
