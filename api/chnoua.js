@@ -1,6 +1,6 @@
 // Vercel serverless function: POST /api/chnoua  { ingredients: "...", lang: "ar" | "fr" | "en" }
 // Needs the environment variable GEMINI_API_KEY (Vercel > Settings > Environment Variables).
-// Optional: GEMINI_MODEL (default gemini-2.5-flash-lite).
+// Optional: GEMINI_MODEL (default gemini-2.5-flash).
 
 const LIMIT = 6;               // requests per IP per hour (best effort)
 const WINDOW_MS = 60 * 60 * 1000;
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'config' });
   }
 
-  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
+  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 
   try {
