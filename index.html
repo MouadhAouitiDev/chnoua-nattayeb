@@ -99,7 +99,7 @@ const T = {
   }
 };
 
-const QUICK = [
+let QUICK = [
   { ar: 'بطاطا', fr: 'pommes de terre', en: 'potatoes' },
   { ar: 'طماطم', fr: 'tomates', en: 'tomatoes' },
   { ar: 'بصل', fr: 'oignon', en: 'onion' },
@@ -242,6 +242,11 @@ go.onclick = async () => {
 };
 
 setLang(initialLang());
+
+// Chips managed from /admin.html (falls back to the built-in list)
+fetch('/api/chips').then(r => r.ok ? r.json() : null).then(d => {
+  if (d && Array.isArray(d.chips) && d.chips.length) { QUICK = d.chips; buildChips(); }
+}).catch(() => {});
 </script>
 </body>
 </html>
