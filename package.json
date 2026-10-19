@@ -1,0 +1,7 @@
+{
+  "name": "chnoua-nattayeb",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Recettes tunisiennes à partir des ingrédients du frigo (IA)"
+}
