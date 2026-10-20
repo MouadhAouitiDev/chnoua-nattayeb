@@ -6,8 +6,8 @@
 <title>Chnoua nattayeb ?</title>
 <meta name="description" id="metaDesc" content="">
 <style>
-:root{--bg:#f4f8fc;--ink:#12202f;--card:#fff;--line:#cfdcea;--blue:#1b5fae;--blue-ink:#fff;--red:#b3261e;--gold:#b8790a;--muted:#546579;--ok:#2e7d4f}
-@media (prefers-color-scheme:dark){:root{--bg:#0c1b2e;--ink:#e8eff7;--card:#12283f;--line:#27405d;--blue:#5aa0ee;--blue-ink:#0c1b2e;--red:#ff7a68;--gold:#f0c04a;--muted:#9db1c6;--ok:#6fd49a}}
+:root{--bg:#f4f8fc;--ink:#12202f;--card:#fff;--line:#cfdcea;--blue:#1b5fae;--blue-ink:#fff;--red:#b3261e;--gold:#b8790a;--muted:#546579;--ok:#2e7d4f;--tilebg:#fbfdff;--wood:#9a6a3a}
+@media (prefers-color-scheme:dark){:root{--bg:#0c1b2e;--ink:#e8eff7;--card:#12283f;--line:#27405d;--blue:#5aa0ee;--blue-ink:#0c1b2e;--red:#ff7a68;--gold:#f0c04a;--muted:#9db1c6;--ok:#6fd49a;--tilebg:#17365a;--wood:#5a3d22}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
 main,footer{max-width:680px;margin:0 auto;padding:20px}
@@ -56,7 +56,6 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 #authErr{color:var(--red);min-height:1.5em;font-weight:600}
 .ad{min-height:90px;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;margin:20px 0}
 footer{color:var(--muted);font-size:.85rem}
-.band{height:16px;margin-bottom:12px;border-radius:4px;border:1px solid var(--line);background:repeating-conic-gradient(from 45deg,var(--blue) 0 25%,var(--card) 0 50%) 0 0/32px 32px}
 h1::before{content:"🍲";margin-inline-end:.3em}
 .tt{display:flex;align-items:center}
 .badge{font-size:1.7rem;margin-inline-end:10px}
@@ -77,6 +76,31 @@ h1::before{content:"🍲";margin-inline-end:.3em}
 @keyframes wob{50%{transform:rotate(-1.5deg)}}
 @keyframes fl{to{transform:scale(.9,1.25)}}
 @keyframes fly{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(-90px) rotate(30deg)}}
+main,footer{position:relative;z-index:1}
+h1::before{display:inline-block;animation:wig 2.6s ease-in-out infinite}
+.pill.chip:hover{transform:translateY(-2px)}
+.chip[aria-pressed="true"]{animation:pop .25s}
+.recipe{position:relative;transition:transform .2s,box-shadow .2s}
+.recipe:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.14)}
+#go:not(:disabled){animation:glow 2.4s infinite}
+.boom{position:absolute;inset-inline-start:50%;top:40%;font-size:1.5rem;pointer-events:none;animation:boom .9s ease-out forwards}
+@keyframes wig{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@keyframes glow{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--red) 22%,transparent)}}
+@keyframes boom{to{transform:translate(var(--x),var(--y)) scale(1.3);opacity:0}}
+.kitchen{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--bg)}
+.kitchen svg{width:100%;height:100%;display:block}
+.kitchen::after{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--bg) 14%,transparent)}
+main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blur(4px);border-radius:14px;margin-top:10px}
+.sway{transform-box:fill-box;transform-origin:top center;animation:sway 4.5s ease-in-out infinite}
+.k-steam{color:var(--muted)}
+.k-steam path{stroke-dasharray:70;animation:steam 3s infinite ease-in}
+.k-fire path{animation:fl .45s infinite alternate;transform-box:fill-box;transform-origin:bottom}
+.k-fire path:nth-child(2){animation-delay:.15s}.k-fire path:nth-child(3){animation-delay:.3s}
+.sun{transform-box:fill-box;transform-origin:center;animation:sunp 3.5s ease-in-out infinite}
+.lid{animation:lid 1.3s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes sunp{50%{transform:scale(1.14)}}
+@keyframes lid{50%{transform:translateY(-3px)}}
 @keyframes up{from{opacity:0;transform:translateY(14px)}}
 @keyframes pop{50%{transform:scale(1.25)}}
 @keyframes sh{to{background-position:-200% 0}}
@@ -84,8 +108,76 @@ h1::before{content:"🍲";margin-inline-end:.3em}
 </style>
 </head>
 <body>
+<div class="kitchen" aria-hidden="true">
+<svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <pattern id="tile" width="64" height="64" patternUnits="userSpaceOnUse">
+    <rect width="64" height="64" fill="var(--tilebg)" stroke="var(--line)" stroke-width="2"/>
+    <g fill="var(--blue)" opacity=".4"><circle cx="32" cy="23" r="9"/><circle cx="32" cy="41" r="9"/><circle cx="23" cy="32" r="9"/><circle cx="41" cy="32" r="9"/></g>
+    <circle cx="32" cy="32" r="5" fill="var(--gold)"/>
+  </pattern>
+  <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ec5ff"/><stop offset="1" stop-color="#e6f3ff"/></linearGradient>
+</defs>
+<rect width="1200" height="800" fill="url(#tile)"/>
+<rect y="650" width="1200" height="150" fill="var(--wood)"/>
+<rect y="650" width="1200" height="10" fill="#000" opacity=".15"/>
+
+<g transform="translate(900 70)">
+  <rect width="210" height="250" rx="10" fill="var(--wood)"/>
+  <rect x="12" y="12" width="186" height="226" rx="4" fill="url(#win)"/>
+  <circle class="sun" cx="150" cy="70" r="26" fill="#ffd65a"/>
+  <path d="M105 12v226M12 125h186" stroke="var(--wood)" stroke-width="8"/>
+</g>
+
+<g transform="translate(40 150)">
+  <rect y="100" width="280" height="14" rx="3" fill="var(--wood)"/>
+  <rect x="18" y="38" width="46" height="62" rx="9" fill="var(--red)"/><rect x="22" y="28" width="38" height="12" rx="3" fill="var(--gold)"/>
+  <rect x="78" y="52" width="42" height="48" rx="8" fill="var(--gold)"/><rect x="82" y="44" width="34" height="10" rx="3" fill="var(--wood)"/>
+  <rect x="134" y="44" width="46" height="56" rx="9" fill="#5b8c3a"/><rect x="139" y="34" width="36" height="12" rx="3" fill="var(--wood)"/>
+  <path d="M214 100V48c0-10 6-12 6-22V14h14v12c0 10 6 12 6 22v52z" fill="#7a8f1f"/><rect x="217" y="6" width="20" height="8" rx="2" fill="var(--wood)"/>
+</g>
+
+<g transform="translate(60 360)">
+  <rect y="90" width="250" height="14" rx="3" fill="var(--wood)"/>
+  <ellipse cx="80" cy="84" rx="62" ry="10" fill="var(--blue)"/>
+  <path d="M30 84C30 44 62 40 80 8c18 32 50 36 50 76z" fill="var(--gold)"/>
+  <circle cx="80" cy="8" r="6" fill="var(--red)"/>
+  <ellipse cx="196" cy="82" rx="40" ry="8" fill="var(--blue)"/><ellipse cx="196" cy="73" rx="40" ry="8" fill="var(--tilebg)" stroke="var(--blue)" stroke-width="2"/>
+</g>
+
+<g transform="translate(340 0)"><g class="sway">
+  <line y2="230" stroke="#8a6a3a" stroke-width="3"/>
+  <ellipse cy="62" rx="17" ry="21" fill="#f4ecd8" stroke="#cdbf9c" stroke-width="2"/><ellipse cy="112" rx="17" ry="21" fill="#f4ecd8" stroke="#cdbf9c" stroke-width="2"/>
+  <ellipse cy="162" rx="17" ry="21" fill="#f4ecd8" stroke="#cdbf9c" stroke-width="2"/><ellipse cy="210" rx="15" ry="19" fill="#f4ecd8" stroke="#cdbf9c" stroke-width="2"/>
+</g></g>
+<g transform="translate(860 0)"><g class="sway" style="animation-delay:-1.8s">
+  <line y2="250" stroke="#8a6a3a" stroke-width="3"/>
+  <ellipse cx="-9" cy="60" rx="7" ry="24" transform="rotate(10 -9 60)" fill="var(--red)"/><ellipse cx="9" cy="95" rx="7" ry="24" transform="rotate(-10 9 95)" fill="var(--red)"/>
+  <ellipse cx="-9" cy="135" rx="7" ry="24" transform="rotate(10 -9 135)" fill="var(--red)"/><ellipse cx="9" cy="175" rx="7" ry="24" transform="rotate(-10 9 175)" fill="var(--red)"/>
+  <ellipse cx="-8" cy="215" rx="7" ry="22" transform="rotate(10 -8 215)" fill="var(--red)"/>
+</g></g>
+
+<g transform="translate(120 612)">
+  <path d="M0 22a70 40 0 0 0 140 0z" fill="var(--blue)"/><ellipse cx="70" cy="22" rx="70" ry="8" fill="var(--tilebg)"/>
+  <circle cx="40" cy="18" r="9" fill="#4a5d23"/><circle cx="62" cy="14" r="9" fill="#4a5d23"/><circle cx="86" cy="17" r="9" fill="#4a5d23"/><circle cx="104" cy="19" r="8" fill="#6b7f2a"/>
+</g>
+<g transform="translate(310 622)">
+  <ellipse cx="60" cy="26" rx="62" ry="26" fill="#d9a15b"/><path d="M28 14c8 10 8 22 0 32M60 8c8 12 8 28 0 40M92 14c8 10 8 22 0 32" fill="none" stroke="#b8803c" stroke-width="3" stroke-linecap="round"/>
+</g>
+<circle cx="470" cy="632" r="18" fill="var(--red)"/><circle cx="508" cy="638" r="15" fill="var(--red)"/><circle cx="548" cy="634" r="14" fill="#f2c230"/>
+
+<g transform="translate(760 560)">
+  <g class="k-fire"><path d="M120 100c-8-14 6-18 2-30 12 8 14 20 8 30z" fill="var(--red)"/><path d="M165 100c-8-14 6-18 2-30 12 8 14 20 8 30z" fill="var(--gold)"/><path d="M210 100c-8-14 6-18 2-30 12 8 14 20 8 30z" fill="var(--red)"/></g>
+  <rect y="100" width="330" height="18" rx="4" fill="#2b2f36"/>
+  <path d="M95 34h140l-10 56a18 18 0 0 1-18 14h-84a18 18 0 0 1-18-14z" fill="var(--blue)"/>
+  <path d="M95 52c-18 0-18 24 0 24M235 52c18 0 18 24 0 24" fill="none" stroke="var(--blue)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M112 58h106M114 72h102" stroke="var(--tilebg)" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/>
+  <g class="lid"><rect x="88" y="22" width="154" height="14" rx="7" fill="var(--gold)"/><circle cx="165" cy="16" r="7" fill="var(--gold)"/></g>
+  <g class="k-steam" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M135 6c-10-12 10-18 0-34"/><path d="M165 4c-10-12 10-18 0-34" style="animation-delay:.9s"/><path d="M195 6c-10-12 10-18 0-34" style="animation-delay:1.8s"/></g>
+</g>
+</svg>
+</div>
 <main>
-  <div class="band" aria-hidden="true"></div>
   <div class="top">
     <div class="langs" role="group" aria-label="Language">
       <button type="button" class="pill" data-lang="ar">العربية</button>
@@ -157,7 +249,7 @@ const T = {
     footer:'الوصفات مولّدة بالذكاء الاصطناعي: تأكّد دايما من الطبخ ومن الحساسية.',
     clear:'نفسخ الكل', login:'دخول', signup:'نعمل حساب', email:'الإيميل', pw:'كلمة السر (8 على الأقل)',
     logout:'خروج', favs:'المفضّلة', save:'نحفظ', copy:'نسخ', copied:'تنسخت', another:'أفكار أخرى', close:'سكّر',
-    done:'مراحل مكمّلة', cook:'نبدا نطيّب', prev:'قبل', next:'بعد', finish:'كمّلنا', saha:'بالهنا والشفا! 🍽️', timer:'ابدا المؤقّت', ready:'⏰ وقت!', nofavs:'ما عندكش مفضّلة توّا.',
+    done:'مراحل مكمّلة', cook:'نبدا نطيّب', trad:'تقليدية', insp:'مستوحاة', prev:'قبل', next:'بعد', finish:'كمّلنا', saha:'بالهنا والشفا! 🍽️', timer:'ابدا المؤقّت', ready:'⏰ وقت!', nofavs:'ما عندكش مفضّلة توّا.',
     tips:['نسخّنو الزيت زيتون…','نحمّرو البصل والثوم…','نزيدو الهريسة العربي والتابل…','نخلّيوها تتهنّى على نار هادية…'],
     err:{rate:'برشة طلبات. جرّب بعد شوية.', invalid:'أكتب 3 حاجات على الأقل (300 حرف كحد أقصى).', config:'الموقع موش جاهز (مفتاح API ناقص).',
       unavailable:'الخدمة موش متوفّرة توّا. عاود جرّب.', server:'صار مشكل. عاود جرّب.', network:'مشكل في الاتصال. عاود جرّب.',
@@ -174,7 +266,7 @@ const T = {
     footer:'Les recettes sont générées par IA : vérifie toujours la cuisson et les allergies.',
     clear:'Tout effacer', login:'Connexion', signup:'Créer un compte', email:'E-mail', pw:'Mot de passe (8 caractères min.)',
     logout:'Déconnexion', favs:'Mes favoris', save:'Sauvegarder', copy:'Copier', copied:'Copié', another:'D’autres idées', close:'Fermer',
-    done:'étapes faites', cook:'Mode cuisine', prev:'Précédent', next:'Suivant', finish:'Terminé', saha:'Saha w hana ! 🍽️', timer:'Lancer le minuteur', ready:'⏰ Temps écoulé !', nofavs:'Aucun favori pour l’instant.',
+    done:'étapes faites', cook:'Mode cuisine', trad:'Traditionnelle', insp:'Inspirée', prev:'Précédent', next:'Suivant', finish:'Terminé', saha:'Saha w hana ! 🍽️', timer:'Lancer le minuteur', ready:'⏰ Temps écoulé !', nofavs:'Aucun favori pour l’instant.',
     tips:['On chauffe l’huile d’olive…','On fait revenir l’oignon et l’ail…','On ajoute la harissa arbi et le tabel…','On laisse mijoter doucement…'],
     err:{rate:'Trop de demandes. Réessaie plus tard.', invalid:'Écris au moins 3 ingrédients (300 caractères max).', config:'Le serveur n’est pas configuré (clé API manquante).',
       unavailable:'Service momentanément indisponible. Réessaie.', server:'Une erreur est survenue. Réessaie.', network:'Problème de connexion. Réessaie.',
@@ -191,7 +283,7 @@ const T = {
     footer:'Recipes are AI-generated: always check cooking times and allergies.',
     clear:'Clear all', login:'Log in', signup:'Sign up', email:'Email', pw:'Password (min. 8 characters)',
     logout:'Log out', favs:'My favorites', save:'Save', copy:'Copy', copied:'Copied', another:'More ideas', close:'Close',
-    done:'steps done', cook:'Cooking mode', prev:'Back', next:'Next', finish:'Done', saha:'Saha w hana! Enjoy your meal 🍽️', timer:'Start timer', ready:'⏰ Time’s up!', nofavs:'No favorites yet.',
+    done:'steps done', cook:'Cooking mode', trad:'Traditional', insp:'Inspired', prev:'Back', next:'Next', finish:'Done', saha:'Saha w hana! Enjoy your meal 🍽️', timer:'Start timer', ready:'⏰ Time’s up!', nofavs:'No favorites yet.',
     tips:['Heating the olive oil…','Sautéing onion and garlic…','Adding harissa and tabel…','Letting it simmer gently…'],
     err:{rate:'Too many requests. Try again later.', invalid:'Enter at least 3 ingredients (300 characters max).', config:'The server is not configured (missing API key).',
       unavailable:'Service temporarily unavailable. Try again.', server:'Something went wrong. Try again.', network:'Connection problem. Try again.',
@@ -272,7 +364,7 @@ function card(r) {
   heart.onclick = () => toggleFav(r);
   head.appendChild(heart);
   c.appendChild(head);
-  const meta = [r.temps, r.portions].filter(Boolean).join(' · ');
+  const meta = [r.authentique === false ? '✨ ' + t().insp : '✔ ' + t().trad, r.temps, r.portions].filter(Boolean).join(' · ');
   if (meta) c.appendChild(el('p', meta, 'meta'));
 
   const checkList = (items, ordered) => {
@@ -298,6 +390,7 @@ function card(r) {
       fill.style.width = (n / N * 100) + '%';
       prog.textContent = n + '/' + N + ' ' + t().done;
       saha.textContent = n === N ? t().saha : '';
+      if (n === N && !c.dataset.done) { c.dataset.done = '1'; burst(c); } if (n < N) delete c.dataset.done;
     };
     c.append(ol, bar, prog, saha);
     updateProgress();
@@ -325,6 +418,16 @@ const ICONS = [
   [/riz|رز|rice/i, '🍚'], [/makroudh|مقروض|gâteau|cake/i, '🍯']
 ];
 const dishIcon = n => (ICONS.find(([re]) => re.test(n)) || [0, '🍽️'])[1];
+
+function burst(card) {
+  ['✨', '🌶️', '🍋', '🌿', '🎉', '✨', '🧄', '🍅'].forEach(e => {
+    const s = el('span', e, 'boom');
+    s.style.setProperty('--x', (Math.random() * 260 - 130) + 'px');
+    s.style.setProperty('--y', (Math.random() * -170 - 20) + 'px');
+    card.appendChild(s);
+    setTimeout(() => s.remove(), 1000);
+  });
+}
 
 function scene() {
   const d = el('div', null, 'scene');
