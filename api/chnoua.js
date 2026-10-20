@@ -1,6 +1,6 @@
 // Vercel serverless function: POST /api/chnoua  { ingredients: "...", lang: "ar" | "fr" | "en" }
 // Needs the environment variable GEMINI_API_KEY (Vercel > Settings > Environment Variables).
-// Optional: GEMINI_MODEL (default gemini-2.5-flash).
+// Optional: GEMINI_MODEL (default gemini-3.6-flash, fallback gemini-3.5-flash-lite).
 
 import { hasStorage, redis, getUser, clientIp } from './_lib.js';
 
@@ -30,7 +30,7 @@ async function callGemini(model, lang, ingredients) {
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: buildSystem(lang) }] },
       contents: [{ role: 'user', parts: [{ text: 'Ingrédients : ' + ingredients }] }],
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.7, maxOutputTokens: 3000 }
+      generationConfig: { responseMimeType: 'application/json', temperature: 0.7, maxOutputTokens: 6000 }
     })
   });
   if (!r.ok) {
@@ -75,8 +75,8 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'quota', member: Boolean(user), storage: hasStorage() });
   }
 
-  // Try the chosen model, then fall back to flash-lite (separate quota, less overloaded)
-  const models = [...new Set([process.env.GEMINI_MODEL || 'gemini-2.5-flash', 'gemini-2.5-flash-lite'])];
+  // Try the chosen model, then fall back to gemini-3.5-flash-lite (free tier, separate quota)
+  const models = [...new Set([process.env.GEMINI_MODEL || 'gemini-3.6-flash', 'gemini-3.5-flash-lite'])];
   let last = '';
   for (const model of models) {
     for (let attempt = 0; attempt < 2; attempt++) {
