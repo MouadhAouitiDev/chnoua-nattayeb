@@ -6,143 +6,210 @@
 <title>Chnoua nattayeb ?</title>
 <meta name="description" id="metaDesc" content="">
 <style>
-:root{--bg:#f6f9fc;--ink:#12202f;--card:#fff;--line:#d3deea;--blue:#1f4e8c;--blue-ink:#fff;--red:#c4382a;--muted:#546579}
-@media (prefers-color-scheme:dark){:root{--bg:#0d1824;--ink:#e8eff7;--card:#14253a;--line:#27405d;--blue:#6aa6ec;--blue-ink:#0d1824;--red:#ff7a68;--muted:#9db1c6}}
+:root{--bg:#f6f9fc;--ink:#12202f;--card:#fff;--line:#d3deea;--blue:#1f4e8c;--blue-ink:#fff;--red:#c4382a;--muted:#546579;--ok:#2e7d4f}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1824;--ink:#e8eff7;--card:#14253a;--line:#27405d;--blue:#6aa6ec;--blue-ink:#0d1824;--red:#ff7a68;--muted:#9db1c6;--ok:#6fd49a}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
 main,footer{max-width:680px;margin:0 auto;padding:20px}
-.langs{display:flex;gap:6px;justify-content:flex-end}
-.langs button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:4px 12px;border-radius:6px;cursor:pointer;font:inherit}
-.langs button[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
-h1{font:700 2.3rem/1.2 Georgia,"Segoe UI",Tahoma,serif;margin:.5em 0 .3em}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.langs,#acct{display:flex;gap:6px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer;font:inherit}
+.pill[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
+h1{font:700 2.4rem/1.2 Georgia,"Segoe UI",Tahoma,serif;margin:.5em 0 .3em}
 .sub{color:var(--muted);margin:0 0 1.2em}
 label{font-weight:600}
-textarea{width:100%;margin-top:6px;padding:12px;border:2px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;resize:vertical}
-textarea:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
-.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit}
-.chip[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
-#go{width:100%;background:var(--red);color:#fff;border:0;border-radius:8px;padding:14px;font:700 1.1rem system-ui,Tahoma,sans-serif;cursor:pointer}
-#go:disabled{opacity:.6;cursor:wait}
+input,textarea{width:100%;margin-top:6px;padding:12px;border:2px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+textarea{resize:vertical}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;align-items:center}
+.chip{transition:transform .12s,background .12s}
+.chip:active{transform:scale(.94)}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit}
+.btn{width:100%;background:var(--red);color:#fff;border:0;border-radius:8px;padding:14px;font:700 1.1rem system-ui,Tahoma,sans-serif;cursor:pointer;transition:transform .12s}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.alt{background:var(--blue);color:var(--blue-ink)}
 #msg{margin:14px 0;color:var(--muted)}
 #msg.err{color:var(--red);font-weight:600}
-.recipe{background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--blue);border-radius:8px;padding:16px 18px;margin:16px 0}
+#msg small{display:block;font-weight:400;opacity:.75;direction:ltr;text-align:start}
+.recipe{background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--blue);border-radius:10px;padding:16px 18px;margin:16px 0;animation:up .4s both}
+.recipe:nth-child(2){animation-delay:.08s}.recipe:nth-child(3){animation-delay:.16s}
+.rh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .recipe h2{margin:0 0 4px;font:700 1.35rem Georgia,"Segoe UI",Tahoma,serif}
-.meta{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.meta{color:var(--muted);font-size:.9rem;margin:0 0 8px}
 .recipe h3{font-size:1rem;margin:12px 0 4px}
-.recipe ul,.recipe ol{margin:0;padding-inline-start:22px}
+.recipe ul,.recipe ol{margin:0;padding-inline-start:0;list-style:none}
+.recipe li label{display:flex;gap:10px;align-items:flex-start;font-weight:400;cursor:pointer;padding:4px 0}
+.recipe li input{width:auto;margin:5px 0 0;accent-color:var(--blue)}
+.recipe li.done span{text-decoration:line-through;color:var(--muted)}
+.bar{height:6px;background:var(--line);border-radius:6px;margin:12px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.prog{font-size:.85rem;color:var(--muted);margin:0}
+.acts{display:flex;gap:8px;margin-top:10px}
+.icon{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;padding:4px 12px;cursor:pointer;font:inherit}
+.heart[aria-pressed="true"]{color:var(--red);border-color:var(--red);animation:pop .3s}
+.sk{height:130px;background:linear-gradient(90deg,var(--card) 25%,var(--line) 50%,var(--card) 75%);background-size:200% 100%;animation:sh 1.2s infinite}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);padding:20px;width:92%;max-width:440px}
+dialog.wide{max-width:640px}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+#authErr{color:var(--red);min-height:1.5em;font-weight:600}
 .ad{min-height:90px;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;margin:20px 0}
 footer{color:var(--muted);font-size:.85rem}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+@keyframes pop{50%{transform:scale(1.25)}}
+@keyframes sh{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <main>
-  <div class="langs" role="group" aria-label="Language">
-    <button type="button" data-lang="ar">العربية</button>
-    <button type="button" data-lang="fr">Français</button>
-    <button type="button" data-lang="en">English</button>
+  <div class="top">
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" class="pill" data-lang="ar">العربية</button>
+      <button type="button" class="pill" data-lang="fr">Français</button>
+      <button type="button" class="pill" data-lang="en">English</button>
+    </div>
+    <div id="acct"></div>
   </div>
 
-  <h1 id="tTitle"></h1>
-  <p class="sub" id="tSub"></p>
+  <h1 data-t="title"></h1>
+  <p class="sub" data-t="sub"></p>
 
-  <label for="ing" id="tLabel"></label>
+  <label for="ing" data-t="label"></label>
   <textarea id="ing" rows="3" maxlength="300"></textarea>
-
   <div class="chips" id="chips" role="group"></div>
+  <p><button type="button" class="link" id="clear" data-t="clear"></button></p>
 
-  <button id="go"></button>
+  <button class="btn" id="go"></button>
   <div id="msg" role="status" aria-live="polite"></div>
   <div id="results"></div>
-
-  <div class="ad" id="tAd"></div>
+  <div class="ad" data-t="ad"></div>
 </main>
-<footer><span id="tFooter"></span> <a href="/privacy.html" id="tPriv" style="color:var(--blue)"></a></footer>
+<footer><span data-t="footer"></span> <a href="/privacy.html" data-t="priv" style="color:var(--blue)"></a></footer>
+
+<dialog id="authDlg">
+  <div class="tabs">
+    <button type="button" class="pill" id="tabLogin" data-t="login"></button>
+    <button type="button" class="pill" id="tabSignup" data-t="signup"></button>
+  </div>
+  <form id="authForm">
+    <label for="authEmail" data-t="email"></label>
+    <input id="authEmail" type="email" autocomplete="email" required>
+    <p></p>
+    <label for="authPw" data-t="pw"></label>
+    <input id="authPw" type="password" minlength="8" maxlength="100" required>
+    <div id="authErr" role="alert"></div>
+    <button class="btn alt" id="authGo" type="submit"></button>
+  </form>
+  <p><button type="button" class="link" data-close="authDlg" data-t="close"></button></p>
+</dialog>
+
+<dialog id="favDlg" class="wide">
+  <h2 data-t="favs"></h2>
+  <div id="favList"></div>
+  <p><button type="button" class="link" data-close="favDlg" data-t="close"></button></p>
+</dialog>
 
 <script>
 const T = {
   ar: {
-    title: 'شنوّة نطيّب؟', page: 'شنوّة نطيّب؟ وصفات تونسية بالّي عندك في الدار',
-    desc: 'أكتب الحاجات اللي عندك في الفريجيدار وإلقى 3 وصفات تونسية. بالمجّان وبلا تسجيل.',
-    sub: 'أكتب الّي عندك في الفريجيدار ونلوّجولك على 3 وصفات.',
-    label: 'شنوّة عندك؟', ph: 'مثلا: بطاطا، طماطم، بصل، بيض',
-    go: 'شنوّة نطيّب؟', loading: 'نحضّرو في الوصفات…',
-    need: 'أكتب 3 حاجات على الأقل.', empty: 'ما لقيناش وصفة. أكتب مكوّنات (مثلا: بطاطا، بصل).',
-    extra: 'زيد عليهم', steps: 'كيفاش', ad: 'مساحة إعلانية',
-    priv: 'الخصوصية', footer: 'الوصفات مولّدة بالذكاء الاصطناعي: تأكّد دايما من الطبخ ومن الحساسية.',
-    chips: 'مكوّنات سريعة',
-    err: { rate: 'برشة طلبات في ساعة. جرّب بعد شوية.', invalid: 'أكتب 3 حاجات على الأقل (300 حرف كحد أقصى).', config: 'الموقع موش جاهز (مفتاح API ناقص).', unavailable: 'الخدمة موش متوفّرة توّا. عاود جرّب.', server: 'ما نجّمناش نكوّنو الوصفات. عاود جرّب.', network: 'مشكل في الاتصال. عاود جرّب.' }
+    title:'شنوّة نطيّب؟', page:'شنوّة نطيّب؟ وصفات تونسية بالّي عندك في الدار',
+    desc:'أكتب الحاجات اللي عندك في الفريجيدار وإلقى 3 وصفات تونسية. بالمجّان وبلا تسجيل.',
+    sub:'أكتب الّي عندك في الفريجيدار ونلوّجولك على 3 وصفات.', label:'شنوّة عندك؟', ph:'مثلا: بطاطا، طماطم، بصل، بيض',
+    go:'شنوّة نطيّب؟', need:'أكتب 3 حاجات على الأقل.', empty:'ما لقيناش وصفة. أكتب مكوّنات (مثلا: بطاطا، بصل).',
+    extra:'زيد عليهم', steps:'كيفاش', ad:'مساحة إعلانية', priv:'الخصوصية', chipsLbl:'مكوّنات سريعة',
+    footer:'الوصفات مولّدة بالذكاء الاصطناعي: تأكّد دايما من الطبخ ومن الحساسية.',
+    clear:'نفسخ الكل', login:'دخول', signup:'نعمل حساب', email:'الإيميل', pw:'كلمة السر (8 على الأقل)',
+    logout:'خروج', favs:'المفضّلة', save:'نحفظ', copy:'نسخ', copied:'تنسخت', another:'أفكار أخرى', close:'سكّر',
+    done:'مراحل مكمّلة', nofavs:'ما عندكش مفضّلة توّا.',
+    tips:['نقلّبو في الدولاب…','نختارو التوابل…','نسخّنو الڨاز…'],
+    err:{rate:'برشة طلبات. جرّب بعد شوية.', invalid:'أكتب 3 حاجات على الأقل (300 حرف كحد أقصى).', config:'الموقع موش جاهز (مفتاح API ناقص).',
+      unavailable:'الخدمة موش متوفّرة توّا. عاود جرّب.', server:'صار مشكل. عاود جرّب.', network:'مشكل في الاتصال. عاود جرّب.',
+      quotaGuest:'كمّلت المحاولات المجانية متاع اليوم. اعمل حساب باش تتزيّد، ولا عاود غدوة.', quotaMember:'كمّلت المحاولات متاع اليوم. عاود غدوة.',
+      email:'الإيميل موش صحيح.', password:'كلمة السر لازم 8 حروف على الأقل.', exists:'الإيميل هذا عندو حساب.',
+      credentials:'الإيميل ولا كلمة السر غالطين.', locked:'برشة محاولات. عاود بعد شوية.', login:'لازم تدخل لحسابك باش تحفظ.', full:'المفضّلة عمرت (50 كحد أقصى).'}
   },
   fr: {
-    title: 'Chnoua nattayeb ?', page: 'Chnoua nattayeb ? Recettes tunisiennes avec ce que tu as chez toi',
-    desc: 'Écris les ingrédients de ton frigo et reçois 3 recettes tunisiennes. Gratuit, sans inscription.',
-    sub: 'Écris ce que tu as dans ton frigo et on te propose 3 recettes.',
-    label: 'Qu’est-ce que tu as ?', ph: 'Ex : pommes de terre, tomates, oignon, œufs',
-    go: 'Chnoua nattayeb ?', loading: 'On prépare les recettes…',
-    need: 'Écris au moins 3 ingrédients.', empty: 'Aucune recette trouvée. Écris des ingrédients (ex : pommes de terre, oignon).',
-    extra: 'À ajouter', steps: 'Préparation', ad: 'Espace publicitaire',
-    priv: 'Confidentialité', footer: 'Les recettes sont générées par IA : vérifie toujours la cuisson et les allergies.',
-    chips: 'Ingrédients rapides',
-    err: { rate: 'Trop de demandes en une heure. Réessaie plus tard.', invalid: 'Écris au moins 3 ingrédients (300 caractères maximum).', config: 'Le serveur n’est pas configuré (clé API manquante).', unavailable: 'Service momentanément indisponible. Réessaie.', server: 'Impossible de générer les recettes. Réessaie.', network: 'Problème de connexion. Réessaie.' }
+    title:'Chnoua nattayeb ?', page:'Chnoua nattayeb ? Recettes tunisiennes avec ce que tu as chez toi',
+    desc:'Écris les ingrédients de ton frigo et reçois 3 recettes tunisiennes. Gratuit.',
+    sub:'Écris ce que tu as dans ton frigo et on te propose 3 recettes.', label:'Qu’est-ce que tu as ?', ph:'Ex : pommes de terre, tomates, oignon, œufs',
+    go:'Chnoua nattayeb ?', need:'Écris au moins 3 ingrédients.', empty:'Aucune recette trouvée. Écris des ingrédients (ex : pommes de terre, oignon).',
+    extra:'À ajouter', steps:'Préparation', ad:'Espace publicitaire', priv:'Confidentialité', chipsLbl:'Ingrédients rapides',
+    footer:'Les recettes sont générées par IA : vérifie toujours la cuisson et les allergies.',
+    clear:'Tout effacer', login:'Connexion', signup:'Créer un compte', email:'E-mail', pw:'Mot de passe (8 caractères min.)',
+    logout:'Déconnexion', favs:'Mes favoris', save:'Sauvegarder', copy:'Copier', copied:'Copié', another:'D’autres idées', close:'Fermer',
+    done:'étapes faites', nofavs:'Aucun favori pour l’instant.',
+    tips:['On fouille le placard…','On choisit les épices…','On chauffe le feu…'],
+    err:{rate:'Trop de demandes. Réessaie plus tard.', invalid:'Écris au moins 3 ingrédients (300 caractères max).', config:'Le serveur n’est pas configuré (clé API manquante).',
+      unavailable:'Service momentanément indisponible. Réessaie.', server:'Une erreur est survenue. Réessaie.', network:'Problème de connexion. Réessaie.',
+      quotaGuest:'Tu as utilisé tes essais gratuits du jour. Crée un compte pour en avoir plus, ou reviens demain.', quotaMember:'Tu as atteint ta limite du jour. Reviens demain.',
+      email:'E-mail invalide.', password:'Le mot de passe doit faire au moins 8 caractères.', exists:'Un compte existe déjà avec cet e-mail.',
+      credentials:'E-mail ou mot de passe incorrect.', locked:'Trop d’essais. Réessaie dans quelques minutes.', login:'Connecte-toi pour sauvegarder.', full:'Favoris pleins (50 max).'}
   },
   en: {
-    title: 'Chnoua nattayeb? (What should I cook?)', page: 'Chnoua nattayeb? Tunisian recipes from what you have at home',
-    desc: 'Type the ingredients in your fridge and get 3 Tunisian recipes. Free, no sign-up.',
-    sub: 'Type what you have in your fridge and get 3 recipe ideas.',
-    label: 'What do you have?', ph: 'E.g. potatoes, tomatoes, onion, eggs',
-    go: 'What should I cook?', loading: 'Preparing recipes…',
-    need: 'Enter at least 3 ingredients.', empty: 'No recipe found. Enter some ingredients (e.g. potatoes, onion).',
-    extra: 'Also needed', steps: 'Method', ad: 'Advertising space',
-    priv: 'Privacy', footer: 'Recipes are AI-generated: always check cooking times and allergies.',
-    chips: 'Quick ingredients',
-    err: { rate: 'Too many requests this hour. Please try again later.', invalid: 'Enter at least 3 ingredients (300 characters max).', config: 'The server is not configured (missing API key).', unavailable: 'Service temporarily unavailable. Try again.', server: 'Could not generate recipes. Try again.', network: 'Connection problem. Try again.' }
+    title:'Chnoua nattayeb? (What should I cook?)', page:'Chnoua nattayeb? Tunisian recipes from what you have at home',
+    desc:'Type the ingredients in your fridge and get 3 Tunisian recipes. Free.',
+    sub:'Type what you have in your fridge and get 3 recipe ideas.', label:'What do you have?', ph:'E.g. potatoes, tomatoes, onion, eggs',
+    go:'What should I cook?', need:'Enter at least 3 ingredients.', empty:'No recipe found. Enter some ingredients (e.g. potatoes, onion).',
+    extra:'Also needed', steps:'Method', ad:'Advertising space', priv:'Privacy', chipsLbl:'Quick ingredients',
+    footer:'Recipes are AI-generated: always check cooking times and allergies.',
+    clear:'Clear all', login:'Log in', signup:'Sign up', email:'Email', pw:'Password (min. 8 characters)',
+    logout:'Log out', favs:'My favorites', save:'Save', copy:'Copy', copied:'Copied', another:'More ideas', close:'Close',
+    done:'steps done', nofavs:'No favorites yet.',
+    tips:['Checking the pantry…','Picking the spices…','Heating the stove…'],
+    err:{rate:'Too many requests. Try again later.', invalid:'Enter at least 3 ingredients (300 characters max).', config:'The server is not configured (missing API key).',
+      unavailable:'Service temporarily unavailable. Try again.', server:'Something went wrong. Try again.', network:'Connection problem. Try again.',
+      quotaGuest:'You used your free tries for today. Create an account to get more, or come back tomorrow.', quotaMember:'You reached today’s limit. Come back tomorrow.',
+      email:'Invalid email.', password:'Password must be at least 8 characters.', exists:'An account already exists with this email.',
+      credentials:'Wrong email or password.', locked:'Too many attempts. Try again in a few minutes.', login:'Log in to save recipes.', full:'Favorites full (50 max).'}
   }
 };
 
-let QUICK = [
-  { ar: 'بطاطا', fr: 'pommes de terre', en: 'potatoes' },
-  { ar: 'طماطم', fr: 'tomates', en: 'tomatoes' },
-  { ar: 'بصل', fr: 'oignon', en: 'onion' },
-  { ar: 'ثوم', fr: 'ail', en: 'garlic' },
-  { ar: 'فلفل', fr: 'poivron', en: 'peppers' },
-  { ar: 'دجاج', fr: 'poulet', en: 'chicken' },
-  { ar: 'لحم مفروم', fr: 'viande hachée', en: 'minced meat' },
-  { ar: 'بيض', fr: 'œufs', en: 'eggs' },
-  { ar: 'تن', fr: 'thon', en: 'tuna' },
-  { ar: 'جبن', fr: 'fromage', en: 'cheese' },
-  { ar: 'رز', fr: 'riz', en: 'rice' },
-  { ar: 'مقرونة', fr: 'pâtes', en: 'pasta' },
-  { ar: 'سميد', fr: 'semoule', en: 'semolina' },
-  { ar: 'عدس', fr: 'lentilles', en: 'lentils' },
-  { ar: 'حمص', fr: 'pois chiches', en: 'chickpeas' },
-  { ar: 'خبز', fr: 'pain', en: 'bread' }
+const QUICK_DEFAULT = [
+  {ar:'بطاطا',fr:'pommes de terre',en:'potatoes'},{ar:'طماطم',fr:'tomates',en:'tomatoes'},{ar:'بصل',fr:'oignon',en:'onion'},
+  {ar:'ثوم',fr:'ail',en:'garlic'},{ar:'فلفل',fr:'poivron',en:'peppers'},{ar:'دجاج',fr:'poulet',en:'chicken'},
+  {ar:'لحم مفروم',fr:'viande hachée',en:'minced meat'},{ar:'بيض',fr:'œufs',en:'eggs'},{ar:'تن',fr:'thon',en:'tuna'},
+  {ar:'جبن',fr:'fromage',en:'cheese'},{ar:'رز',fr:'riz',en:'rice'},{ar:'مقرونة',fr:'pâtes',en:'pasta'},
+  {ar:'سميد',fr:'semoule',en:'semolina'},{ar:'عدس',fr:'lentilles',en:'lentils'},{ar:'حمص',fr:'pois chiches',en:'chickpeas'},{ar:'خبز',fr:'pain',en:'bread'}
 ];
+let QUICK = QUICK_DEFAULT;
 
 const $ = id => document.getElementById(id);
 const ing = $('ing'), chips = $('chips'), go = $('go'), msg = $('msg'), results = $('results');
-let lang = 'fr';
+let lang = 'fr', user = null, favs = [], storage = false, authMode = 'login', tipTimer = null;
+const t = () => T[lang];
 
-function initialLang() {
-  try { const s = localStorage.getItem('lang'); if (T[s]) return s; } catch (e) {}
-  const n = (navigator.language || 'fr').slice(0, 2);
-  return T[n] ? n : 'fr';
+function el(tag, text, cls) {
+  const e = document.createElement(tag);
+  if (text != null) e.textContent = text;
+  if (cls) e.className = cls;
+  return e;
+}
+function say(text, err, detail) {
+  msg.className = err ? 'err' : '';
+  msg.textContent = text;
+  if (detail) msg.appendChild(el('small', detail));
+}
+async function api(action, data) {
+  const r = await fetch('/api/auth', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ action, ...data }) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || 'server');
+  return d;
 }
 
+/* ---------- chips ---------- */
 const list = () => ing.value.split(/[,،\n]/).map(s => s.trim()).filter(Boolean);
-
 function syncChips() {
   const items = list().map(x => x.toLowerCase());
-  chips.querySelectorAll('.chip').forEach(c =>
-    c.setAttribute('aria-pressed', String(items.includes(c.textContent.toLowerCase()))));
+  chips.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(items.includes(c.textContent.toLowerCase()))));
 }
-
 function buildChips() {
   chips.innerHTML = '';
   QUICK.forEach(q => {
     const name = q[lang];
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'chip'; b.textContent = name;
-    b.setAttribute('aria-pressed', 'false');
+    const b = el('button', name, 'pill chip');
+    b.type = 'button'; b.setAttribute('aria-pressed', 'false');
     b.onclick = () => {
       const items = list();
       const i = items.findIndex(x => x.toLowerCase() === name.toLowerCase());
@@ -154,98 +221,186 @@ function buildChips() {
   });
   syncChips();
 }
+ing.addEventListener('input', syncChips);
+$('clear').onclick = () => { ing.value = ''; syncChips(); };
 
+/* ---------- recipe card ---------- */
+function recipeText(r) {
+  return [r.nom, '', ...(r.en_plus || []).map(x => '• ' + x), '', ...(r.etapes || []).map((x, i) => (i + 1) + '. ' + x), '', location.origin].join('\n');
+}
+function card(r) {
+  const c = el('article', null, 'recipe');
+  const head = el('div', null, 'rh');
+  head.appendChild(el('h2', r.nom || ''));
+  const heart = el('button', '♥', 'icon heart');
+  heart.type = 'button'; heart.dataset.nom = r.nom; heart.setAttribute('aria-label', t().save); heart.setAttribute('aria-pressed', 'false');
+  heart.onclick = () => toggleFav(r);
+  head.appendChild(heart);
+  c.appendChild(head);
+  const meta = [r.temps, r.portions].filter(Boolean).join(' · ');
+  if (meta) c.appendChild(el('p', meta, 'meta'));
+
+  const checkList = (items, ordered) => {
+    const l = el(ordered ? 'ol' : 'ul');
+    items.forEach(x => {
+      const li = el('li'), lab = el('label'), cb = el('input');
+      cb.type = 'checkbox';
+      cb.onchange = () => { li.classList.toggle('done', cb.checked); if (ordered) updateProgress(); };
+      lab.append(cb, el('span', String(x)));
+      li.appendChild(lab); l.appendChild(li);
+    });
+    return l;
+  };
+  if (Array.isArray(r.en_plus) && r.en_plus.length) { c.appendChild(el('h3', t().extra)); c.appendChild(checkList(r.en_plus, false)); }
+  let updateProgress = () => {};
+  if (Array.isArray(r.etapes) && r.etapes.length) {
+    c.appendChild(el('h3', t().steps));
+    const ol = checkList(r.etapes, true);
+    const bar = el('div', null, 'bar'), fill = el('i'), prog = el('p', null, 'prog');
+    bar.appendChild(fill);
+    updateProgress = () => {
+      const n = ol.querySelectorAll('input:checked').length, N = r.etapes.length;
+      fill.style.width = (n / N * 100) + '%';
+      prog.textContent = n + '/' + N + ' ' + t().done;
+    };
+    c.append(ol, bar, prog);
+    updateProgress();
+  }
+  const acts = el('div', null, 'acts');
+  const cp = el('button', t().copy, 'icon'); cp.type = 'button';
+  cp.onclick = async () => {
+    try {
+      if (navigator.share) await navigator.share({ title: r.nom, text: recipeText(r) });
+      else { await navigator.clipboard.writeText(recipeText(r)); cp.textContent = t().copied; setTimeout(() => cp.textContent = t().copy, 1500); }
+    } catch (e) {}
+  };
+  acts.appendChild(cp); c.appendChild(acts);
+  return c;
+}
+
+/* ---------- favorites ---------- */
+function refreshHearts() {
+  document.querySelectorAll('.heart').forEach(h => h.setAttribute('aria-pressed', String(favs.some(f => f.nom === h.dataset.nom))));
+}
+function renderFavs() {
+  const box = $('favList'); box.innerHTML = '';
+  if (!favs.length) box.appendChild(el('p', t().nofavs, 'sub'));
+  favs.forEach(f => box.appendChild(card(f)));
+  refreshHearts();
+}
+async function toggleFav(r) {
+  if (!user) { openAuth('login', t().err.login); return; }
+  try {
+    const ex = favs.find(f => f.nom === r.nom);
+    favs = (ex ? await api('fav_remove', { id: ex.id }) : await api('fav_add', { recipe: r })).favs;
+    if ($('favDlg').open) renderFavs(); else refreshHearts();
+  } catch (e) { say(t().err[e.message] || t().err.server, true); }
+}
+
+/* ---------- account ---------- */
+function renderAcct() {
+  const box = $('acct'); box.innerHTML = '';
+  if (!storage) return;
+  if (!user) { const b = el('button', t().login, 'pill'); b.onclick = () => openAuth('login'); box.appendChild(b); return; }
+  const f = el('button', '♥ ' + t().favs, 'pill'); f.onclick = () => { renderFavs(); $('favDlg').showModal(); };
+  const o = el('button', t().logout, 'pill');
+  o.onclick = async () => { try { await api('logout'); } catch (e) {} user = null; favs = []; renderAcct(); refreshHearts(); };
+  box.append(f, o);
+}
+function setAuthMode(m) {
+  authMode = m;
+  $('tabLogin').setAttribute('aria-pressed', String(m === 'login'));
+  $('tabSignup').setAttribute('aria-pressed', String(m === 'signup'));
+  $('authGo').textContent = m === 'login' ? t().login : t().signup;
+  $('authPw').autocomplete = m === 'login' ? 'current-password' : 'new-password';
+}
+function openAuth(mode, note) {
+  setAuthMode(mode);
+  $('authErr').textContent = note || '';
+  $('authDlg').showModal();
+}
+$('tabLogin').onclick = () => setAuthMode('login');
+$('tabSignup').onclick = () => setAuthMode('signup');
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => $(b.dataset.close).close());
+$('authForm').onsubmit = async e => {
+  e.preventDefault();
+  $('authErr').textContent = '';
+  try {
+    const d = await api(authMode === 'login' ? 'login' : 'register', { email: $('authEmail').value, password: $('authPw').value });
+    user = d.user;
+    favs = (await api('fav_list')).favs;
+    $('authPw').value = '';
+    $('authDlg').close();
+    renderAcct(); refreshHearts();
+  } catch (err) { $('authErr').textContent = t().err[err.message] || t().err.server; }
+};
+
+/* ---------- language ---------- */
+function initialLang() {
+  try { const s = localStorage.getItem('lang'); if (T[s]) return s; } catch (e) {}
+  const n = (navigator.language || 'fr').slice(0, 2);
+  return T[n] ? n : 'fr';
+}
 function setLang(l) {
   lang = l;
-  const t = T[l];
   try { localStorage.setItem('lang', l); } catch (e) {}
   document.documentElement.lang = l === 'ar' ? 'ar-TN' : l;
   document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
-  document.title = t.page;
-  $('metaDesc').setAttribute('content', t.desc);
-  $('tTitle').textContent = t.title;
-  $('tSub').textContent = t.sub;
-  $('tLabel').textContent = t.label;
-  ing.placeholder = t.ph;
-  go.textContent = t.go;
-  $('tAd').textContent = t.ad;
-  $('tFooter').textContent = t.footer;
-  $('tPriv').textContent = t.priv;
-  chips.setAttribute('aria-label', t.chips);
-  document.querySelectorAll('.langs button').forEach(b =>
-    b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
-  msg.textContent = ''; msg.className = '';
-  results.innerHTML = '';
-  ing.value = '';
-  buildChips();
+  document.title = t().page;
+  $('metaDesc').setAttribute('content', t().desc);
+  document.querySelectorAll('[data-t]').forEach(e => e.textContent = t()[e.dataset.t]);
+  ing.placeholder = t().ph;
+  go.textContent = t().go;
+  chips.setAttribute('aria-label', t().chipsLbl);
+  document.querySelectorAll('.langs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
+  setAuthMode(authMode);
+  say('', false); results.innerHTML = ''; ing.value = '';
+  buildChips(); renderAcct();
 }
-
 document.querySelectorAll('.langs button').forEach(b => b.onclick = () => setLang(b.dataset.lang));
-ing.addEventListener('input', syncChips);
 
-function el(tag, text, cls) {
-  const e = document.createElement(tag);
-  if (text != null) e.textContent = text;
-  if (cls) e.className = cls;
-  return e;
-}
-
-function render(recettes) {
-  const t = T[lang];
-  results.innerHTML = '';
-  recettes.forEach(r => {
-    const card = el('article', null, 'recipe');
-    card.appendChild(el('h2', r.nom || ''));
-    const meta = [r.temps, r.portions].filter(Boolean).join(' · ');
-    if (meta) card.appendChild(el('p', meta, 'meta'));
-    if (Array.isArray(r.en_plus) && r.en_plus.length) {
-      card.appendChild(el('h3', t.extra));
-      const ul = el('ul');
-      r.en_plus.forEach(x => ul.appendChild(el('li', String(x))));
-      card.appendChild(ul);
-    }
-    if (Array.isArray(r.etapes) && r.etapes.length) {
-      card.appendChild(el('h3', t.steps));
-      const ol = el('ol');
-      r.etapes.forEach(x => ol.appendChild(el('li', String(x))));
-      card.appendChild(ol);
-    }
-    results.appendChild(card);
-  });
-}
-
+/* ---------- generate ---------- */
 go.onclick = async () => {
-  const t = T[lang];
   const text = list().join(', ');
-  msg.className = '';
   results.innerHTML = '';
-  if (text.length < 3) { msg.className = 'err'; msg.textContent = t.need; return; }
+  if (text.length < 3) { say(t().need, true); return; }
   go.disabled = true;
-  msg.textContent = t.loading;
+  for (let i = 0; i < 3; i++) results.appendChild(el('div', null, 'recipe sk'));
+  let ti = 0;
+  say(t().tips[0], false);
+  tipTimer = setInterval(() => say(t().tips[++ti % t().tips.length], false), 2500);
   try {
-    const r = await fetch('/api/chnoua', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ingredients: text, lang })
-    });
+    const r = await fetch('/api/chnoua', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ ingredients: text, lang }) });
     const d = await r.json().catch(() => ({}));
-    if (!r.ok) { msg.className = 'err'; msg.textContent = t.err[d.error] || t.err.server; return; }
-    if (!d.recettes || !d.recettes.length) { msg.textContent = t.empty; return; }
-    msg.textContent = '';
-    render(d.recettes);
+    results.innerHTML = '';
+    if (!r.ok) {
+      let key = d.error;
+      if (key === 'quota') key = !d.storage ? 'rate' : (d.member ? 'quotaMember' : 'quotaGuest');
+      say(t().err[key] || t().err.server, true, d.detail);
+      return;
+    }
+    if (!d.recettes || !d.recettes.length) { say(t().empty, false); return; }
+    say('', false);
+    d.recettes.forEach(x => results.appendChild(card(x)));
+    const more = el('button', t().another, 'btn alt'); more.onclick = () => go.click();
+    results.appendChild(more);
+    refreshHearts();
   } catch (e) {
-    msg.className = 'err';
-    msg.textContent = t.err.network;
+    results.innerHTML = ''; say(t().err.network, true);
   } finally {
-    go.disabled = false;
+    clearInterval(tipTimer); go.disabled = false;
   }
 };
 
+/* ---------- boot ---------- */
 setLang(initialLang());
-
-// Chips managed from /admin.html (falls back to the built-in list)
 fetch('/api/chips').then(r => r.ok ? r.json() : null).then(d => {
   if (d && Array.isArray(d.chips) && d.chips.length) { QUICK = d.chips; buildChips(); }
+}).catch(() => {});
+fetch('/api/auth').then(r => r.json()).then(async d => {
+  storage = Boolean(d.storage); user = d.user || null;
+  if (user) { try { favs = (await api('fav_list')).favs; } catch (e) {} }
+  renderAcct(); refreshHearts();
 }).catch(() => {});
 </script>
 </body>
