@@ -107,6 +107,49 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
 @keyframes up{from{opacity:0;transform:translateY(14px)}}
 @keyframes pop{50%{transform:scale(1.25)}}
 @keyframes sh{to{background-position:-200% 0}}
+/* ---------- mobile polish ----------
+   Comfortable spacing, readable contrast and touch-friendly controls. */
+@media (max-width: 600px) {
+  body { font-size: 15px; line-height: 1.6; }
+  main, footer { width: 100%; max-width: none; padding: 14px; }
+  main {
+    margin: 8px auto 0;
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .top { align-items: flex-start; gap: 10px; }
+  .langs { width: 100%; gap: 6px; }
+  .langs .pill { flex: 1; padding: 8px 6px; font-size: .9rem; }
+  #acct { width: 100%; }
+  #acct .pill { flex: 1; }
+  h1 { font-size: clamp(1.8rem, 8vw, 2.25rem); line-height: 1.15; margin: .65em 0 .35em; }
+  .sub { margin-bottom: 1em; }
+  input, textarea { padding: 13px; border-radius: 12px; font-size: 16px; }
+  textarea { min-height: 94px; }
+  .chips { gap: 7px; margin: 12px 0; }
+  .chip { padding: 7px 11px; min-height: 40px; }
+  .btn { min-height: 48px; padding: 13px 16px; border-radius: 12px; font-size: 1rem; }
+  .recipe { padding: 14px; margin: 12px 0; border-radius: 14px; }
+  .recipe h2 { font-size: 1.2rem; }
+  .recipe li label { padding: 7px 0; gap: 10px; }
+  .recipe li input { width: 18px; height: 18px; flex: 0 0 auto; }
+  .acts { flex-wrap: wrap; }
+  .acts .icon { min-height: 42px; }
+  .ad { min-height: 60px; margin: 14px 0; }
+  footer { padding: 12px 16px 22px; }
+  dialog, dialog.wide { width: calc(100% - 24px); max-width: none; max-height: 88dvh; overflow-y: auto; padding: 16px; border-radius: 16px; }
+  #cookStep { font-size: 1.15rem; min-height: 5em; }
+  .kitchen video { object-position: center center; }
+  .kitchen.vid::after { background: color-mix(in srgb, var(--bg) 30%, transparent); }
+}
+@media (max-width: 380px) {
+  main, footer { padding: 11px; }
+  .langs .pill { font-size: .82rem; }
+  h1 { font-size: 1.75rem; }
+  .recipe { padding: 12px; }
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
