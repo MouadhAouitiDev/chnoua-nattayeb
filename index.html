@@ -101,6 +101,9 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
 @keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 @keyframes sunp{50%{transform:scale(1.14)}}
 @keyframes lid{50%{transform:translateY(-3px)}}
+.kitchen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity 1.2s}
+.kitchen video.on{opacity:1}
+.kitchen.vid::after{background:color-mix(in srgb,var(--bg) 10%,transparent)}
 @keyframes up{from{opacity:0;transform:translateY(14px)}}
 @keyframes pop{50%{transform:scale(1.25)}}
 @keyframes sh{to{background-position:-200% 0}}
@@ -176,6 +179,7 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
   <g class="k-steam" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M135 6c-10-12 10-18 0-34"/><path d="M165 4c-10-12 10-18 0-34" style="animation-delay:.9s"/><path d="M195 6c-10-12 10-18 0-34" style="animation-delay:1.8s"/></g>
 </g>
 </svg>
+<video id="bgVideo" muted loop playsinline autoplay preload="auto"><source src="https://videos.pexels.com/video-files/3967265/3967265-uhd_2732_1440_24fps.mp4" type="video/mp4"></video>
 </div>
 <main>
   <div class="top">
@@ -582,6 +586,21 @@ go.onclick = async () => {
     clearInterval(tipTimer); go.disabled = false;
   }
 };
+
+/* ---------- background video ----------
+   Tries /media/kitchen.mp4 first (your own compressed copy), then a free Pexels CDN clip.
+   The CDN clip is heavy (UHD), so it only plays on large screens with a good connection. */
+(() => {
+  const ALLOW_MOBILE = true; // allow the fullscreen background video on mobile too
+  const v = $('bgVideo');
+  if (!v) return;
+  const c = navigator.connection;
+  const weak = c && (c.saveData || /(^|-)(2g|3g)/.test(c.effectiveType || ''));
+  const small = matchMedia('(max-width: 899px)').matches;
+  if (weak || matchMedia('(prefers-reduced-motion: reduce)').matches) { v.remove(); return; }
+  v.addEventListener('playing', () => { v.classList.add('on'); v.parentElement.classList.add('vid'); });
+  addEventListener('load', () => { v.preload = 'auto'; v.load(); v.play().catch(() => {}); });
+})();
 
 /* ---------- boot ---------- */
 setLang(initialLang());
