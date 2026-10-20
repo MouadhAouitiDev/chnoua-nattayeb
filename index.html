@@ -115,10 +115,14 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
   main {
     margin: 8px auto 0;
     border-radius: 18px;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* Let the fullscreen kitchen video show through on mobile. */
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
+  footer { background: transparent; }
+  .kitchen.vid::after { background: rgba(8, 14, 22, .16); }
+  h1, .sub, main > label, #msg { text-shadow: 0 1px 3px rgba(0, 0, 0, .28); }
   .top { align-items: flex-start; gap: 10px; }
   .langs { width: 100%; gap: 6px; }
   .langs .pill { flex: 1; padding: 8px 6px; font-size: .9rem; }
@@ -142,7 +146,7 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
   dialog, dialog.wide { width: calc(100% - 24px); max-width: none; max-height: 88dvh; overflow-y: auto; padding: 16px; border-radius: 16px; }
   #cookStep { font-size: 1.15rem; min-height: 5em; }
   .kitchen video { object-position: center center; }
-  .kitchen.vid::after { background: color-mix(in srgb, var(--bg) 30%, transparent); }
+  .kitchen.vid::after { background: rgba(8, 14, 22, .16); }
 }
 @media (max-width: 380px) {
   main, footer { padding: 11px; }
