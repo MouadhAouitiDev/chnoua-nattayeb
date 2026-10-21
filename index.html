@@ -102,7 +102,14 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
 @keyframes sunp{50%{transform:scale(1.14)}}
 @keyframes lid{50%{transform:translateY(-3px)}}
 .kitchen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
-.kitchen video.on{opacity:1}
+ .kitchen video.on{opacity:1}
+/* Full-screen YouTube video background; no player controls or title UI. */
+#bgMusic{position:fixed;top:50%;left:50%;width:177.78vh;height:56.25vw;min-width:100vw;min-height:100vh;transform:translate(-50%,-50%);border:0;opacity:1;pointer-events:none;z-index:0}
+.kitchen svg{display:none}
+.kitchen::after{background:rgba(20,18,14,.30)}
+main{position:relative;z-index:1}
+#musicStart{position:fixed;z-index:20;bottom:14px;inset-inline-end:14px;border:0;border-radius:999px;padding:10px 15px;background:#426b45;color:#fff;font:600 14px system-ui,Tahoma,sans-serif;box-shadow:0 5px 18px #0002;cursor:pointer;display:none}
+#musicStart.show{display:block}
 .kitchen.vid::after{background:color-mix(in srgb,var(--bg) 42%,transparent)}
 .step{margin:20px 0}
 .stp{display:flex;align-items:center;gap:10px;font:700 1.15rem system-ui,Tahoma,sans-serif;margin:0 0 10px}
@@ -222,7 +229,8 @@ h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
   <g class="k-steam" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M135 6c-10-12 10-18 0-34"/><path d="M165 4c-10-12 10-18 0-34" style="animation-delay:.9s"/><path d="M195 6c-10-12 10-18 0-34" style="animation-delay:1.8s"/></g>
 </g>
 </svg>
-<video id="bgVideo" muted loop playsinline preload="none"><source src="/media/kitchen.mp4" type="video/mp4"><source src="https://videos.pexels.com/video-files/3967265/3967265-uhd_2732_1440_24fps.mp4" type="video/mp4"></video>
+<!-- Full-screen YouTube video background with audio; controls and player UI hidden. -->
+<iframe id="bgMusic" title="Background music" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/5rjB5JT9RC0?autoplay=1&mute=0&controls=0&disablekb=1&playsinline=1&loop=1&playlist=5rjB5JT9RC0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1" loading="eager"></iframe>
 </div>
 <main>
   <div class="top">
@@ -702,19 +710,31 @@ go.onclick = async () => {
   }
 };
 
-/* ---------- background video ----------
-   Tries /media/kitchen.mp4 first (your own compressed copy), then a free Pexels CDN clip.
-   The CDN clip is heavy (UHD), so it only plays on large screens with a good connection. */
+/* ---------- background music ----------
+   Attempts to start the requested YouTube track as soon as the page loads.
+   Browsers may block autoplay with sound; in that case, show a one-tap play button. */
 (() => {
-  const ALLOW_MOBILE = false; // set to true once /media/kitchen.mp4 is a light (<4 MB) file
-  const v = $('bgVideo');
-  if (!v) return;
-  const c = navigator.connection;
-  const weak = c && (c.saveData || /(^|-)(2g|3g)/.test(c.effectiveType || ''));
-  const small = matchMedia('(max-width: 899px)').matches;
-  if (weak || (small && !ALLOW_MOBILE) || matchMedia('(prefers-reduced-motion: reduce)').matches) { v.remove(); return; }
-  v.addEventListener('playing', () => { v.classList.add('on'); v.parentElement.classList.add('vid'); });
-  addEventListener('load', () => { v.preload = 'auto'; v.load(); v.play().catch(() => {}); });
+  const player = $('bgMusic');
+  if (!player) return;
+  const startButton = document.createElement('button');
+  startButton.id = 'musicStart';
+  startButton.type = 'button';
+  startButton.textContent = '🔊 تشغيل الموسيقى';
+  startButton.setAttribute('aria-label', 'تشغيل الموسيقى');
+  document.body.appendChild(startButton);
+  let started = false;
+  const startMusic = () => {
+    player.src = 'https://www.youtube-nocookie.com/embed/5rjB5JT9RC0?autoplay=1&mute=0&controls=0&disablekb=1&playsinline=1&loop=1&playlist=5rjB5JT9RC0&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1';
+    started = true;
+    startButton.classList.remove('show');
+  };
+  startButton.addEventListener('click', startMusic);
+  // Autoplay is attempted on entry. If blocked, the visitor can start it with one tap.
+  const showFallback = () => { if (!started) startButton.classList.add('show'); };
+  setTimeout(showFallback, 1800);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !started) startMusic();
+  });
 })();
 
 /* ---------- boot ---------- */
