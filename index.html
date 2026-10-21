@@ -101,59 +101,32 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
 @keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 @keyframes sunp{50%{transform:scale(1.14)}}
 @keyframes lid{50%{transform:translateY(-3px)}}
-.kitchen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity 1.2s}
+.kitchen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
 .kitchen video.on{opacity:1}
-.kitchen.vid::after{background:color-mix(in srgb,var(--bg) 10%,transparent)}
+.kitchen.vid::after{background:color-mix(in srgb,var(--bg) 42%,transparent)}
+.step{margin:20px 0}
+.stp{display:flex;align-items:center;gap:10px;font:700 1.15rem system-ui,Tahoma,sans-serif;margin:0 0 10px}
+.stp b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;font-size:.95rem}
+.pot{border:2px dashed var(--line);border-radius:14px;min-height:96px;padding:10px 12px;background:color-mix(in srgb,var(--card) 88%,transparent);transition:border-color .2s,background .2s,transform .2s}
+.pot.over-ready{border-color:var(--blue)}
+.pot.over{border-color:var(--red);background:color-mix(in srgb,var(--red) 10%,var(--card));transform:scale(1.01)}
+.pothead{display:flex;justify-content:space-between;align-items:center}
+.tag{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--blue);color:var(--blue-ink);border-radius:999px;padding:4px 12px;margin:3px;cursor:pointer;font:inherit;animation:pop .25s}
+.hint{margin:6px 0 0;color:var(--muted);font-size:.9rem}
+.pot.full .hint{display:none}
+#q{margin:12px 0 8px}
+#tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
+#tabs .pill{white-space:nowrap}
+.shelf{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
+.chip[draggable="true"]{cursor:grab}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.opts{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+.tog{display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer}
+.tog input{width:auto;margin:0;accent-color:var(--red)}
+@media (max-width:700px){#go{position:sticky;bottom:12px;z-index:5}}
 @keyframes up{from{opacity:0;transform:translateY(14px)}}
 @keyframes pop{50%{transform:scale(1.25)}}
 @keyframes sh{to{background-position:-200% 0}}
-/* ---------- mobile polish ----------
-   Comfortable spacing, readable contrast and touch-friendly controls. */
-@media (max-width: 600px) {
-  body { font-size: 15px; line-height: 1.6; }
-  main, footer { width: 100%; max-width: none; padding: 14px; }
-  main {
-    margin: 8px auto 0;
-    border-radius: 18px;
-    /* Let the fullscreen kitchen video show through on mobile. */
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  footer { background: transparent; }
-  .kitchen.vid::after { background: rgba(8, 14, 22, .16); }
-  h1, .sub, main > label, #msg { text-shadow: 0 1px 3px rgba(0, 0, 0, .28); }
-  .top { align-items: flex-start; gap: 10px; }
-  .langs { width: 100%; gap: 6px; }
-  .langs .pill { flex: 1; padding: 8px 6px; font-size: .9rem; }
-  #acct { width: 100%; }
-  #acct .pill { flex: 1; }
-  h1 { font-size: clamp(1.8rem, 8vw, 2.25rem); line-height: 1.15; margin: .65em 0 .35em; }
-  .sub { margin-bottom: 1em; }
-  input, textarea { padding: 13px; border-radius: 12px; font-size: 16px; }
-  textarea { min-height: 94px; }
-  .chips { gap: 7px; margin: 12px 0; }
-  .chip { padding: 7px 11px; min-height: 40px; }
-  .btn { min-height: 48px; padding: 13px 16px; border-radius: 12px; font-size: 1rem; }
-  .recipe { padding: 14px; margin: 12px 0; border-radius: 14px; }
-  .recipe h2 { font-size: 1.2rem; }
-  .recipe li label { padding: 7px 0; gap: 10px; }
-  .recipe li input { width: 18px; height: 18px; flex: 0 0 auto; }
-  .acts { flex-wrap: wrap; }
-  .acts .icon { min-height: 42px; }
-  .ad { min-height: 60px; margin: 14px 0; }
-  footer { padding: 12px 16px 22px; }
-  dialog, dialog.wide { width: calc(100% - 24px); max-width: none; max-height: 88dvh; overflow-y: auto; padding: 16px; border-radius: 16px; }
-  #cookStep { font-size: 1.15rem; min-height: 5em; }
-  .kitchen video { object-position: center center; }
-  .kitchen.vid::after { background: rgba(8, 14, 22, .16); }
-}
-@media (max-width: 380px) {
-  main, footer { padding: 11px; }
-  .langs .pill { font-size: .82rem; }
-  h1 { font-size: 1.75rem; }
-  .recipe { padding: 12px; }
-}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -226,7 +199,7 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
   <g class="k-steam" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M135 6c-10-12 10-18 0-34"/><path d="M165 4c-10-12 10-18 0-34" style="animation-delay:.9s"/><path d="M195 6c-10-12 10-18 0-34" style="animation-delay:1.8s"/></g>
 </g>
 </svg>
-<video id="bgVideo" muted loop playsinline autoplay preload="auto"><source src="https://videos.pexels.com/video-files/3967265/3967265-uhd_2732_1440_24fps.mp4" type="video/mp4"></video>
+<video id="bgVideo" muted loop playsinline preload="none"><source src="/media/kitchen.mp4" type="video/mp4"><source src="https://videos.pexels.com/video-files/3967265/3967265-uhd_2732_1440_24fps.mp4" type="video/mp4"></video>
 </div>
 <main>
   <div class="top">
@@ -241,10 +214,28 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
   <h1 data-t="title"></h1>
   <p class="sub" data-t="sub"></p>
 
-  <label for="ing" data-t="label"></label>
-  <textarea id="ing" rows="3" maxlength="300"></textarea>
-  <div class="chips" id="chips" role="group"></div>
-  <p><button type="button" class="link" id="clear" data-t="clear"></button></p>
+  <section class="step">
+    <h2 class="stp"><b>1</b><span data-t="s1"></span></h2>
+    <div id="pot" class="pot" aria-live="polite">
+      <div class="pothead"><strong data-t="potTitle"></strong><button type="button" class="icon" id="mic" hidden>🎤</button></div>
+      <div id="potItems"></div>
+      <p class="hint" data-t="dropHint"></p>
+    </div>
+    <input id="q" type="search" autocomplete="off">
+    <div id="tabs" role="tablist"></div>
+    <div id="shelf" class="shelf"></div>
+    <label for="ing" data-t="free"></label>
+    <textarea id="ing" rows="2" maxlength="300"></textarea>
+    <p><button type="button" class="link" id="clear" data-t="clear"></button></p>
+  </section>
+  <section class="step">
+    <h2 class="stp"><b>2</b><span data-t="s2"></span></h2>
+    <div id="cuisines" class="pills" role="radiogroup"></div>
+    <div class="opts">
+      <label class="tog"><input type="checkbox" id="optQuick"><span data-t="quick"></span></label>
+      <label class="tog"><input type="checkbox" id="optVeg"><span data-t="veg"></span></label>
+    </div>
+  </section>
 
   <button class="btn" id="go"></button>
   <div id="msg" role="status" aria-live="polite"></div>
@@ -300,7 +291,7 @@ const T = {
     footer:'الوصفات مولّدة بالذكاء الاصطناعي: تأكّد دايما من الطبخ ومن الحساسية.',
     clear:'نفسخ الكل', login:'دخول', signup:'نعمل حساب', email:'الإيميل', pw:'كلمة السر (8 على الأقل)',
     logout:'خروج', favs:'المفضّلة', save:'نحفظ', copy:'نسخ', copied:'تنسخت', another:'أفكار أخرى', close:'سكّر',
-    done:'مراحل مكمّلة', cook:'نبدا نطيّب', trad:'تقليدية', insp:'مستوحاة', prev:'قبل', next:'بعد', finish:'كمّلنا', saha:'بالهنا والشفا! 🍽️', timer:'ابدا المؤقّت', ready:'⏰ وقت!', nofavs:'ما عندكش مفضّلة توّا.',
+    done:'مراحل مكمّلة', cook:'نبدا نطيّب', trad:'تقليدية', s1:'شنوّة عندك؟', s2:'أي مطبخ تحب؟', potTitle:'القدرة متاعي', dropHint:'اسحب المكوّنات لهنا ولا كبّس عليها', search:'قلّب على مكوّن…', noItems:'ما لقيناش مكوّن.', quick:'سريعة (أقل من 30 دقيقة)', veg:'نباتية (بلا لحم وحوت)', free:'ولا أكتبهم بيدك', mic:'احكي المكوّنات', micNone:'ما فهمتش المكوّنات. عاود قول بصوت أوضح.', insp:'مستوحاة', prev:'قبل', next:'بعد', finish:'كمّلنا', saha:'بالهنا والشفا! 🍽️', timer:'ابدا المؤقّت', ready:'⏰ وقت!', nofavs:'ما عندكش مفضّلة توّا.',
     tips:['نسخّنو الزيت زيتون…','نحمّرو البصل والثوم…','نزيدو الهريسة العربي والتابل…','نخلّيوها تتهنّى على نار هادية…'],
     err:{rate:'برشة طلبات. جرّب بعد شوية.', invalid:'أكتب 3 حاجات على الأقل (300 حرف كحد أقصى).', config:'الموقع موش جاهز (مفتاح API ناقص).',
       unavailable:'الخدمة موش متوفّرة توّا. عاود جرّب.', server:'صار مشكل. عاود جرّب.', network:'مشكل في الاتصال. عاود جرّب.',
@@ -317,7 +308,7 @@ const T = {
     footer:'Les recettes sont générées par IA : vérifie toujours la cuisson et les allergies.',
     clear:'Tout effacer', login:'Connexion', signup:'Créer un compte', email:'E-mail', pw:'Mot de passe (8 caractères min.)',
     logout:'Déconnexion', favs:'Mes favoris', save:'Sauvegarder', copy:'Copier', copied:'Copié', another:'D’autres idées', close:'Fermer',
-    done:'étapes faites', cook:'Mode cuisine', trad:'Traditionnelle', insp:'Inspirée', prev:'Précédent', next:'Suivant', finish:'Terminé', saha:'Saha w hana ! 🍽️', timer:'Lancer le minuteur', ready:'⏰ Temps écoulé !', nofavs:'Aucun favori pour l’instant.',
+    done:'étapes faites', cook:'Mode cuisine', trad:'Traditionnelle', s1:'Qu’as-tu dans ton frigo ?', s2:'Quelle cuisine ?', potTitle:'Ma casserole', dropHint:'Glisse les ingrédients ici ou clique dessus', search:'Chercher un ingrédient…', noItems:'Aucun ingrédient trouvé.', quick:'Rapide (moins de 30 min)', veg:'Végétarien', free:'Ou écris-les toi-même', mic:'Dicter les ingrédients', micNone:'Aucun ingrédient reconnu. Réessaie.', insp:'Inspirée', prev:'Précédent', next:'Suivant', finish:'Terminé', saha:'Saha w hana ! 🍽️', timer:'Lancer le minuteur', ready:'⏰ Temps écoulé !', nofavs:'Aucun favori pour l’instant.',
     tips:['On chauffe l’huile d’olive…','On fait revenir l’oignon et l’ail…','On ajoute la harissa arbi et le tabel…','On laisse mijoter doucement…'],
     err:{rate:'Trop de demandes. Réessaie plus tard.', invalid:'Écris au moins 3 ingrédients (300 caractères max).', config:'Le serveur n’est pas configuré (clé API manquante).',
       unavailable:'Service momentanément indisponible. Réessaie.', server:'Une erreur est survenue. Réessaie.', network:'Problème de connexion. Réessaie.',
@@ -334,7 +325,7 @@ const T = {
     footer:'Recipes are AI-generated: always check cooking times and allergies.',
     clear:'Clear all', login:'Log in', signup:'Sign up', email:'Email', pw:'Password (min. 8 characters)',
     logout:'Log out', favs:'My favorites', save:'Save', copy:'Copy', copied:'Copied', another:'More ideas', close:'Close',
-    done:'steps done', cook:'Cooking mode', trad:'Traditional', insp:'Inspired', prev:'Back', next:'Next', finish:'Done', saha:'Saha w hana! Enjoy your meal 🍽️', timer:'Start timer', ready:'⏰ Time’s up!', nofavs:'No favorites yet.',
+    done:'steps done', cook:'Cooking mode', trad:'Traditional', s1:'What’s in your fridge?', s2:'Which cuisine?', potTitle:'My pot', dropHint:'Drag ingredients here or tap them', search:'Search an ingredient…', noItems:'No ingredient found.', quick:'Quick (under 30 min)', veg:'Vegetarian', free:'Or type them yourself', mic:'Speak your ingredients', micNone:'No ingredient recognized. Try again.', insp:'Inspired', prev:'Back', next:'Next', finish:'Done', saha:'Saha w hana! Enjoy your meal 🍽️', timer:'Start timer', ready:'⏰ Time’s up!', nofavs:'No favorites yet.',
     tips:['Heating the olive oil…','Sautéing onion and garlic…','Adding harissa and tabel…','Letting it simmer gently…'],
     err:{rate:'Too many requests. Try again later.', invalid:'Enter at least 3 ingredients (300 characters max).', config:'The server is not configured (missing API key).',
       unavailable:'Service temporarily unavailable. Try again.', server:'Something went wrong. Try again.', network:'Connection problem. Try again.',
@@ -344,17 +335,9 @@ const T = {
   }
 };
 
-const QUICK_DEFAULT = [
-  {ar:'بطاطا',fr:'pommes de terre',en:'potatoes'},{ar:'طماطم',fr:'tomates',en:'tomatoes'},{ar:'بصل',fr:'oignon',en:'onion'},
-  {ar:'ثوم',fr:'ail',en:'garlic'},{ar:'فلفل',fr:'poivron',en:'peppers'},{ar:'دجاج',fr:'poulet',en:'chicken'},
-  {ar:'لحم مفروم',fr:'viande hachée',en:'minced meat'},{ar:'بيض',fr:'œufs',en:'eggs'},{ar:'تن',fr:'thon',en:'tuna'},
-  {ar:'جبن',fr:'fromage',en:'cheese'},{ar:'رز',fr:'riz',en:'rice'},{ar:'مقرونة',fr:'pâtes',en:'pasta'},
-  {ar:'سميد',fr:'semoule',en:'semolina'},{ar:'عدس',fr:'lentilles',en:'lentils'},{ar:'حمص',fr:'pois chiches',en:'chickpeas'},{ar:'خبز',fr:'pain',en:'bread'}
-];
-let QUICK = QUICK_DEFAULT;
 
 const $ = id => document.getElementById(id);
-const ing = $('ing'), chips = $('chips'), go = $('go'), msg = $('msg'), results = $('results');
+const ing = $('ing'), go = $('go'), msg = $('msg'), results = $('results');
 let lang = 'fr', user = null, favs = [], storage = false, authMode = 'login', tipTimer = null;
 const t = () => T[lang];
 
@@ -376,31 +359,91 @@ async function api(action, data) {
   return d;
 }
 
-/* ---------- chips ---------- */
+/* ---------- ingredient shelf: tap OR drag & drop into the pot ---------- */
+const DEFAULT_SHELF = [{"ar": "خضرة وغلة", "fr": "Légumes & fruits", "en": "Vegetables & fruits", "items": [{"ar": "بطاطا", "fr": "pommes de terre", "en": "potatoes"}, {"ar": "طماطم", "fr": "tomates", "en": "tomatoes"}, {"ar": "بصل", "fr": "oignon", "en": "onion"}, {"ar": "ثوم", "fr": "ail", "en": "garlic"}, {"ar": "فلفل", "fr": "poivron", "en": "peppers"}, {"ar": "جزر", "fr": "carottes", "en": "carrots"}, {"ar": "كوسة", "fr": "courgettes", "en": "zucchini"}, {"ar": "باذنجان", "fr": "aubergine", "en": "eggplant"}, {"ar": "قرنابيط", "fr": "chou-fleur", "en": "cauliflower"}, {"ar": "سلاطة", "fr": "laitue", "en": "lettuce"}, {"ar": "ليمون", "fr": "citron", "en": "lemon"}, {"ar": "فطر", "fr": "champignons", "en": "mushrooms"}]}, {"ar": "لحم وحوت", "fr": "Viandes & poissons", "en": "Meat & fish", "items": [{"ar": "دجاج", "fr": "poulet", "en": "chicken"}, {"ar": "لحم مفروم", "fr": "viande hachée", "en": "minced meat"}, {"ar": "لحم علوش", "fr": "agneau", "en": "lamb"}, {"ar": "لحم بقري", "fr": "bœuf", "en": "beef"}, {"ar": "تن", "fr": "thon", "en": "tuna"}, {"ar": "حوت", "fr": "poisson", "en": "fish"}, {"ar": "قمبري", "fr": "crevettes", "en": "shrimp"}, {"ar": "مرڨاز", "fr": "merguez", "en": "merguez"}]}, {"ar": "بيض وحليب", "fr": "Œufs & laitages", "en": "Eggs & dairy", "items": [{"ar": "بيض", "fr": "œufs", "en": "eggs"}, {"ar": "جبن", "fr": "fromage", "en": "cheese"}, {"ar": "حليب", "fr": "lait", "en": "milk"}, {"ar": "زبدة", "fr": "beurre", "en": "butter"}, {"ar": "ياغورت", "fr": "yaourt", "en": "yogurt"}, {"ar": "كريمة", "fr": "crème", "en": "cream"}]}, {"ar": "كرموس وقطاني", "fr": "Féculents & légumineuses", "en": "Grains & legumes", "items": [{"ar": "رز", "fr": "riz", "en": "rice"}, {"ar": "مقرونة", "fr": "pâtes", "en": "pasta"}, {"ar": "سميد", "fr": "semoule", "en": "semolina"}, {"ar": "عدس", "fr": "lentilles", "en": "lentils"}, {"ar": "حمص", "fr": "pois chiches", "en": "chickpeas"}, {"ar": "فاصوليا", "fr": "haricots", "en": "beans"}, {"ar": "خبز", "fr": "pain", "en": "bread"}, {"ar": "فرينة", "fr": "farine", "en": "flour"}]}, {"ar": "توابل وعولة", "fr": "Épices & garde-manger", "en": "Spices & pantry", "items": [{"ar": "هريسة", "fr": "harissa", "en": "harissa"}, {"ar": "كمون", "fr": "cumin", "en": "cumin"}, {"ar": "كروية", "fr": "carvi", "en": "caraway"}, {"ar": "زيتون", "fr": "olives", "en": "olives"}, {"ar": "معجون طماطم", "fr": "concentré de tomate", "en": "tomato paste"}, {"ar": "زيت زيتون", "fr": "huile d’olive", "en": "olive oil"}, {"ar": "سكر", "fr": "sucre", "en": "sugar"}, {"ar": "عسل", "fr": "miel", "en": "honey"}]}];
+let SHELF = DEFAULT_SHELF, activeCat = 0, query = '';
+const CUISINES = [
+  { id: 'tn', e: '🍲', ar: 'تونسية', fr: 'Tunisienne', en: 'Tunisian' }, { id: 'ma', e: '🫖', ar: 'مغاربية', fr: 'Maghrébine', en: 'Maghreb' },
+  { id: 'me', e: '🥙', ar: 'شرقية', fr: 'Moyen-Orient', en: 'Middle Eastern' }, { id: 'it', e: '🍕', ar: 'إيطالية', fr: 'Italienne', en: 'Italian' },
+  { id: 'fr', e: '🥐', ar: 'فرنسية', fr: 'Française', en: 'French' }, { id: 'tr', e: '🍢', ar: 'تركية', fr: 'Turque', en: 'Turkish' },
+  { id: 'as', e: '🍜', ar: 'آسيوية', fr: 'Asiatique', en: 'Asian' }, { id: 'any', e: '🌍', ar: 'أي مطبخ', fr: 'Toutes', en: 'Any' }
+];
+let cuisine = (() => { try { const c = localStorage.getItem('cuisine'); if (CUISINES.some(x => x.id === c)) return c; } catch (e) {} return 'tn'; })();
+
+const pot = $('pot'), potItems = $('potItems'), shelf = $('shelf'), tabs = $('tabs');
+const norm = x => x.toLowerCase();
 const list = () => ing.value.split(/[,،\n]/).map(s => s.trim()).filter(Boolean);
-function syncChips() {
-  const items = list().map(x => x.toLowerCase());
-  chips.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(items.includes(c.textContent.toLowerCase()))));
+const has = n => list().some(x => norm(x) === norm(n));
+function setList(items) { ing.value = items.join(lang === 'ar' ? '، ' : ', '); sync(); }
+function toggle(n) { const items = list(), i = items.findIndex(x => norm(x) === norm(n)); if (i >= 0) items.splice(i, 1); else items.push(n); setList(items); }
+function addItem(n) { n = n.replace(/[,،<>]/g, ' ').trim().slice(0, 40); if (n && !has(n)) setList([...list(), n]); }
+
+function sync() {
+  potItems.innerHTML = '';
+  list().forEach(n => { const b = el('button', n + ' ✕', 'tag'); b.type = 'button'; b.onclick = () => toggle(n); potItems.appendChild(b); });
+  pot.classList.toggle('full', list().length > 0);
+  shelf.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(has(c.dataset.name))));
+  try { localStorage.setItem('pantry', JSON.stringify({ lang, text: ing.value })); } catch (e) {}
 }
-function buildChips() {
-  chips.innerHTML = '';
-  QUICK.forEach(q => {
-    const name = q[lang];
-    const b = el('button', name, 'pill chip');
-    b.type = 'button'; b.setAttribute('aria-pressed', 'false');
-    b.onclick = () => {
-      const items = list();
-      const i = items.findIndex(x => x.toLowerCase() === name.toLowerCase());
-      if (i >= 0) items.splice(i, 1); else items.push(name);
-      ing.value = items.join(lang === 'ar' ? '، ' : ', ');
-      syncChips();
-    };
-    chips.appendChild(b);
+
+function buildShelf() {
+  tabs.innerHTML = ''; shelf.innerHTML = '';
+  SHELF.forEach((c, i) => {
+    const b = el('button', c[lang], 'pill'); b.type = 'button'; b.setAttribute('role', 'tab');
+    b.setAttribute('aria-pressed', String(i === activeCat && !query));
+    b.onclick = () => { activeCat = i; query = ''; $('q').value = ''; buildShelf(); };
+    tabs.appendChild(b);
   });
-  syncChips();
+  const q = norm(query);
+  const items = q ? SHELF.flatMap(c => c.items).filter(it => norm(it[lang]).includes(q)) : (SHELF[activeCat] || { items: [] }).items;
+  items.forEach(it => {
+    const n = it[lang], b = el('button', n, 'pill chip');
+    b.type = 'button'; b.draggable = true; b.dataset.name = n; b.setAttribute('aria-pressed', 'false');
+    b.onclick = () => toggle(n);
+    b.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', n); e.dataTransfer.effectAllowed = 'copy'; pot.classList.add('over-ready'); });
+    b.addEventListener('dragend', () => pot.classList.remove('over-ready', 'over'));
+    shelf.appendChild(b);
+  });
+  if (!items.length) shelf.appendChild(el('p', t().noItems, 'sub'));
+  sync();
 }
-ing.addEventListener('input', syncChips);
-$('clear').onclick = () => { ing.value = ''; syncChips(); };
+['dragenter', 'dragover'].forEach(ev => pot.addEventListener(ev, e => { e.preventDefault(); pot.classList.add('over'); }));
+pot.addEventListener('dragleave', e => { if (!pot.contains(e.relatedTarget)) pot.classList.remove('over'); });
+pot.addEventListener('drop', e => { e.preventDefault(); pot.classList.remove('over', 'over-ready'); addItem(e.dataTransfer.getData('text/plain') || ''); });
+$('q').addEventListener('input', e => { query = e.target.value.trim(); buildShelf(); });
+ing.addEventListener('input', sync);
+$('clear').onclick = () => { ing.value = ''; sync(); };
+
+function buildCuisines() {
+  const box = $('cuisines'); box.innerHTML = '';
+  CUISINES.forEach(c => {
+    const b = el('button', c.e + ' ' + c[lang], 'pill');
+    b.type = 'button'; b.setAttribute('role', 'radio');
+    b.setAttribute('aria-checked', String(c.id === cuisine)); b.setAttribute('aria-pressed', String(c.id === cuisine));
+    b.onclick = () => { cuisine = c.id; try { localStorage.setItem('cuisine', cuisine); } catch (e) {} buildCuisines(); };
+    box.appendChild(b);
+  });
+}
+const buildAll = () => { buildShelf(); buildCuisines(); };
+
+// voice input (like SuperCook): matches what you say against the shelf
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SR) {
+  const mic = $('mic'); mic.hidden = false;
+  mic.onclick = () => {
+    const r = new SR(); r.lang = { ar: 'ar-TN', fr: 'fr-FR', en: 'en-US' }[lang]; r.interimResults = false;
+    mic.textContent = '🔴';
+    r.onresult = e => {
+      const said = norm(e.results[0][0].transcript);
+      const found = SHELF.flatMap(c => c.items).map(i => i[lang]).filter(n => said.includes(norm(n)));
+      found.forEach(addItem);
+      say(found.length ? '' : t().micNone, !found.length);
+    };
+    r.onend = () => { mic.textContent = '🎤'; };
+    r.onerror = () => { mic.textContent = '🎤'; };
+    try { r.start(); } catch (e) { mic.textContent = '🎤'; }
+  };
+}
 
 /* ---------- recipe card ---------- */
 function recipeText(r) {
@@ -415,7 +458,7 @@ function card(r) {
   heart.onclick = () => toggleFav(r);
   head.appendChild(heart);
   c.appendChild(head);
-  const meta = [r.authentique === false ? '✨ ' + t().insp : '✔ ' + t().trad, r.temps, r.portions].filter(Boolean).join(' · ');
+  const meta = [r.authentique === false ? '✨ ' + t().insp : '✔ ' + t().trad, r.cuisine, r.temps, r.portions].filter(Boolean).join(' · ');
   if (meta) c.appendChild(el('p', meta, 'meta'));
 
   const checkList = (items, ordered) => {
@@ -466,7 +509,9 @@ const ICONS = [
   [/lablabi|لبلابي|marqa|مرقة|مرڨة|soupe|chorba|شربة|soup|hlalem|حلالم/i, '🥣'],
   [/pâte|pasta|مقرونة|مكرونة|spaghetti/i, '🍝'], [/poulet|دجاج|chicken|djej/i, '🍗'],
   [/poisson|حوت|fish|thon|تن/i, '🐟'], [/tajine|طاجين/i, '🥘'], [/fricass|فريكاسي|pain|خبز|bread|sandwich/i, '🥖'],
-  [/riz|رز|rice/i, '🍚'], [/makroudh|مقروض|gâteau|cake/i, '🍯']
+  [/riz|رز|rice/i, '🍚'], [/makroudh|مقروض|gâteau|cake/i, '🍯'],
+  [/pizza|بيتزا/i, '🍕'], [/sushi|سوشي/i, '🍣'], [/curry|كاري/i, '🍛'], [/burger|برغر/i, '🍔'], [/tacos|تاكو/i, '🌮'],
+  [/ramen|nouille|noodle|نودلز/i, '🍜'], [/crêpe|crepe|pancake|كريب/i, '🥞'], [/gratin|lasagne|لازانيا/i, '🧀']
 ];
 const dishIcon = n => (ICONS.find(([re]) => re.test(n)) || [0, '🍽️'])[1];
 
@@ -593,11 +638,11 @@ function setLang(l) {
   document.querySelectorAll('[data-t]').forEach(e => e.textContent = t()[e.dataset.t]);
   ing.placeholder = t().ph;
   go.textContent = t().go;
-  chips.setAttribute('aria-label', t().chipsLbl);
+  $('q').placeholder = t().search; $('mic').setAttribute('aria-label', t().mic);
   document.querySelectorAll('.langs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
   setAuthMode(authMode);
   say('', false); results.innerHTML = ''; ing.value = '';
-  buildChips(); renderAcct();
+  buildAll(); renderAcct();
 }
 document.querySelectorAll('.langs button').forEach(b => b.onclick = () => setLang(b.dataset.lang));
 
@@ -612,7 +657,7 @@ go.onclick = async () => {
   say(t().tips[0], false);
   tipTimer = setInterval(() => say(t().tips[++ti % t().tips.length], false), 2500);
   try {
-    const r = await fetch('/api/chnoua', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ ingredients: text, lang }) });
+    const r = await fetch('/api/chnoua', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ ingredients: text, lang, cuisine, quick: $('optQuick').checked, veg: $('optVeg').checked }) });
     const d = await r.json().catch(() => ({}));
     results.innerHTML = '';
     if (!r.ok) {
@@ -638,21 +683,24 @@ go.onclick = async () => {
    Tries /media/kitchen.mp4 first (your own compressed copy), then a free Pexels CDN clip.
    The CDN clip is heavy (UHD), so it only plays on large screens with a good connection. */
 (() => {
-  const ALLOW_MOBILE = true; // allow the fullscreen background video on mobile too
+  const ALLOW_MOBILE = false; // set to true once /media/kitchen.mp4 is a light (<4 MB) file
   const v = $('bgVideo');
   if (!v) return;
   const c = navigator.connection;
   const weak = c && (c.saveData || /(^|-)(2g|3g)/.test(c.effectiveType || ''));
   const small = matchMedia('(max-width: 899px)').matches;
-  if (weak || matchMedia('(prefers-reduced-motion: reduce)').matches) { v.remove(); return; }
+  if (weak || (small && !ALLOW_MOBILE) || matchMedia('(prefers-reduced-motion: reduce)').matches) { v.remove(); return; }
   v.addEventListener('playing', () => { v.classList.add('on'); v.parentElement.classList.add('vid'); });
   addEventListener('load', () => { v.preload = 'auto'; v.load(); v.play().catch(() => {}); });
 })();
 
 /* ---------- boot ---------- */
+let savedPantry = null;
+try { savedPantry = JSON.parse(localStorage.getItem('pantry') || 'null'); } catch (e) {}
 setLang(initialLang());
+if (savedPantry && savedPantry.lang === lang && savedPantry.text) { ing.value = savedPantry.text; sync(); }
 fetch('/api/chips').then(r => r.ok ? r.json() : null).then(d => {
-  if (d && Array.isArray(d.chips) && d.chips.length) { QUICK = d.chips; buildChips(); }
+  if (d && Array.isArray(d.shelf) && d.shelf.length) { SHELF = d.shelf; activeCat = 0; buildShelf(); }
 }).catch(() => {});
 fetch('/api/auth').then(r => r.json()).then(async d => {
   storage = Boolean(d.storage); user = d.user || null;
