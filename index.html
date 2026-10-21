@@ -10,7 +10,7 @@
 @media (prefers-color-scheme:dark){:root{--bg:#0c1b2e;--ink:#e8eff7;--card:#12283f;--line:#27405d;--blue:#5aa0ee;--blue-ink:#0c1b2e;--red:#ff7a68;--gold:#f0c04a;--muted:#9db1c6;--ok:#6fd49a;--tilebg:#17365a;--wood:#5a3d22}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
-main,footer{max-width:680px;margin:0 auto;padding:20px}
+main,footer{max-width:1080px;margin:0 auto;padding:20px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .langs,#acct{display:flex;gap:6px;flex-wrap:wrap}
 .pill{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer;font:inherit}
@@ -103,6 +103,11 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
 @keyframes lid{50%{transform:translateY(-3px)}}
 .kitchen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
  .kitchen video.on{opacity:1}
+
+/* Realistic cooking overlay while the original YouTube background keeps playing */
+#realisticPotOverlay{position:fixed;z-index:1;left:50%;top:46%;transform:translate(-50%,-50%);width:min(66vw,760px);height:auto;max-height:60vh;object-fit:contain;pointer-events:none;filter:drop-shadow(0 18px 30px rgba(0,0,0,.32));opacity:.96}
+@media(max-width:640px){#realisticPotOverlay{width:min(96vw,560px);top:42%;max-height:43vh}}
+
 /* Full-screen YouTube video background; no player controls or title UI. */
 #bgMusic{position:fixed;top:50%;left:50%;width:177.78vh;height:56.25vw;min-width:100vw;min-height:100vh;transform:translate(-50%,-50%);border:0;opacity:1;pointer-events:none;z-index:0}
 .kitchen svg{display:none}
@@ -158,10 +163,49 @@ h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
 @media(max-width:700px){main{margin:10px 10px 0;padding:18px;border-radius:20px}.kitchen{background:radial-gradient(ellipse at 15% 10%,rgba(228,174,94,.2),transparent 35%),linear-gradient(150deg,#f5e6cd,#e5d9c3 55%,#dbe4ce)}.kitchen::after{width:65vw;height:65vw;right:-20vw;bottom:8%;opacity:.7}body{background:var(--bg)}}
 @media(prefers-color-scheme:dark){.kitchen{background:radial-gradient(ellipse at 12% 18%,rgba(218,159,74,.12),transparent 30%),radial-gradient(ellipse at 88% 78%,rgba(67,107,69,.22),transparent 32%),linear-gradient(145deg,#1b261e,#20251f 55%,#1b2a20)}.kitchen::before{opacity:.1}main{box-shadow:0 24px 70px rgba(0,0,0,.25)}}
 
+
+/* Nutrition studio */
+.nutri{margin:28px 0 8px;padding:clamp(16px,3vw,26px);border:1px solid color-mix(in srgb,var(--line) 75%,transparent);border-radius:24px;background:color-mix(in srgb,var(--card) 94%,transparent);box-shadow:0 18px 50px rgba(12,32,47,.13);backdrop-filter:blur(14px)}
+.nutri-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+.nutri-kicker{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border-radius:999px;background:color-mix(in srgb,var(--ok) 15%,var(--card));color:var(--ok);font-size:.78rem;font-weight:800;letter-spacing:.03em}
+.nutri h2{font-size:clamp(1.45rem,3vw,2rem);line-height:1.2;margin:10px 0 6px}
+.nutri p{margin:0;color:var(--muted)}
+.nutri-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}
+.goal-card{min-width:0;text-align:start;border:1px solid var(--line);border-radius:16px;padding:14px 12px;background:var(--card);color:var(--ink);cursor:pointer;transition:.2s;font:inherit}
+.goal-card .gicon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:color-mix(in srgb,var(--blue) 12%,var(--card));font-size:1.3rem;margin-bottom:9px}
+.goal-card strong{display:block;font-size:.94rem;line-height:1.3}
+.goal-card small{display:block;color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:5px}
+.goal-card[aria-pressed="true"]{border-color:var(--ok);box-shadow:0 0 0 2px color-mix(in srgb,var(--ok) 22%,transparent);background:color-mix(in srgb,var(--ok) 7%,var(--card))}
+.nutri-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px;border-radius:18px;background:color-mix(in srgb,var(--bg) 70%,var(--card));border:1px solid var(--line)}
+.nutri-field label{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.9rem}
+.nutri-field select{width:100%;margin-top:8px;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+.nutri-field input[type=range]{width:100%;margin:14px 0 0;accent-color:var(--ok)}
+.nutri-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0 20px}
+.nutri-metric{padding:13px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.nutri-metric span{display:block;color:var(--muted);font-size:.78rem}
+.nutri-metric strong{font-size:1.3rem;letter-spacing:-.03em}
+.nutri-results-head{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:20px 0 12px}
+.nutri-results-head h3{margin:0;font-size:1.15rem}
+.meal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.meal-card{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:var(--card);min-width:0}
+.meal-visual{height:98px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,color-mix(in srgb,var(--ok) 15%,var(--card)),color-mix(in srgb,var(--gold) 15%,var(--card)))}
+.meal-content{padding:13px}
+.meal-title{font-weight:800;line-height:1.3;margin-bottom:5px}
+.meal-desc{font-size:.83rem;color:var(--muted);line-height:1.45;min-height:2.5em}
+.meal-tags{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.meal-tag{font-size:.75rem;padding:4px 7px;border-radius:999px;background:color-mix(in srgb,var(--blue) 10%,var(--card));color:var(--ink)}
+.meal-macros{display:flex;justify-content:space-between;gap:6px;border-top:1px solid var(--line);padding-top:9px;font-size:.78rem;color:var(--muted)}
+.meal-macros strong{color:var(--ink)}
+.nutri-note{font-size:.8rem!important;margin-top:13px!important;line-height:1.5}
+.nutri-empty{padding:18px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);text-align:center}
+@media(max-width:600px){.nutri-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nutri-controls{grid-template-columns:1fr}.meal-grid{grid-template-columns:1fr}.meal-visual{height:82px}.nutri-head{display:block}.nutri-metrics{gap:6px}.nutri-metric{padding:10px}.nutri-metric strong{font-size:1.15rem}}
+@media(min-width:601px) and (max-width:850px){.nutri-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
 <div class="kitchen" aria-hidden="true">
+  <img id="realisticPotOverlay" src="realistic-pot-overlay.png" alt="" aria-hidden="true">
 <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <pattern id="tile" width="64" height="64" patternUnits="userSpaceOnUse">
@@ -271,6 +315,48 @@ h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
   <button class="btn" id="go"></button>
   <div id="msg" role="status" aria-live="polite"></div>
   <div id="results"></div>
+
+  <section class="nutri" id="nutrition">
+    <div class="nutri-head">
+      <div>
+        <span class="nutri-kicker" data-nutri="kicker">✦ NUTRITION STUDIO</span>
+        <h2 data-nutri="title">Mange selon ton objectif</h2>
+        <p data-nutri="intro">Des idées simples, équilibrées et adaptées à ton rythme.</p>
+      </div>
+      <div aria-hidden="true" style="font-size:2.4rem">🥗</div>
+    </div>
+    <div class="nutri-grid" role="group" aria-label="Nutrition goal">
+      <button type="button" class="goal-card" data-goal="lose" aria-pressed="false"><span class="gicon">⚖️</span><strong data-nutri="lose">Perdre du poids</strong><small data-nutri="loseSub">Satiété et portions équilibrées</small></button>
+      <button type="button" class="goal-card" data-goal="gain" aria-pressed="false"><span class="gicon">🍚</span><strong data-nutri="gain">Prendre du poids</strong><small data-nutri="gainSub">Plus d’énergie et de bons apports</small></button>
+      <button type="button" class="goal-card" data-goal="sport" aria-pressed="true"><span class="gicon">🏋️</span><strong data-nutri="sport">Sport & muscles</strong><small data-nutri="sportSub">Protéines et récupération</small></button>
+      <button type="button" class="goal-card" data-goal="healthy" aria-pressed="false"><span class="gicon">🌿</span><strong data-nutri="healthy">Manger healthy</strong><small data-nutri="healthySub">Équilibre au quotidien</small></button>
+    </div>
+    <div class="nutri-controls">
+      <div class="nutri-field">
+        <label for="dietStyle"><span data-nutri="dietLabel">Style alimentaire</span></label>
+        <select id="dietStyle">
+          <option value="all" data-nutri="dietAll">Tout voir</option>
+          <option value="med" data-nutri="dietMed">Méditerranéen</option>
+          <option value="veg" data-nutri="dietVeg">Végétarien</option>
+          <option value="protein" data-nutri="dietProtein">Riche en protéines</option>
+          <option value="quick" data-nutri="dietQuick">Rapide (≤ 20 min)</option>
+        </select>
+      </div>
+      <div class="nutri-field">
+        <label for="calorieTarget"><span data-nutri="calLabel">Objectif calories / jour</span><strong id="calorieValue">2 200 kcal</strong></label>
+        <input id="calorieTarget" type="range" min="1400" max="3200" step="100" value="2200">
+      </div>
+    </div>
+    <div class="nutri-metrics" aria-live="polite">
+      <div class="nutri-metric"><span data-nutri="calMetric">Calories visées</span><strong id="metricCalories">2 200</strong></div>
+      <div class="nutri-metric"><span data-nutri="proteinMetric">Protéines indicatives</span><strong id="metricProtein">110 g</strong></div>
+      <div class="nutri-metric"><span data-nutri="mealsMetric">Idées proposées</span><strong id="metricMeals">8</strong></div>
+    </div>
+    <div class="nutri-results-head"><div><h3 data-nutri="ideas">Des idées pour ton assiette</h3><p data-nutri="ideasSub">Choisis une catégorie pour adapter les suggestions.</p></div></div>
+    <div id="mealGrid" class="meal-grid" aria-live="polite"></div>
+    <p class="nutri-note" data-nutri="note">Les calories et protéines sont des estimations par portion. Les besoins dépendent notamment de l’âge, de la taille, de l’activité et de la santé. Pour un objectif médical, demande conseil à un professionnel.</p>
+  </section>
+
   <div class="ad" data-t="ad"></div>
 </main>
 <footer><span data-t="footer"></span> <a href="/privacy.html" data-t="priv" style="color:var(--blue)"></a></footer>
@@ -394,10 +480,11 @@ async function api(action, data) {
 const DEFAULT_SHELF = [{"ar": "خضرة وغلة", "fr": "Légumes & fruits", "en": "Vegetables & fruits", "items": [{"ar": "بطاطا", "fr": "pommes de terre", "en": "potatoes"}, {"ar": "طماطم", "fr": "tomates", "en": "tomatoes"}, {"ar": "بصل", "fr": "oignon", "en": "onion"}, {"ar": "ثوم", "fr": "ail", "en": "garlic"}, {"ar": "فلفل", "fr": "poivron", "en": "peppers"}, {"ar": "جزر", "fr": "carottes", "en": "carrots"}, {"ar": "كوسة", "fr": "courgettes", "en": "zucchini"}, {"ar": "باذنجان", "fr": "aubergine", "en": "eggplant"}, {"ar": "قرنابيط", "fr": "chou-fleur", "en": "cauliflower"}, {"ar": "سلاطة", "fr": "laitue", "en": "lettuce"}, {"ar": "ليمون", "fr": "citron", "en": "lemon"}, {"ar": "فطر", "fr": "champignons", "en": "mushrooms"}]}, {"ar": "لحم وحوت", "fr": "Viandes & poissons", "en": "Meat & fish", "items": [{"ar": "دجاج", "fr": "poulet", "en": "chicken"}, {"ar": "لحم مفروم", "fr": "viande hachée", "en": "minced meat"}, {"ar": "لحم علوش", "fr": "agneau", "en": "lamb"}, {"ar": "لحم بقري", "fr": "bœuf", "en": "beef"}, {"ar": "تن", "fr": "thon", "en": "tuna"}, {"ar": "حوت", "fr": "poisson", "en": "fish"}, {"ar": "قمبري", "fr": "crevettes", "en": "shrimp"}, {"ar": "مرڨاز", "fr": "merguez", "en": "merguez"}]}, {"ar": "بيض وحليب", "fr": "Œufs & laitages", "en": "Eggs & dairy", "items": [{"ar": "بيض", "fr": "œufs", "en": "eggs"}, {"ar": "جبن", "fr": "fromage", "en": "cheese"}, {"ar": "حليب", "fr": "lait", "en": "milk"}, {"ar": "زبدة", "fr": "beurre", "en": "butter"}, {"ar": "ياغورت", "fr": "yaourt", "en": "yogurt"}, {"ar": "كريمة", "fr": "crème", "en": "cream"}]}, {"ar": "كرموس وقطاني", "fr": "Féculents & légumineuses", "en": "Grains & legumes", "items": [{"ar": "رز", "fr": "riz", "en": "rice"}, {"ar": "مقرونة", "fr": "pâtes", "en": "pasta"}, {"ar": "سميد", "fr": "semoule", "en": "semolina"}, {"ar": "عدس", "fr": "lentilles", "en": "lentils"}, {"ar": "حمص", "fr": "pois chiches", "en": "chickpeas"}, {"ar": "فاصوليا", "fr": "haricots", "en": "beans"}, {"ar": "خبز", "fr": "pain", "en": "bread"}, {"ar": "فرينة", "fr": "farine", "en": "flour"}]}, {"ar": "توابل وعولة", "fr": "Épices & garde-manger", "en": "Spices & pantry", "items": [{"ar": "هريسة", "fr": "harissa", "en": "harissa"}, {"ar": "كمون", "fr": "cumin", "en": "cumin"}, {"ar": "كروية", "fr": "carvi", "en": "caraway"}, {"ar": "زيتون", "fr": "olives", "en": "olives"}, {"ar": "معجون طماطم", "fr": "concentré de tomate", "en": "tomato paste"}, {"ar": "زيت زيتون", "fr": "huile d’olive", "en": "olive oil"}, {"ar": "سكر", "fr": "sucre", "en": "sugar"}, {"ar": "عسل", "fr": "miel", "en": "honey"}]}];
 let SHELF = DEFAULT_SHELF, activeCat = 0, query = '';
 const CUISINES = [
-  { id: 'tn', e: '🍲', ar: 'تونسية', fr: 'Tunisienne', en: 'Tunisian' }, { id: 'ma', e: '🫖', ar: 'مغاربية', fr: 'Maghrébine', en: 'Maghreb' },
-  { id: 'me', e: '🥙', ar: 'شرقية', fr: 'Moyen-Orient', en: 'Middle Eastern' }, { id: 'it', e: '🍕', ar: 'إيطالية', fr: 'Italienne', en: 'Italian' },
-  { id: 'fr', e: '🥐', ar: 'فرنسية', fr: 'Française', en: 'French' }, { id: 'tr', e: '🍢', ar: 'تركية', fr: 'Turque', en: 'Turkish' },
-  { id: 'as', e: '🍜', ar: 'آسيوية', fr: 'Asiatique', en: 'Asian' }, { id: 'any', e: '🌍', ar: 'أي مطبخ', fr: 'Toutes', en: 'Any' }
+{id:'tn',e:'🍲',ar:'تونسية',fr:'Tunisienne',en:'Tunisian'},{id:'ma',e:'🫖',ar:'مغاربية',fr:'Maghrébine',en:'Maghreb'},{id:'me',e:'🥙',ar:'شرقية',fr:'Moyen-Orient',en:'Middle Eastern'},
+{id:'it',e:'🍕',ar:'إيطالية',fr:'Italienne',en:'Italian'},{id:'fr',e:'🥐',ar:'فرنسية',fr:'Française',en:'French'},{id:'es',e:'🥘',ar:'إسبانية',fr:'Espagnole',en:'Spanish'},{id:'gr',e:'🫒',ar:'يونانية',fr:'Grecque',en:'Greek'},{id:'tr',e:'🥙',ar:'تركية',fr:'Turque',en:'Turkish'},{id:'lb',e:'🧆',ar:'لبنانية',fr:'Libanaise',en:'Lebanese'},{id:'eg',e:'🍛',ar:'مصرية',fr:'Égyptienne',en:'Egyptian'},
+{id:'in',e:'🍛',ar:'هندية',fr:'Indienne',en:'Indian'},{id:'pk',e:'🍚',ar:'باكستانية',fr:'Pakistanaise',en:'Pakistani'},{id:'cn',e:'🥡',ar:'صينية',fr:'Chinoise',en:'Chinese'},{id:'jp',e:'🍣',ar:'يابانية',fr:'Japonaise',en:'Japanese'},{id:'kr',e:'🍜',ar:'كورية',fr:'Coréenne',en:'Korean'},{id:'th',e:'🍜',ar:'تايلاندية',fr:'Thaïlandaise',en:'Thai'},{id:'vn',e:'🍜',ar:'فيتنامية',fr:'Vietnamienne',en:'Vietnamese'},{id:'id',e:'🍢',ar:'إندونيسية',fr:'Indonésienne',en:'Indonesian'},{id:'ph',e:'🍲',ar:'فلبينية',fr:'Philippine',en:'Filipino'},
+{id:'mx',e:'🌮',ar:'مكسيكية',fr:'Mexicaine',en:'Mexican'},{id:'br',e:'🥩',ar:'برازيلية',fr:'Brésilienne',en:'Brazilian'},{id:'pe',e:'🥔',ar:'بيروفية',fr:'Péruvienne',en:'Peruvian'},{id:'us',e:'🍔',ar:'أمريكية',fr:'Américaine',en:'American'},{id:'ca',e:'🍁',ar:'كندية',fr:'Canadienne',en:'Canadian'},{id:'gb',e:'🥧',ar:'بريطانية',fr:'Britannique',en:'British'},{id:'de',e:'🥨',ar:'ألمانية',fr:'Allemande',en:'German'},{id:'at',e:'🍰',ar:'نمساوية',fr:'Autrichienne',en:'Austrian'},{id:'pl',e:'🥟',ar:'بولندية',fr:'Polonaise',en:'Polish'},{id:'ru',e:'🥣',ar:'روسية',fr:'Russe',en:'Russian'},{id:'ge',e:'🥟',ar:'جورجية',fr:'Géorgienne',en:'Georgian'},
+{id:'et',e:'🍲',ar:'إثيوبية',fr:'Éthiopienne',en:'Ethiopian'},{id:'ng',e:'🍛',ar:'نيجيرية',fr:'Nigériane',en:'Nigerian'},{id:'sn',e:'🥘',ar:'سنغالية',fr:'Sénégalaise',en:'Senegalese'},{id:'za',e:'🥩',ar:'جنوب إفريقية',fr:'Sud-africaine',en:'South African'},{id:'au',e:'🦐',ar:'أسترالية',fr:'Australienne',en:'Australian'},{id:'fusion',e:'🌎',ar:'مطبخ عالمي مدمج',fr:'Fusion du monde',en:'Global fusion'},{id:'any',e:'🌍',ar:'أي مطبخ',fr:'Toutes les cuisines',en:'Any cuisine'}
 ];
 let cuisine = (() => { try { const c = localStorage.getItem('cuisine'); if (CUISINES.some(x => x.id === c)) return c; } catch (e) {} return 'tn'; })();
 
@@ -672,6 +759,7 @@ function setLang(l) {
   $('q').placeholder = t().search; $('mic').setAttribute('aria-label', t().mic);
   document.querySelectorAll('.langs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
   setAuthMode(authMode);
+  setNutritionLang();
   say('', false); results.innerHTML = ''; ing.value = '';
   buildAll(); renderAcct();
 }
@@ -709,6 +797,43 @@ go.onclick = async () => {
     clearInterval(tipTimer); go.disabled = false;
   }
 };
+
+/* ---------- Nutrition studio: goal-based meal ideas ---------- */
+const nutritionText={
+fr:{kicker:'✦ NUTRITION STUDIO',title:'Mange selon ton objectif',intro:'Des idées simples, équilibrées et adaptées à ton rythme.',lose:'Perdre du poids',loseSub:'Satiété et portions équilibrées',gain:'Prendre du poids',gainSub:'Plus d’énergie et de bons apports',sport:'Sport & muscles',sportSub:'Protéines et récupération',healthy:'Manger healthy',healthySub:'Équilibre au quotidien',dietLabel:'Style alimentaire',dietAll:'Tout voir',dietMed:'Méditerranéen',dietVeg:'Végétarien',dietProtein:'Riche en protéines',dietQuick:'Rapide (≤ 20 min)',calLabel:'Objectif calories / jour',calMetric:'Calories visées',proteinMetric:'Protéines indicatives',mealsMetric:'Idées proposées',ideas:'Des idées pour ton assiette',ideasSub:'Choisis une catégorie pour adapter les suggestions.',note:'Les calories et protéines sont des estimations par portion. Les besoins dépendent notamment de l’âge, de la taille, de l’activité et de la santé. Pour un objectif médical, demande conseil à un professionnel.',kcal:'kcal',protein:'protéines',veg:'Végétarien',med:'Méditerranéen',high:'Protéiné',quick:'Rapide',none:'Aucun repas ne correspond à ces filtres. Essaie un autre style.'},
+ar:{kicker:'✦ تغذية ورياضة',title:'كول حسب هدفك',intro:'أفكار سهلة ومتوازنة تناسب نسق حياتك.',lose:'نقصان في الوزن',loseSub:'شبع وكميات متوازنة',gain:'زيادة في الوزن',gainSub:'طاقة ومغذّيات أكثر',sport:'رياضة وعضلات',sportSub:'بروتين واسترجاع',healthy:'أكل صحي',healthySub:'توازن كل يوم',dietLabel:'نوع النظام الغذائي',dietAll:'الكل',dietMed:'متوسطي',dietVeg:'نباتي',dietProtein:'غني بالبروتين',dietQuick:'سريع (≤ 20 دقيقة)',calLabel:'السعرات المستهدفة / اليوم',calMetric:'السعرات المستهدفة',proteinMetric:'بروتين تقريبي',mealsMetric:'أفكار مقترحة',ideas:'أفكار لطبقك',ideasSub:'اختار نوع الأكل باش تتبدل الاقتراحات.',note:'السعرات والبروتين تقديرات للحصة الواحدة. احتياجاتك تتبدل حسب العمر والطول والنشاط والصحة. للأهداف الطبية استشر مختصاً.',kcal:'سعرة',protein:'بروتين',veg:'نباتي',med:'متوسطي',high:'غني بالبروتين',quick:'سريع',none:'ما لقيناش اقتراحات للفلاتر هاذم. جرّب اختيار آخر.'},
+en:{kicker:'✦ NUTRITION STUDIO',title:'Eat for your goal',intro:'Simple, balanced ideas that fit your routine.',lose:'Lose weight',loseSub:'Filling meals, balanced portions',gain:'Gain weight',gainSub:'More energy and nourishment',sport:'Sports & muscle',sportSub:'Protein and recovery',healthy:'Eat healthy',healthySub:'Everyday balance',dietLabel:'Eating style',dietAll:'Show all',dietMed:'Mediterranean',dietVeg:'Vegetarian',dietProtein:'High protein',dietQuick:'Quick (≤ 20 min)',calLabel:'Daily calorie target',calMetric:'Target calories',proteinMetric:'Indicative protein',mealsMetric:'Meal ideas',ideas:'Ideas for your plate',ideasSub:'Choose a style to tailor the suggestions.',note:'Calories and protein are estimates per serving. Needs vary with age, height, activity and health. For medical goals, consult a qualified professional.',kcal:'kcal',protein:'protein',veg:'Vegetarian',med:'Mediterranean',high:'High protein',quick:'Quick',none:'No meals match these filters. Try another style.'}};
+const nutritionMeals=[
+['🥣','Bol skyr, avoine & fruits','Skyr, flocons d’avoine, banane et fruits rouges.','healthy med protein quick vegetarian',390,27,'15 min'],
+['🍳','Omelette complète','Œufs, épinards, tomate et pain complet.','healthy med protein quick',430,28,'15 min'],
+['🐟','Poisson, boulgour & salade','Poisson grillé, boulgour, salade et huile d’olive.','healthy med protein',520,38,'25 min'],
+['🍗','Poulet, riz & légumes','Poulet grillé, riz complet et légumes de saison.','healthy med protein',560,42,'25 min'],
+['🥗','Salade de pois chiches','Pois chiches, concombre, tomate, feta et citron.','healthy med vegetarian',440,18,'15 min'],
+['🥜','Smoothie nourrissant','Lait, banane, avoine et beurre de cacahuète.','gain vegetarian quick',520,19,'5 min'],
+['🥑','Toast avocat & œufs','Pain complet, avocat, œufs et graines.','gain med vegetarian',480,22,'12 min'],
+['🍝','Pâtes au thon','Pâtes, thon, tomates, herbes et huile d’olive.','gain sport med protein',610,36,'20 min'],
+['🫘','Lablabi revisité','Pois chiches, cumin, ail, œuf et pain en portion adaptée.','gain sport med protein',590,25,'25 min'],
+['🥛','Fromage blanc & noix','Fromage blanc, noix, dattes et miel en petite quantité.','gain vegetarian protein quick',360,23,'5 min'],
+['🌯','Wrap poulet & crudités','Tortilla complète, poulet, yaourt et crudités.','sport healthy protein quick',470,35,'15 min'],
+['🍲','Lentilles aux légumes','Lentilles, carotte, tomate et épices douces.','healthy vegetarian med',410,22,'30 min']
+];
+let nutritionGoal='sport';
+const goalCalories={lose:1800,gain:2700,sport:2400,healthy:2200};
+function renderMeals(){
+ const tx=nutritionText[lang]||nutritionText.fr, target=Number($('calorieTarget').value);
+ const number=target.toLocaleString(lang==='ar'?'ar-TN':lang==='fr'?'fr-FR':'en-US');
+ $('calorieValue').textContent=number+' '+tx.kcal;$('metricCalories').textContent=number;
+ $('metricProtein').textContent=Math.round(target*(nutritionGoal==='sport'?.22:nutritionGoal==='lose'?.28:nutritionGoal==='gain'?.18:.18)/4)+' g';
+ document.querySelectorAll('.goal-card').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.goal===nutritionGoal)));
+ const style=$('dietStyle').value;
+ const meals=nutritionMeals.filter(m=>{const tags=m[3].split(' ');if(style==='med'&&!tags.includes('med'))return false;if(style==='veg'&&!tags.includes('vegetarian'))return false;if(style==='protein'&&!tags.includes('protein'))return false;if(style==='quick'&&!tags.includes('quick'))return false;if(nutritionGoal==='lose'&&m[4]>560)return false;if(nutritionGoal==='gain'&&m[4]<400)return false;if(nutritionGoal==='sport'&&!tags.includes('protein'))return false;return true;});
+ $('metricMeals').textContent=meals.length;const grid=$('mealGrid');grid.innerHTML='';
+ if(!meals.length){const e=document.createElement('div');e.className='nutri-empty';e.textContent=tx.none;grid.appendChild(e);return;}
+ meals.forEach(m=>{const card=document.createElement('article');card.className='meal-card';const visual=document.createElement('div');visual.className='meal-visual';visual.textContent=m[0];visual.setAttribute('aria-hidden','true');const content=document.createElement('div');content.className='meal-content';const title=document.createElement('div');title.className='meal-title';title.textContent=m[1];const desc=document.createElement('div');desc.className='meal-desc';desc.textContent=m[2];const tagsEl=document.createElement('div');tagsEl.className='meal-tags';m[3].split(' ').filter(x=>['med','vegetarian','protein','quick'].includes(x)).slice(0,3).forEach(tag=>{const tagEl=document.createElement('span');tagEl.className='meal-tag';tagEl.textContent=tag==='med'?tx.med:tag==='vegetarian'?tx.veg:tag==='protein'?tx.high:tx.quick;tagsEl.appendChild(tagEl);});const macros=document.createElement('div');macros.className='meal-macros';const kcal=document.createElement('span');kcal.innerHTML='<strong>'+m[4]+'</strong> '+tx.kcal;const protein=document.createElement('span');protein.innerHTML='<strong>'+m[5]+' g</strong> '+tx.protein;const time=document.createElement('span');time.textContent=m[6];macros.append(kcal,protein,time);content.append(title,desc,tagsEl,macros);card.append(visual,content);grid.appendChild(card);});
+}
+function setNutritionLang(){const tx=nutritionText[lang]||nutritionText.fr;document.querySelectorAll('[data-nutri]').forEach(e=>{if(tx[e.dataset.nutri])e.textContent=tx[e.dataset.nutri];});document.querySelectorAll('#dietStyle option[data-nutri]').forEach(e=>{if(tx[e.dataset.nutri])e.textContent=tx[e.dataset.nutri];});renderMeals();}
+document.querySelectorAll('.goal-card').forEach(b=>b.addEventListener('click',()=>{nutritionGoal=b.dataset.goal;$('calorieTarget').value=goalCalories[nutritionGoal];renderMeals();}));
+$('dietStyle').addEventListener('change',renderMeals);$('calorieTarget').addEventListener('input',renderMeals);
 
 /* ---------- background music ----------
    Attempts to start the requested YouTube track as soon as the page loads.
