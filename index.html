@@ -128,6 +128,29 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
 @keyframes pop{50%{transform:scale(1.25)}}
 @keyframes sh{to{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Fresh, editorial food-studio background */
+:root{--bg:#f8f2e8;--ink:#25291f;--card:#fffdf8;--line:#e8d8c4;--blue:#426b45;--blue-ink:#fffdf8;--red:#c65335;--gold:#d39a35;--muted:#756b5d;--ok:#467c50;--tilebg:#f5ead9;--wood:#b8794c}
+@media(prefers-color-scheme:dark){:root{--bg:#171e18;--ink:#f6efe2;--card:#202b22;--line:#39483a;--blue:#a5c58a;--blue-ink:#172018;--red:#ef8868;--gold:#e5b75c;--muted:#b8b5a5;--ok:#9acb91;--tilebg:#26362a;--wood:#65432f}}
+body{background:radial-gradient(ellipse at 12% 8%,rgba(228,174,94,.26),transparent 32%),radial-gradient(ellipse at 92% 30%,rgba(198,83,53,.16),transparent 28%),linear-gradient(135deg,var(--bg),color-mix(in srgb,var(--bg) 82%,#d6e0bc));}
+.kitchen{background:radial-gradient(ellipse at 12% 18%,rgba(218,159,74,.25),transparent 28%),radial-gradient(ellipse at 88% 78%,rgba(67,107,69,.2),transparent 32%),linear-gradient(145deg,#f5e6cd,#e9d7b9 45%,#dbe4ce);overflow:hidden}
+.kitchen svg{display:none}
+.kitchen::before,.kitchen::after{content:"";position:absolute;inset:-10%;pointer-events:none}
+.kitchen::before{opacity:.36;background-image:radial-gradient(circle at 15% 20%,#fff8e7 0 2px,transparent 3px),radial-gradient(circle at 78% 24%,#fff8e7 0 3px,transparent 4px),radial-gradient(circle at 64% 76%,#fff8e7 0 2px,transparent 3px);background-size:95px 95px,137px 137px,111px 111px}
+.kitchen::after{inset:auto 4% 5% auto;width:min(42vw,420px);height:min(42vw,420px);border-radius:50%;border:1px solid rgba(255,255,255,.45);box-shadow:0 0 0 22px rgba(255,255,255,.08),0 0 0 48px rgba(255,255,255,.06);background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.18),transparent 68%)}
+main{max-width:760px;margin:22px auto 0;background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:blur(18px);border:1px solid color-mix(in srgb,var(--line) 72%,white);border-radius:24px;box-shadow:0 24px 70px rgba(74,53,28,.12);padding:clamp(18px,4vw,30px)}
+footer{position:relative}
+h1{letter-spacing:-.04em;font-size:clamp(2.2rem,6vw,3.3rem)}
+h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
+.pill{transition:all .2s ease}
+.pill[aria-pressed="true"]{box-shadow:0 5px 14px color-mix(in srgb,var(--blue) 22%,transparent)}
+.recipe{border-radius:16px;box-shadow:0 8px 24px rgba(75,54,32,.05)}
+.pot{border-radius:16px}
+.btn{border-radius:14px;background:linear-gradient(120deg,#bd4d32,#e18a45);box-shadow:0 8px 20px rgba(198,83,53,.2)}
+.btn.alt{background:linear-gradient(120deg,#426b45,#6f955e);color:#fff}
+@media(max-width:700px){main{margin:10px 10px 0;padding:18px;border-radius:20px}.kitchen{background:radial-gradient(ellipse at 15% 10%,rgba(228,174,94,.2),transparent 35%),linear-gradient(150deg,#f5e6cd,#e5d9c3 55%,#dbe4ce)}.kitchen::after{width:65vw;height:65vw;right:-20vw;bottom:8%;opacity:.7}body{background:var(--bg)}}
+@media(prefers-color-scheme:dark){.kitchen{background:radial-gradient(ellipse at 12% 18%,rgba(218,159,74,.12),transparent 30%),radial-gradient(ellipse at 88% 78%,rgba(67,107,69,.22),transparent 32%),linear-gradient(145deg,#1b261e,#20251f 55%,#1b2a20)}.kitchen::before{opacity:.1}main{box-shadow:0 24px 70px rgba(0,0,0,.25)}}
+
 </style>
 </head>
 <body>
