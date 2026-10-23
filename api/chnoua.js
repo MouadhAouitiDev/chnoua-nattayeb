@@ -44,17 +44,10 @@ async function callGemini(model, lang, ingredients, extra = '', opts = {}) {
   return { ok: true, text: parts.map(p => p.text || '').join('') };
 }
 
-const langRule = (lang, c, dialect = 'tn') => {
+const langRule = (lang, c) => {
   const tn = c === 'tn';
   if (lang === 'ar') {
-    const dialectRules = {
-      tn: 'بالدارجة التونسية اليومية وبمفردات تونسية.',
-      dz: 'بالدارجة الجزائرية اليومية وبمفردات جزائرية.',
-      ma: 'بالدارجة المغربية اليومية وبمفردات مغربية.',
-      ly: 'باللهجة الليبية اليومية وبمفردات ليبية.',
-      eg: 'بالعامية المصرية اليومية وبمفردات مصرية.'
-    };
-    return 'اكتب كل النصوص بالعربية وباللهجة التالية: ' + (dialectRules[dialect] || dialectRules.tn) + ' استخدم مقادير منزلية مفهومة.' +
+    return 'اكتب كل النصوص بالعربية الفصحى المبسطة والواضحة، بأسلوب طبيعي ومفهوم في تونس. استخدم مقادير منزلية مفهومة.' +
       (tn ? ' حافظ على أسماء الأكلات التونسية (مثال: كسكسي، ملسوقة، طاجين).' : ' حافظ على اسم الطبق الأصلي واكتبه بحروف عربية إذا لزم.');
   }
   if (lang === 'en') return "Write all text content in simple English." +
@@ -114,7 +107,7 @@ Propose exactement 3 recettes réalisables avec ces ingrédients, de cuisine ${c
   return `${intro}
 ${c === 'tn' ? TN_BLOCK : ''}
 ${extra}
-${langRule(lang, c, o.dialect)}
+${langRule(lang, c)}
 Réponds UNIQUEMENT avec du JSON valide, sans texte autour, sans balises markdown. Les clés JSON restent exactement celles ci-dessous (en français), seules les valeurs sont dans la langue demandée :
 {"recettes":[{"nom":"","cuisine":"nom de la cuisine","authentique":true,"temps":"","portions":"","en_plus":["ingrédients de base à ajouter : sel, huile, épices..."],"etapes":["",""]}]}
 Si l'entrée ne contient pas d'ingrédients alimentaires, réponds {"recettes":[]}.
@@ -165,14 +158,13 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const ingredients = typeof body.ingredients === 'string' ? body.ingredients.trim() : '';
   const lang = ['ar', 'fr', 'en'].includes(body.lang) ? body.lang : 'fr';
-  const dialect = ['tn', 'dz', 'ma', 'ly', 'eg'].includes(body.dialect) ? body.dialect : 'tn';
   // An unknown cuisine id is an error: silently falling back to Tunisian was the cause of "Italian gives Tunisian"
   if (body.cuisine !== undefined && !(typeof body.cuisine === 'string' && Object.prototype.hasOwnProperty.call(CUISINES, body.cuisine))) {
     return res.status(400).json({ error: 'invalid' });
   }
   const exclude = (Array.isArray(body.exclude) ? body.exclude : []).slice(0, 6)
     .map(x => (typeof x === 'string' ? x.replace(/[^\p{L}\p{N}\s'’-]/gu, '').trim().slice(0, 80) : '')).filter(Boolean);
-  const opts = { cuisine: body.cuisine || 'tn', quick: body.quick === true, veg: body.veg === true, exclude, dialect };
+  const opts = { cuisine: body.cuisine || 'tn', quick: body.quick === true, veg: body.veg === true, exclude };
   if (ingredients.length < 3 || ingredients.length > 300) return res.status(400).json({ error: 'invalid' });
   if (!process.env.GEMINI_API_KEY) return res.status(500).json({ error: 'config' });
 
