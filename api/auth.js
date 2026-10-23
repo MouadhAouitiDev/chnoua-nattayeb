@@ -1,3 +1,4 @@
+// File location: api/auth.js (Vercel only serves functions from /api, lowercase name)
 // POST /api/auth { action, ... }   GET /api/auth -> current user
 // Actions: register, login, logout, me, fav_list, fav_add, fav_remove
 // Needs the Redis (Upstash) connected in Vercel. Passwords are hashed with scrypt, never stored in clear.
@@ -5,15 +6,15 @@ import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { hasStorage, redis, cookie, getUser, clientIp } from './_lib.js';
 
 const SESSION = 30 * 86400;
-const COOKIE = 'HttpOnly; Secure; SameSite=Lax; Path=/';
+// 'Secure' only over https, otherwise the cookie is dropped on http://localhost and login "succeeds" without a session
+const cookieFlags = req => 'HttpOnly; SameSite=Lax; Path=/' + (((req.headers['x-forwarded-proto'] || '').split(',')[0] === 'https' || req.socket?.encrypted) ? '; Secure' : '');
+const WINDOW = 15 * 60 * 1000, MAX_STRIKES = 10;
 const tries = new Map();
 
-function limited(ip) {
-  const now = Date.now();
-  const l = (tries.get(ip) || []).filter(t => now - t < 15 * 60 * 1000);
-  l.push(now); tries.set(ip, l);
-  return l.length > 12;
-}
+// Only failures / signups count (typos in the form must not lock people out; mobile carriers share IPs)
+const strikes = ip => { const now = Date.now(), l = (tries.get(ip) || []).filter(t => now - t < WINDOW); tries.set(ip, l); return l; };
+const locked = ip => strikes(ip).length >= MAX_STRIKES;
+const strike = ip => strikes(ip).push(Date.now());
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const hash = (pw, salt) => scryptSync(pw, salt, 64);
 
@@ -41,7 +42,8 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return fail(405, 'method');
 
     if (action === 'register' || action === 'login') {
-      if (limited(clientIp(req))) return fail(429, 'locked');
+      const ip = clientIp(req);
+      if (locked(ip)) return fail(429, 'locked');
       const email = str(b.email, 100).toLowerCase();
       const pw = typeof b.password === 'string' ? b.password : '';
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail(400, 'email');
@@ -51,23 +53,27 @@ export default async function handler(req, res) {
       if (action === 'register') {
         const salt = randomBytes(16);
         const rec = JSON.stringify({ salt: salt.toString('hex'), hash: hash(pw, salt).toString('hex') });
-        if ((await redis(['SET', key, rec, 'NX'])) !== 'OK') return fail(409, 'exists');
+        if ((await redis(['SET', key, rec, 'NX'])) !== 'OK') { strike(ip); return fail(409, 'exists'); }
+        strike(ip);
       } else {
         const raw = await redis(['GET', key]);
         const u = raw ? JSON.parse(raw) : null;
         const h = hash(pw, u ? Buffer.from(u.salt, 'hex') : randomBytes(16));
-        if (!u || !timingSafeEqual(h, Buffer.from(u.hash, 'hex'))) return fail(401, 'credentials');
+        if (!u || !timingSafeEqual(h, Buffer.from(u.hash, 'hex'))) { strike(ip); return fail(401, 'credentials'); }
       }
       const token = randomBytes(32).toString('hex');
       await redis(['SET', 'sess:' + token, email, 'EX', SESSION]);
-      res.setHeader('Set-Cookie', `sid=${token}; ${COOKIE}; Max-Age=${SESSION}`);
-      return res.status(200).json({ user: { email } });
+      res.setHeader('Set-Cookie', `sid=${token}; ${cookieFlags(req)}; Max-Age=${SESSION}`);
+      // Return the favorites with the login so the client has one request less that can fail
+      let favs = [];
+      if (action === 'login') { try { const raw = await redis(['GET', 'favs:' + email]); favs = raw ? JSON.parse(raw) : []; } catch (e) { console.error(e); } }
+      return res.status(200).json({ user: { email }, favs });
     }
 
     if (action === 'logout') {
       const t = cookie(req, 'sid');
       if (/^[a-f0-9]{64}$/.test(t)) await redis(['DEL', 'sess:' + t]);
-      res.setHeader('Set-Cookie', `sid=; ${COOKIE}; Max-Age=0`);
+      res.setHeader('Set-Cookie', `sid=; ${cookieFlags(req)}; Max-Age=0`);
       return res.status(200).json({ ok: true });
     }
 
