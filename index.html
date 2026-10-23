@@ -229,6 +229,24 @@ details.steps>summary{cursor:pointer;font-weight:700;margin:12px 0 4px}
 #authErr{margin:10px 0}
 #authErr.info{color:var(--muted);font-weight:400}
 dialog{max-height:90vh;overflow:auto}
+
+/* Animated cooking pot: visible, lightweight, and motion-safe. */
+.pot{position:relative;overflow:hidden;isolation:isolate}
+.pot-scene{height:118px;position:relative;display:flex;justify-content:center;align-items:flex-end;margin:4px auto 8px;max-width:360px;pointer-events:none}
+.pot-art{position:relative;width:156px;height:74px;border-radius:12px 12px 32px 32px;background:linear-gradient(145deg,#c6e7a0,#7ebd76);border:5px solid #e9bd58;box-shadow:inset 0 -12px 0 #5e9b65,0 8px 0 #b77b35;animation:potBob 2.6s ease-in-out infinite}
+.pot-art:before,.pot-art:after{content:"";position:absolute;top:15px;width:24px;height:26px;border:7px solid #a9d78d;border-radius:50%}
+.pot-art:before{left:-27px}.pot-art:after{right:-27px}
+.pot-lid{position:absolute;left:-10px;right:-10px;top:-13px;height:16px;border-radius:12px;background:#efc35c;box-shadow:0 3px 0 #b77b35;animation:lidDance 1.8s ease-in-out infinite}
+.pot-lid:after{content:"";position:absolute;width:15px;height:10px;border-radius:9px 9px 3px 3px;background:#efc35c;left:calc(50% - 7px);top:-8px}
+.pot-food{position:absolute;left:12px;right:12px;top:18px;display:flex;justify-content:center;gap:5px;font-size:22px;filter:drop-shadow(0 2px 1px #4b7149)}
+.pot-food span{animation:bubble 1.5s ease-in-out infinite}.pot-food span:nth-child(2){animation-delay:.35s}.pot-food span:nth-child(3){animation-delay:.7s}.pot-food span:nth-child(4){animation-delay:1.05s}
+.pot-steam{position:absolute;top:0;left:calc(50% - 22px);font-size:24px;letter-spacing:5px;color:var(--muted);animation:steamRise 2s ease-out infinite}.pot-steam.s2{left:calc(50% + 2px);animation-delay:.8s}
+.pot-flames{position:absolute;bottom:-1px;display:flex;gap:16px;font-size:23px;animation:flame  .5s ease-in-out infinite alternate}
+@keyframes potBob{50%{transform:translateY(-3px) rotate(.6deg)}}@keyframes lidDance{50%{transform:translateY(-4px) rotate(-1deg)}}@keyframes bubble{50%{transform:translateY(-7px) rotate(8deg)}}@keyframes steamRise{0%{opacity:0;transform:translateY(18px) scale(.8)}40%{opacity:.8}100%{opacity:0;transform:translateY(-15px) scale(1.15)}}@keyframes flame{to{transform:scaleY(.78);filter:brightness(1.2)}}
+.dialect-wrap{display:none;align-items:center;gap:8px;margin:6px 0 0;flex-wrap:wrap}.dialect-wrap.visible{display:flex}.dialect-wrap label{font-size:.9rem}.dialect-wrap select{max-width:230px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+.premium{margin:24px 0;padding:20px;border:1px solid #d5ad54;border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,#d5ad54 15%,var(--card)),var(--card));display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.premium h2{margin:0 0 4px}.premium p{margin:0;color:var(--muted)}.premium .btn{width:auto;padding:10px 16px;white-space:nowrap}.premium-lock{font-size:1.5rem}@media(max-width:560px){.premium{grid-template-columns:1fr}.premium .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.pot-art,.pot-lid,.pot-food span,.pot-steam,.pot-flames{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -311,6 +329,7 @@ dialog{max-height:90vh;overflow:auto}
       <button type="button" class="pill" data-lang="fr">Français</button>
       <button type="button" class="pill" data-lang="en">English</button>
     </div>
+    <div class="dialect-wrap" id="dialectWrap"><label for="dialectSelect" id="dialectLabel">اللهجة</label><select id="dialectSelect"><option value="tn">تونسيّة</option><option value="dz">جزائريّة</option><option value="ma">مغربيّة</option><option value="ly">ليبيّة</option><option value="eg">مصريّة</option></select></div>
     <div id="acct"></div>
   </div>
 
@@ -322,6 +341,7 @@ dialog{max-height:90vh;overflow:auto}
     <div id="pot" class="pot" aria-live="polite">
       <div class="pothead"><strong data-t="potTitle"></strong><span><button type="button" class="link" id="clear" data-t="clear"></button><button type="button" class="icon" id="mic" hidden>🎤</button></span></div>
       <div id="potItems"></div>
+      <div class="pot-scene" aria-hidden="true"><span class="pot-steam">〰</span><span class="pot-steam s2">〰</span><div class="pot-art"><div class="pot-lid"></div><div class="pot-food"><span>🥕</span><span>🍅</span><span>🧅</span><span>🌶️</span></div></div><div class="pot-flames">🔥 🔥 🔥</div></div>
       <p class="hint" data-t="dropHint"></p>
     </div>
     <input id="q" type="search" autocomplete="off">
@@ -385,6 +405,10 @@ dialog{max-height:90vh;overflow:auto}
     <p class="nutri-note" data-nutri="note">Les calories et protéines sont des estimations par portion. Les besoins dépendent notamment de l’âge, de la taille, de l’activité et de la santé. Pour un objectif médical, demande conseil à un professionnel.</p>
   </details></section>
 
+  <section class="premium" id="premiumPack">
+    <div><h2 id="premiumTitle">✨ Pack Premium / Pro</h2><p id="premiumDesc">Calculateur de masse, nutrition sportive, menus personnalisés et outils avancés.</p></div>
+    <button type="button" class="btn alt" id="premiumBtn"><span class="premium-lock">🔒</span> <span id="premiumBtnText">Créer un compte pour débloquer</span></button>
+  </section>
   <div class="ad" data-t="ad"></div>
 </main>
 <footer><span data-t="footer"></span> <a href="/privacy.html" data-t="priv" style="color:var(--blue)"></a></footer>
@@ -488,7 +512,7 @@ Object.assign(T.en, {allCuisines:'See all', fewerCuisines:'Show less', moreChips
 
 const $ = id => document.getElementById(id);
 const ing = $('ing'), go = $('go'), msg = $('msg'), results = $('results');
-let lang = 'fr', user = null, favs = [], storage = false, authMode = 'login', tipTimer = null;
+let lang = 'fr', dialect = 'tn', user = null, favs = [], storage = false, authMode = 'login', tipTimer = null;
 const t = () => T[lang];
 
 function el(tag, text, cls) {
@@ -838,7 +862,12 @@ function initialLang() {
 function setLang(l) {
   lang = l;
   try { localStorage.setItem('lang', l); } catch (e) {}
-  document.documentElement.lang = l === 'ar' ? 'ar-TN' : l;
+  document.documentElement.lang = l === 'ar' ? ({tn:'ar-TN',dz:'ar-DZ',ma:'ar-MA',ly:'ar-LY',eg:'ar-EG'}[dialect] || 'ar-TN') : l;
+  $('dialectWrap').classList.toggle('visible', l === 'ar');
+  $('dialectLabel').textContent = l === 'ar' ? 'اختار اللهجة:' : 'Dialect:';
+  $('premiumTitle').textContent = l === 'ar' ? '✨ الباقة المدفوعة Premium / Pro' : l === 'en' ? '✨ Premium / Pro Pack' : '✨ Pack Premium / Pro';
+  $('premiumDesc').textContent = l === 'ar' ? 'حاسبة الكتلة العضلية، تغذية رياضية، برامج أكل وأدوات متقدمة.' : l === 'en' ? 'Muscle-gain calculator, sports nutrition, personalized meal plans and advanced tools.' : 'Calculateur de masse musculaire, nutrition sportive, menus personnalisés et outils avancés.';
+  $('premiumBtnText').textContent = l === 'ar' ? 'اعمل حساب باش تفتحها' : l === 'en' ? 'Create an account to unlock' : 'Créer un compte pour débloquer';
   document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
   document.title = t().page;
   $('metaDesc').setAttribute('content', t().desc);
@@ -853,6 +882,9 @@ function setLang(l) {
   buildAll(); renderAcct();
 }
 document.querySelectorAll('.langs button').forEach(b => b.onclick = () => setLang(b.dataset.lang));
+$('dialectSelect').addEventListener('change', e => { dialect = e.target.value; try { localStorage.setItem('dialect', dialect); } catch {} document.documentElement.lang = ({tn:'ar-TN',dz:'ar-DZ',ma:'ar-MA',ly:'ar-LY',eg:'ar-EG'}[dialect] || 'ar-TN'); });
+try { const savedDialect = localStorage.getItem('dialect'); if (['tn','dz','ma','ly','eg'].includes(savedDialect)) { dialect = savedDialect; $('dialectSelect').value = dialect; } } catch {}
+$('premiumBtn').addEventListener('click', () => { if (!user) { openAuth('signup', lang === 'ar' ? 'اعمل حساب مجاني باش نربطولك الباقة بحسابك.' : lang === 'en' ? 'Create your account first to link the premium pack.' : 'Crée ton compte pour associer le pack à ton profil.'); return; } alert(lang === 'ar' ? 'حسابك مربوط. تفعيل الدفع وفتح المزايا يتطلب ربط خدمة دفع.' : lang === 'en' ? 'Your account is linked. Payment activation is needed before paid features can be unlocked.' : 'Ton compte est connecté. Le paiement doit être intégré avant de débloquer les fonctionnalités payantes.'); });
 
 /* ---------- generate ---------- */
 let moreMode = false, lastNames = [];
@@ -868,7 +900,7 @@ go.onclick = async () => {
   say(t().tips[0], false);
   tipTimer = setInterval(() => say(t().tips[++ti % t().tips.length], false), 2500);
   try {
-    const r = await fetch('/api/chnoua', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ ingredients: text, lang, cuisine, quick: $('optQuick').checked, veg: $('optVeg').checked, exclude }) });
+    const r = await fetch('/api/chnoua', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ ingredients: text, lang, dialect, cuisine, quick: $('optQuick').checked, veg: $('optVeg').checked, exclude }) });
     const d = await r.json().catch(() => ({}));
     results.innerHTML = '';
     if (!r.ok) {
