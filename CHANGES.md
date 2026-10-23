@@ -24,3 +24,8 @@
 - Nutrition studio collapsed by default.
 - Recipes: steps collapsed except for the first recipe; page scrolls to the results.
 - robots -> robots.txt
+
+## 2026-10-23 updates
+- Added an animated cooking pot in the ingredient area, with steam, lid movement, bubbling ingredients and flames; respects reduced-motion preferences.
+- Added Arabic dialect selection for Tunisian, Algerian, Moroccan, Libyan and Egyptian Arabic. The selected dialect is sent to the recipe API and used in the generation instructions.
+- Added a Premium / Pro pack entry point that requires account creation before continuing. Actual paid-feature access remains locked until a payment provider and subscription verification are integrated; account creation alone does not grant paid access.
