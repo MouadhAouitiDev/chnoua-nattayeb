@@ -464,7 +464,7 @@ const T = {
     logout:'خروج', favs:'المفضّلة', save:'نحفظ', copy:'نسخ', copied:'تنسخت', another:'أفكار أخرى', close:'سكّر',
     done:'مراحل مكمّلة', cook:'نبدا نطيّب', trad:'تقليدية', s1:'شنوّة عندك؟', s2:'أي مطبخ تحب؟', potTitle:'القدرة متاعي', dropHint:'اسحب المكوّنات لهنا ولا كبّس عليها', search:'قلّب على مكوّن…', noItems:'ما لقيناش مكوّن.', quick:'سريعة (أقل من 30 دقيقة)', veg:'نباتية (بلا لحم وحوت)', free:'ولا أكتبهم بيدك', mic:'احكي المكوّنات', micNone:'ما فهمتش المكوّنات. عاود قول بصوت أوضح.', insp:'مستوحاة', prev:'قبل', next:'بعد', finish:'كمّلنا', saha:'بالهنا والشفا! 🍽️', timer:'ابدا المؤقّت', ready:'⏰ وقت!', nofavs:'ما عندكش مفضّلة توّا.',
     tips:['نسخّنو الزيت زيتون…','نحمّرو البصل والثوم…','نزيدو الهريسة العربي والتابل…','نخلّيوها تتهنّى على نار هادية…'],
-    err:{rate:'برشة طلبات. جرّب بعد شوية.', invalid:'أكتب 3 حاجات على الأقل (300 حرف كحد أقصى).', config:'الموقع موش جاهز (مفتاح API ناقص).',
+    err:{storage_config:'إنشاء الحساب موش مفعّل توّا: يلزم إعداد قاعدة البيانات في Vercel. جرّب لاحقًا أو اتصل بصاحب الموقع.', rate:'برشة طلبات. جرّب بعد شوية.', invalid:'أكتب 3 حاجات على الأقل (300 حرف كحد أقصى).', config:'الموقع موش جاهز (مفتاح API ناقص).',
       unavailable:'الخدمة موش متوفّرة توّا. عاود جرّب.', server:'صار مشكل. عاود جرّب.', network:'مشكل في الاتصال. عاود جرّب.',
       quotaGuest:'كمّلت المحاولات المجانية متاع اليوم. اعمل حساب باش تتزيّد، ولا عاود غدوة.', quotaMember:'كمّلت المحاولات متاع اليوم. عاود غدوة.',
       email:'الإيميل موش صحيح.', password:'كلمة السر لازم 8 حروف على الأقل.', exists:'الإيميل هذا عندو حساب.',
@@ -481,7 +481,7 @@ const T = {
     logout:'Déconnexion', favs:'Mes favoris', save:'Sauvegarder', copy:'Copier', copied:'Copié', another:'D’autres idées', close:'Fermer',
     done:'étapes faites', cook:'Mode cuisine', trad:'Traditionnelle', s1:'Qu’as-tu dans ton frigo ?', s2:'Quelle cuisine ?', potTitle:'Ma casserole', dropHint:'Glisse les ingrédients ici ou clique dessus', search:'Chercher un ingrédient…', noItems:'Aucun ingrédient trouvé.', quick:'Rapide (moins de 30 min)', veg:'Végétarien', free:'Ou écris-les toi-même', mic:'Dicter les ingrédients', micNone:'Aucun ingrédient reconnu. Réessaie.', insp:'Inspirée', prev:'Précédent', next:'Suivant', finish:'Terminé', saha:'Saha w hana ! 🍽️', timer:'Lancer le minuteur', ready:'⏰ Temps écoulé !', nofavs:'Aucun favori pour l’instant.',
     tips:['On chauffe l’huile d’olive…','On fait revenir l’oignon et l’ail…','On ajoute la harissa arbi et le tabel…','On laisse mijoter doucement…'],
-    err:{rate:'Trop de demandes. Réessaie plus tard.', invalid:'Écris au moins 3 ingrédients (300 caractères max).', config:'Le serveur n’est pas configuré (clé API manquante).',
+    err:{storage_config:'La création de compte est désactivée : configure Upstash Redis dans les variables Vercel.', rate:'Trop de demandes. Réessaie plus tard.', invalid:'Écris au moins 3 ingrédients (300 caractères max).', config:'Le serveur n’est pas configuré (clé API manquante).',
       unavailable:'Service momentanément indisponible. Réessaie.', server:'Une erreur est survenue. Réessaie.', network:'Problème de connexion. Réessaie.',
       quotaGuest:'Tu as utilisé tes essais gratuits du jour. Crée un compte pour en avoir plus, ou reviens demain.', quotaMember:'Tu as atteint ta limite du jour. Reviens demain.',
       email:'E-mail invalide.', password:'Le mot de passe doit faire au moins 8 caractères.', exists:'Un compte existe déjà avec cet e-mail.',
@@ -498,7 +498,7 @@ const T = {
     logout:'Log out', favs:'My favorites', save:'Save', copy:'Copy', copied:'Copied', another:'More ideas', close:'Close',
     done:'steps done', cook:'Cooking mode', trad:'Traditional', s1:'What’s in your fridge?', s2:'Which cuisine?', potTitle:'My pot', dropHint:'Drag ingredients here or tap them', search:'Search an ingredient…', noItems:'No ingredient found.', quick:'Quick (under 30 min)', veg:'Vegetarian', free:'Or type them yourself', mic:'Speak your ingredients', micNone:'No ingredient recognized. Try again.', insp:'Inspired', prev:'Back', next:'Next', finish:'Done', saha:'Saha w hana! Enjoy your meal 🍽️', timer:'Start timer', ready:'⏰ Time’s up!', nofavs:'No favorites yet.',
     tips:['Heating the olive oil…','Sautéing onion and garlic…','Adding harissa and tabel…','Letting it simmer gently…'],
-    err:{rate:'Too many requests. Try again later.', invalid:'Enter at least 3 ingredients (300 characters max).', config:'The server is not configured (missing API key).',
+    err:{storage_config:'Account creation is not configured. Set up Upstash Redis in Vercel environment variables.', rate:'Too many requests. Try again later.', invalid:'Enter at least 3 ingredients (300 characters max).', config:'The server is not configured (missing API key).',
       unavailable:'Service temporarily unavailable. Try again.', server:'Something went wrong. Try again.', network:'Connection problem. Try again.',
       quotaGuest:'You used your free tries for today. Create an account to get more, or come back tomorrow.', quotaMember:'You reached today’s limit. Come back tomorrow.',
       email:'Invalid email.', password:'Password must be at least 8 characters.', exists:'An account already exists with this email.',
@@ -882,7 +882,7 @@ function setLang(l) {
   buildAll(); renderAcct();
 }
 document.querySelectorAll('.langs button').forEach(b => b.onclick = () => setLang(b.dataset.lang));
-$('dialectSelect').addEventListener('change', e => { dialect = e.target.value; try { localStorage.setItem('dialect', dialect); } catch {} document.documentElement.lang = ({tn:'ar-TN',dz:'ar-DZ',ma:'ar-MA',ly:'ar-LY',eg:'ar-EG'}[dialect] || 'ar-TN'); });
+$('dialectSelect').addEventListener('change', e => { dialect = e.target.value; lang = 'ar'; try { localStorage.setItem('dialect', dialect); localStorage.setItem('lang', 'ar'); } catch {} document.documentElement.lang = ({tn:'ar-TN',dz:'ar-DZ',ma:'ar-MA',ly:'ar-LY',eg:'ar-EG'}[dialect] || 'ar-TN'); setLang('ar'); });
 try { const savedDialect = localStorage.getItem('dialect'); if (['tn','dz','ma','ly','eg'].includes(savedDialect)) { dialect = savedDialect; $('dialectSelect').value = dialect; } } catch {}
 $('premiumBtn').addEventListener('click', () => { if (!user) { openAuth('signup', lang === 'ar' ? 'اعمل حساب مجاني باش نربطولك الباقة بحسابك.' : lang === 'en' ? 'Create your account first to link the premium pack.' : 'Crée ton compte pour associer le pack à ton profil.'); return; } alert(lang === 'ar' ? 'حسابك مربوط. تفعيل الدفع وفتح المزايا يتطلب ربط خدمة دفع.' : lang === 'en' ? 'Your account is linked. Payment activation is needed before paid features can be unlocked.' : 'Ton compte est connecté. Le paiement doit être intégré avant de débloquer les fonctionnalités payantes.'); });
 
