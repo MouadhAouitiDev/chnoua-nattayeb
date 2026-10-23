@@ -28,7 +28,8 @@ function cleanRecipe(r) {
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  if (!hasStorage()) return res.status(200).json({ storage: false });
+  // Do not pretend signup/login succeeded when persistent storage is missing.
+  if (!hasStorage()) return res.status(503).json({ error: 'storage_config' });
 
   const b = req.method === 'POST' ? (req.body || {}) : {};
   const action = req.method === 'POST' ? b.action : 'me';
