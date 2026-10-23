@@ -201,6 +201,34 @@ h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
 @media(max-width:600px){.nutri-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nutri-controls{grid-template-columns:1fr}.meal-grid{grid-template-columns:1fr}.meal-visual{height:82px}.nutri-head{display:block}.nutri-metrics{gap:6px}.nutri-metric{padding:10px}.nutri-metric strong{font-size:1.15rem}}
 @media(min-width:601px) and (max-width:850px){.nutri-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+/* ===== UX pass: shorter page, cleaner account dialog ===== */
+.step{margin:14px 0}
+.pot{min-height:72px}
+.pothead span{display:flex;gap:10px;align-items:center}
+.pot:not(.full) #clear{display:none}
+.stp .link{margin-inline-start:auto;font-size:.9rem;white-space:nowrap}
+.free{margin:8px 0 0}
+.free summary{cursor:pointer;color:var(--muted);font-size:.92rem}
+.free textarea{margin-top:8px}
+.opts{margin-top:10px}
+@media(max-width:700px){#cuisines.row{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}#cuisines.row .pill{flex:none;scroll-snap-align:start}}
+details.steps>summary{cursor:pointer;font-weight:700;margin:12px 0 4px}
+.nutri{margin:18px 0 8px}
+.nutri summary{list-style:none;cursor:pointer}
+.nutri summary::-webkit-details-marker{display:none}
+.nutri summary.nutri-head{display:flex;align-items:center;margin-bottom:0}
+.nutri details[open]>summary.nutri-head{margin-bottom:18px}
+.nutri-head::after{content:"▾";font-size:1.3rem;color:var(--muted);transition:transform .2s}
+.nutri details[open]>.nutri-head::after{transform:rotate(180deg)}
+#authForm label{display:block;margin-top:12px}
+#authForm label:first-child{margin-top:0}
+.pw{position:relative}
+.pw input{padding-inline-end:90px}
+.pw .link{position:absolute;inset-inline-end:12px;top:calc(50% + 3px);transform:translateY(-50%)}
+#authErr{margin:10px 0}
+#authErr.info{color:var(--muted);font-weight:400}
+dialog{max-height:90vh;overflow:auto}
 </style>
 </head>
 <body>
@@ -292,20 +320,20 @@ h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
   <section class="step">
     <h2 class="stp"><b>1</b><span data-t="s1"></span></h2>
     <div id="pot" class="pot" aria-live="polite">
-      <div class="pothead"><strong data-t="potTitle"></strong><button type="button" class="icon" id="mic" hidden>🎤</button></div>
+      <div class="pothead"><strong data-t="potTitle"></strong><span><button type="button" class="link" id="clear" data-t="clear"></button><button type="button" class="icon" id="mic" hidden>🎤</button></span></div>
       <div id="potItems"></div>
       <p class="hint" data-t="dropHint"></p>
     </div>
     <input id="q" type="search" autocomplete="off">
     <div id="tabs" role="tablist"></div>
     <div id="shelf" class="shelf"></div>
-    <label for="ing" data-t="free"></label>
-    <textarea id="ing" rows="2" maxlength="300"></textarea>
-    <p><button type="button" class="link" id="clear" data-t="clear"></button></p>
+    <details class="free"><summary data-t="free"></summary>
+      <textarea id="ing" rows="2" maxlength="300"></textarea>
+    </details>
   </section>
   <section class="step">
-    <h2 class="stp"><b>2</b><span data-t="s2"></span></h2>
-    <div id="cuisines" class="pills" role="radiogroup"></div>
+    <h2 class="stp"><b>2</b><span data-t="s2"></span><button type="button" class="link" id="cuisToggle" aria-controls="cuisines" aria-expanded="false"></button></h2>
+    <div id="cuisines" class="pills row" role="radiogroup"></div>
     <div class="opts">
       <label class="tog"><input type="checkbox" id="optQuick"><span data-t="quick"></span></label>
       <label class="tog"><input type="checkbox" id="optVeg"><span data-t="veg"></span></label>
@@ -316,15 +344,15 @@ h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
   <div id="msg" role="status" aria-live="polite"></div>
   <div id="results"></div>
 
-  <section class="nutri" id="nutrition">
-    <div class="nutri-head">
+  <section class="nutri" id="nutrition"><details>
+    <summary class="nutri-head">
       <div>
         <span class="nutri-kicker" data-nutri="kicker">✦ NUTRITION STUDIO</span>
         <h2 data-nutri="title">Mange selon ton objectif</h2>
         <p data-nutri="intro">Des idées simples, équilibrées et adaptées à ton rythme.</p>
       </div>
       <div aria-hidden="true" style="font-size:2.4rem">🥗</div>
-    </div>
+    </summary>
     <div class="nutri-grid" role="group" aria-label="Nutrition goal">
       <button type="button" class="goal-card" data-goal="lose" aria-pressed="false"><span class="gicon">⚖️</span><strong data-nutri="lose">Perdre du poids</strong><small data-nutri="loseSub">Satiété et portions équilibrées</small></button>
       <button type="button" class="goal-card" data-goal="gain" aria-pressed="false"><span class="gicon">🍚</span><strong data-nutri="gain">Prendre du poids</strong><small data-nutri="gainSub">Plus d’énergie et de bons apports</small></button>
@@ -355,7 +383,7 @@ h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
     <div class="nutri-results-head"><div><h3 data-nutri="ideas">Des idées pour ton assiette</h3><p data-nutri="ideasSub">Choisis une catégorie pour adapter les suggestions.</p></div></div>
     <div id="mealGrid" class="meal-grid" aria-live="polite"></div>
     <p class="nutri-note" data-nutri="note">Les calories et protéines sont des estimations par portion. Les besoins dépendent notamment de l’âge, de la taille, de l’activité et de la santé. Pour un objectif médical, demande conseil à un professionnel.</p>
-  </section>
+  </details></section>
 
   <div class="ad" data-t="ad"></div>
 </main>
@@ -366,12 +394,14 @@ h1::before{filter:drop-shadow(0 4px 7px rgba(198,83,53,.18))}
     <button type="button" class="pill" id="tabLogin" data-t="login"></button>
     <button type="button" class="pill" id="tabSignup" data-t="signup"></button>
   </div>
-  <form id="authForm">
+  <form id="authForm" novalidate>
     <label for="authEmail" data-t="email"></label>
-    <input id="authEmail" type="email" autocomplete="email" required>
-    <p></p>
+    <input id="authEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="100">
     <label for="authPw" data-t="pw"></label>
-    <input id="authPw" type="password" minlength="8" maxlength="100" required>
+    <div class="pw">
+      <input id="authPw" type="password" maxlength="100" autocomplete="current-password">
+      <button type="button" class="link" id="pwToggle"></button>
+    </div>
     <div id="authErr" role="alert"></div>
     <button class="btn alt" id="authGo" type="submit"></button>
   </form>
@@ -452,6 +482,9 @@ const T = {
   }
 };
 
+Object.assign(T.ar, {allCuisines:'شوف الكل', fewerCuisines:'أقل', moreChips:'شوف أكثر', lessChips:'شوف أقل', showPw:'نبيّن', hidePw:'نخبّي', logInstead:'ادخل بيه.', noItems:'ما لقيناش مكوّن. كبّس Entrée باش تزيدو.'});
+Object.assign(T.fr, {allCuisines:'Tout voir', fewerCuisines:'Réduire', moreChips:'Voir plus', lessChips:'Voir moins', showPw:'Afficher', hidePw:'Masquer', logInstead:'Connecte-toi.', noItems:'Aucun ingrédient trouvé. Appuie sur Entrée pour l’ajouter.'});
+Object.assign(T.en, {allCuisines:'See all', fewerCuisines:'Show less', moreChips:'Show more', lessChips:'Show less', showPw:'Show', hidePw:'Hide', logInstead:'Log in instead.', noItems:'No ingredient found. Press Enter to add it.'});
 
 const $ = id => document.getElementById(id);
 const ing = $('ing'), go = $('go'), msg = $('msg'), results = $('results');
@@ -470,7 +503,9 @@ function say(text, err, detail) {
   if (detail) msg.appendChild(el('small', detail));
 }
 async function api(action, data) {
-  const r = await fetch('/api/auth', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ action, ...data }) });
+  let r;
+  try { r = await fetch('/api/auth', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ action, ...data }) }); }
+  catch (e) { throw new Error('network'); }
   const d = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(d.error || 'server');
   return d;
@@ -478,7 +513,8 @@ async function api(action, data) {
 
 /* ---------- ingredient shelf: tap OR drag & drop into the pot ---------- */
 const DEFAULT_SHELF = [{"ar": "خضرة وغلة", "fr": "Légumes & fruits", "en": "Vegetables & fruits", "items": [{"ar": "بطاطا", "fr": "pommes de terre", "en": "potatoes"}, {"ar": "طماطم", "fr": "tomates", "en": "tomatoes"}, {"ar": "بصل", "fr": "oignon", "en": "onion"}, {"ar": "ثوم", "fr": "ail", "en": "garlic"}, {"ar": "فلفل", "fr": "poivron", "en": "peppers"}, {"ar": "جزر", "fr": "carottes", "en": "carrots"}, {"ar": "كوسة", "fr": "courgettes", "en": "zucchini"}, {"ar": "باذنجان", "fr": "aubergine", "en": "eggplant"}, {"ar": "قرنابيط", "fr": "chou-fleur", "en": "cauliflower"}, {"ar": "سلاطة", "fr": "laitue", "en": "lettuce"}, {"ar": "ليمون", "fr": "citron", "en": "lemon"}, {"ar": "فطر", "fr": "champignons", "en": "mushrooms"}]}, {"ar": "لحم وحوت", "fr": "Viandes & poissons", "en": "Meat & fish", "items": [{"ar": "دجاج", "fr": "poulet", "en": "chicken"}, {"ar": "لحم مفروم", "fr": "viande hachée", "en": "minced meat"}, {"ar": "لحم علوش", "fr": "agneau", "en": "lamb"}, {"ar": "لحم بقري", "fr": "bœuf", "en": "beef"}, {"ar": "تن", "fr": "thon", "en": "tuna"}, {"ar": "حوت", "fr": "poisson", "en": "fish"}, {"ar": "قمبري", "fr": "crevettes", "en": "shrimp"}, {"ar": "مرڨاز", "fr": "merguez", "en": "merguez"}]}, {"ar": "بيض وحليب", "fr": "Œufs & laitages", "en": "Eggs & dairy", "items": [{"ar": "بيض", "fr": "œufs", "en": "eggs"}, {"ar": "جبن", "fr": "fromage", "en": "cheese"}, {"ar": "حليب", "fr": "lait", "en": "milk"}, {"ar": "زبدة", "fr": "beurre", "en": "butter"}, {"ar": "ياغورت", "fr": "yaourt", "en": "yogurt"}, {"ar": "كريمة", "fr": "crème", "en": "cream"}]}, {"ar": "كرموس وقطاني", "fr": "Féculents & légumineuses", "en": "Grains & legumes", "items": [{"ar": "رز", "fr": "riz", "en": "rice"}, {"ar": "مقرونة", "fr": "pâtes", "en": "pasta"}, {"ar": "سميد", "fr": "semoule", "en": "semolina"}, {"ar": "عدس", "fr": "lentilles", "en": "lentils"}, {"ar": "حمص", "fr": "pois chiches", "en": "chickpeas"}, {"ar": "فاصوليا", "fr": "haricots", "en": "beans"}, {"ar": "خبز", "fr": "pain", "en": "bread"}, {"ar": "فرينة", "fr": "farine", "en": "flour"}]}, {"ar": "توابل وعولة", "fr": "Épices & garde-manger", "en": "Spices & pantry", "items": [{"ar": "هريسة", "fr": "harissa", "en": "harissa"}, {"ar": "كمون", "fr": "cumin", "en": "cumin"}, {"ar": "كروية", "fr": "carvi", "en": "caraway"}, {"ar": "زيتون", "fr": "olives", "en": "olives"}, {"ar": "معجون طماطم", "fr": "concentré de tomate", "en": "tomato paste"}, {"ar": "زيت زيتون", "fr": "huile d’olive", "en": "olive oil"}, {"ar": "سكر", "fr": "sucre", "en": "sugar"}, {"ar": "عسل", "fr": "miel", "en": "honey"}]}];
-let SHELF = DEFAULT_SHELF, activeCat = 0, query = '';
+let SHELF = DEFAULT_SHELF, activeCat = 0, query = '', shelfAll = false;
+const SHELF_LIMIT = 14;
 const CUISINES = [
 {id:'tn',e:'🍲',ar:'تونسية',fr:'Tunisienne',en:'Tunisian'},{id:'ma',e:'🫖',ar:'مغاربية',fr:'Maghrébine',en:'Maghreb'},{id:'me',e:'🥙',ar:'شرقية',fr:'Moyen-Orient',en:'Middle Eastern'},
 {id:'it',e:'🍕',ar:'إيطالية',fr:'Italienne',en:'Italian'},{id:'fr',e:'🥐',ar:'فرنسية',fr:'Française',en:'French'},{id:'es',e:'🥘',ar:'إسبانية',fr:'Espagnole',en:'Spanish'},{id:'gr',e:'🫒',ar:'يونانية',fr:'Grecque',en:'Greek'},{id:'tr',e:'🥙',ar:'تركية',fr:'Turque',en:'Turkish'},{id:'lb',e:'🧆',ar:'لبنانية',fr:'Libanaise',en:'Lebanese'},{id:'eg',e:'🍛',ar:'مصرية',fr:'Égyptienne',en:'Egyptian'},
@@ -509,12 +545,13 @@ function buildShelf() {
   SHELF.forEach((c, i) => {
     const b = el('button', c[lang], 'pill'); b.type = 'button'; b.setAttribute('role', 'tab');
     b.setAttribute('aria-pressed', String(i === activeCat && !query));
-    b.onclick = () => { activeCat = i; query = ''; $('q').value = ''; buildShelf(); };
+    b.onclick = () => { activeCat = i; query = ''; shelfAll = false; $('q').value = ''; buildShelf(); };
     tabs.appendChild(b);
   });
   const q = norm(query);
   const items = q ? SHELF.flatMap(c => c.items).filter(it => norm(it[lang]).includes(q)) : (SHELF[activeCat] || { items: [] }).items;
-  items.forEach(it => {
+  const limit = (!q && !shelfAll && items.length > SHELF_LIMIT) ? SHELF_LIMIT : items.length;
+  items.slice(0, limit).forEach(it => {
     const n = it[lang], b = el('button', n, 'pill chip');
     b.type = 'button'; b.draggable = true; b.dataset.name = n; b.setAttribute('aria-pressed', 'false');
     b.onclick = () => toggle(n);
@@ -522,6 +559,10 @@ function buildShelf() {
     b.addEventListener('dragend', () => pot.classList.remove('over-ready', 'over'));
     shelf.appendChild(b);
   });
+  if (!q && items.length > SHELF_LIMIT) {
+    const m = el('button', shelfAll ? t().lessChips : t().moreChips + ' (' + (items.length - SHELF_LIMIT) + ')', 'link');
+    m.type = 'button'; m.onclick = () => { shelfAll = !shelfAll; buildShelf(); }; shelf.appendChild(m);
+  }
   if (!items.length) shelf.appendChild(el('p', t().noItems, 'sub'));
   sync();
 }
@@ -529,19 +570,43 @@ function buildShelf() {
 pot.addEventListener('dragleave', e => { if (!pot.contains(e.relatedTarget)) pot.classList.remove('over'); });
 pot.addEventListener('drop', e => { e.preventDefault(); pot.classList.remove('over', 'over-ready'); addItem(e.dataTransfer.getData('text/plain') || ''); });
 $('q').addEventListener('input', e => { query = e.target.value.trim(); buildShelf(); });
+// Enter adds what you typed (or the single match), so an ingredient that is not on the shelf is never a dead end
+$('q').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const v = e.target.value.trim(); if (!v) return;
+  const m = SHELF.flatMap(c => c.items).map(i => i[lang]).filter(n => norm(n).includes(norm(v)));
+  addItem(m.length === 1 ? m[0] : v);
+  e.target.value = ''; query = ''; buildShelf();
+});
 ing.addEventListener('input', sync);
 $('clear').onclick = () => { ing.value = ''; sync(); };
 
+const POP = ['tn', 'it', 'fr', 'ma', 'me', 'tr', 'in', 'cn', 'any'];
+let cuisAll = false;
 function buildCuisines() {
   const box = $('cuisines'); box.innerHTML = '';
-  CUISINES.forEach(c => {
+  let items = CUISINES;
+  if (!cuisAll) {
+    items = POP.map(id => CUISINES.find(c => c.id === id));
+    if (!POP.includes(cuisine)) items = [CUISINES.find(c => c.id === cuisine), ...items]; // the chosen one is always visible
+  }
+  box.classList.toggle('row', !cuisAll);
+  items.forEach(c => {
     const b = el('button', c.e + ' ' + c[lang], 'pill');
-    b.type = 'button'; b.setAttribute('role', 'radio');
-    b.setAttribute('aria-checked', String(c.id === cuisine)); b.setAttribute('aria-pressed', String(c.id === cuisine));
-    b.onclick = () => { cuisine = c.id; try { localStorage.setItem('cuisine', cuisine); } catch (e) {} buildCuisines(); };
+    b.type = 'button'; b.setAttribute('role', 'radio'); b.dataset.id = c.id;
+    b.onclick = () => {
+      cuisine = c.id; try { localStorage.setItem('cuisine', cuisine); } catch (e) {}
+      box.querySelectorAll('button').forEach(x => { const on = x.dataset.id === cuisine; x.setAttribute('aria-checked', String(on)); x.setAttribute('aria-pressed', String(on)); });
+    };
+    const on = c.id === cuisine; b.setAttribute('aria-checked', String(on)); b.setAttribute('aria-pressed', String(on));
     box.appendChild(b);
   });
+  const tg = $('cuisToggle');
+  tg.textContent = cuisAll ? t().fewerCuisines : t().allCuisines + ' (' + CUISINES.length + ')';
+  tg.setAttribute('aria-expanded', String(cuisAll));
 }
+$('cuisToggle').onclick = () => { cuisAll = !cuisAll; buildCuisines(); };
 const buildAll = () => { buildShelf(); buildCuisines(); };
 
 // voice input (like SuperCook): matches what you say against the shelf
@@ -567,7 +632,7 @@ if (SR) {
 function recipeText(r) {
   return [r.nom, '', ...(r.en_plus || []).map(x => '• ' + x), '', ...(r.etapes || []).map((x, i) => (i + 1) + '. ' + x), '', location.origin].join('\n');
 }
-function card(r) {
+function card(r, open = false) {
   const c = el('article', null, 'recipe');
   const head = el('div', null, 'rh');
   const tt = el('div', null, 'tt'); tt.append(el('span', dishIcon(r.nom || ''), 'badge'), el('h2', r.nom || '')); head.appendChild(tt);
@@ -593,7 +658,8 @@ function card(r) {
   if (Array.isArray(r.en_plus) && r.en_plus.length) { c.appendChild(el('h3', t().extra)); c.appendChild(checkList(r.en_plus, false)); }
   let updateProgress = () => {};
   if (Array.isArray(r.etapes) && r.etapes.length) {
-    c.appendChild(el('h3', t().steps));
+    const det = el('details', null, 'steps'); det.open = open;
+    det.appendChild(el('summary', t().steps + ' · ' + r.etapes.length));
     const ol = checkList(r.etapes, true);
     const bar = el('div', null, 'bar'), fill = el('i'), prog = el('p', null, 'prog'), saha = el('p', null, 'saha');
     bar.appendChild(fill);
@@ -604,7 +670,7 @@ function card(r) {
       saha.textContent = n === N ? t().saha : '';
       if (n === N && !c.dataset.done) { c.dataset.done = '1'; burst(c); } if (n < N) delete c.dataset.done;
     };
-    c.append(ol, bar, prog, saha);
+    det.append(ol, bar, prog, saha); c.appendChild(det);
     updateProgress();
   }
   const acts = el('div', null, 'acts');
@@ -694,7 +760,7 @@ function renderFavs() {
   refreshHearts();
 }
 async function toggleFav(r) {
-  if (!user) { openAuth('login', t().err.login); return; }
+  if (!user) { pendingFav = r; openAuth('login', t().err.login); return; }
   try {
     const ex = favs.find(f => f.nom === r.nom);
     favs = (ex ? await api('fav_remove', { id: ex.id }) : await api('fav_add', { recipe: r })).favs;
@@ -712,32 +778,55 @@ function renderAcct() {
   o.onclick = async () => { try { await api('logout'); } catch (e) {} user = null; favs = []; renderAcct(); refreshHearts(); };
   box.append(f, o);
 }
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; // same rule as the server, so the browser never accepts what the API refuses
+let authBusy = false, pendingFav = null;
+function showAuthMsg(text, info) { const e = $('authErr'); e.textContent = text || ''; e.className = info ? 'info' : ''; }
+function paintAuthBtn() { const b = $('authGo'); b.disabled = authBusy; b.textContent = authBusy ? '…' : (authMode === 'login' ? t().login : t().signup); }
 function setAuthMode(m) {
   authMode = m;
   $('tabLogin').setAttribute('aria-pressed', String(m === 'login'));
   $('tabSignup').setAttribute('aria-pressed', String(m === 'signup'));
-  $('authGo').textContent = m === 'login' ? t().login : t().signup;
   $('authPw').autocomplete = m === 'login' ? 'current-password' : 'new-password';
+  $('pwToggle').textContent = $('authPw').type === 'password' ? t().showPw : t().hidePw;
+  showAuthMsg('');
+  paintAuthBtn();
 }
 function openAuth(mode, note) {
+  $('authPw').type = 'password';
   setAuthMode(mode);
-  $('authErr').textContent = note || '';
+  if (note) showAuthMsg(note, true); // a hint, not an error
   $('authDlg').showModal();
+  $('authEmail').focus();
 }
-$('tabLogin').onclick = () => setAuthMode('login');
-$('tabSignup').onclick = () => setAuthMode('signup');
+$('tabLogin').onclick = () => { if (!authBusy) setAuthMode('login'); };
+$('tabSignup').onclick = () => { if (!authBusy) setAuthMode('signup'); };
+$('pwToggle').onclick = () => { const pw = $('authPw'); pw.type = pw.type === 'password' ? 'text' : 'password'; $('pwToggle').textContent = pw.type === 'password' ? t().showPw : t().hidePw; pw.focus(); };
 document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => $(b.dataset.close).close());
+// click on the dark backdrop closes a dialog (target check: keyboard "clicks" on buttons report 0,0)
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => {
+  if (e.target !== d) return;
+  const b = d.getBoundingClientRect();
+  if (e.clientX < b.left || e.clientX > b.right || e.clientY < b.top || e.clientY > b.bottom) d.close();
+}));
+$('authDlg').addEventListener('close', () => { pendingFav = null; $('authPw').value = ''; });
 $('authForm').onsubmit = async e => {
   e.preventDefault();
-  $('authErr').textContent = '';
+  if (authBusy) return; // a double tap used to send "register" twice -> the 2nd one answered "account already exists"
+  const email = $('authEmail').value.trim(), pw = $('authPw').value;
+  if (!EMAIL_RE.test(email)) { showAuthMsg(t().err.email); $('authEmail').focus(); return; }
+  if (pw.length < 8) { showAuthMsg(t().err.password); $('authPw').focus(); return; }
+  authBusy = true; showAuthMsg(''); paintAuthBtn();
   try {
-    const d = await api(authMode === 'login' ? 'login' : 'register', { email: $('authEmail').value, password: $('authPw').value });
-    user = d.user;
-    favs = (await api('fav_list')).favs;
-    $('authPw').value = '';
+    const d = await api(authMode === 'login' ? 'login' : 'register', { email, password: pw });
+    user = d.user; favs = d.favs || [];
+    const again = pendingFav; pendingFav = null;
     $('authDlg').close();
     renderAcct(); refreshHearts();
-  } catch (err) { $('authErr').textContent = t().err[err.message] || t().err.server; }
+    if (again) toggleFav(again); // the heart the visitor tapped before logging in is saved now
+  } catch (err) {
+    if (err.message === 'exists') { setAuthMode('login'); showAuthMsg(t().err.exists + ' ' + t().logInstead); }
+    else showAuthMsg(t().err[err.message] || t().err.server);
+  } finally { authBusy = false; paintAuthBtn(); }
 };
 
 /* ---------- language ---------- */
@@ -754,7 +843,7 @@ function setLang(l) {
   document.title = t().page;
   $('metaDesc').setAttribute('content', t().desc);
   document.querySelectorAll('[data-t]').forEach(e => e.textContent = t()[e.dataset.t]);
-  ing.placeholder = t().ph;
+  ing.placeholder = t().ph; ing.setAttribute('aria-label', t().free);
   go.textContent = t().go;
   $('q').placeholder = t().search; $('mic').setAttribute('aria-label', t().mic);
   document.querySelectorAll('.langs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
@@ -766,17 +855,20 @@ function setLang(l) {
 document.querySelectorAll('.langs button').forEach(b => b.onclick = () => setLang(b.dataset.lang));
 
 /* ---------- generate ---------- */
+let moreMode = false, lastNames = [];
 go.onclick = async () => {
   const text = list().join(', ');
+  const exclude = moreMode ? lastNames : []; moreMode = false;
   results.innerHTML = '';
   if (text.length < 3) { say(t().need, true); return; }
   go.disabled = true;
   results.appendChild(scene());
+  results.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   let ti = 0;
   say(t().tips[0], false);
   tipTimer = setInterval(() => say(t().tips[++ti % t().tips.length], false), 2500);
   try {
-    const r = await fetch('/api/chnoua', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ ingredients: text, lang, cuisine, quick: $('optQuick').checked, veg: $('optVeg').checked }) });
+    const r = await fetch('/api/chnoua', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ ingredients: text, lang, cuisine, quick: $('optQuick').checked, veg: $('optVeg').checked, exclude }) });
     const d = await r.json().catch(() => ({}));
     results.innerHTML = '';
     if (!r.ok) {
@@ -787,8 +879,9 @@ go.onclick = async () => {
     }
     if (!d.recettes || !d.recettes.length) { say(t().empty, false); return; }
     say('', false);
-    d.recettes.forEach(x => results.appendChild(card(x)));
-    const more = el('button', t().another, 'btn alt'); more.onclick = () => go.click();
+    lastNames = d.recettes.map(x => x.nom).filter(Boolean);
+    d.recettes.forEach((x, i) => results.appendChild(card(x, i === 0)));
+    const more = el('button', t().another, 'btn alt'); more.onclick = () => { moreMode = true; go.click(); };
     results.appendChild(more);
     refreshHearts();
   } catch (e) {
