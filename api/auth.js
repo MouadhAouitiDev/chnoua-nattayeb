@@ -1,22 +1,22 @@
 // File location: api/auth.js (Vercel only serves functions from /api, lowercase name)
-// POST /api/auth { action, ... }   GET /api/auth -> current user
-// Actions: register, login, logout, me, fav_list, fav_add, fav_remove
-// Needs the Redis (Upstash) connected in Vercel. Passwords are hashed with scrypt, never stored in clear.
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { hasStorage, redis, cookie, getUser, clientIp } from './_lib.js';
 
 const SESSION = 30 * 86400;
-// 'Secure' only over https, otherwise the cookie is dropped on http://localhost and login "succeeds" without a session
 const cookieFlags = req => 'HttpOnly; SameSite=Lax; Path=/' + (((req.headers['x-forwarded-proto'] || '').split(',')[0] === 'https' || req.socket?.encrypted) ? '; Secure' : '');
 const WINDOW = 15 * 60 * 1000, MAX_STRIKES = 10;
 const tries = new Map();
 
-// Only failures / signups count (typos in the form must not lock people out; mobile carriers share IPs)
 const strikes = ip => { const now = Date.now(), l = (tries.get(ip) || []).filter(t => now - t < WINDOW); tries.set(ip, l); return l; };
 const locked = ip => strikes(ip).length >= MAX_STRIKES;
 const strike = ip => strikes(ip).push(Date.now());
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const hash = (pw, salt) => scryptSync(pw, salt, 64);
+
+// Fallback memory storage ken Redis mouch mconfiguré
+const memoryStore = new Map();
+const memorySessions = new Map();
+const memoryFavs = new Map();
 
 function cleanRecipe(r) {
   if (!r || typeof r !== 'object') return null;
@@ -28,8 +28,8 @@ function cleanRecipe(r) {
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  // Do not pretend signup/login succeeded when persistent storage is missing.
-  if (!hasStorage()) return res.status(503).json({ error: 'storage_config' });
+  
+  const useRedis = hasStorage();
 
   const b = req.method === 'POST' ? (req.body || {}) : {};
   const action = req.method === 'POST' ? b.action : 'me';
@@ -37,8 +37,14 @@ export default async function handler(req, res) {
 
   try {
     if (action === 'me') {
-      const email = await getUser(req);
-      return res.status(200).json({ storage: true, user: email ? { email } : null });
+      let email = null;
+      if (useRedis) {
+        email = await getUser(req);
+      } else {
+        const t = cookie(req, 'sid');
+        email = memorySessions.get(t) || null;
+      }
+      return res.status(200).json({ storage: useRedis, user: email ? { email } : null });
     }
     if (req.method !== 'POST') return fail(405, 'method');
 
@@ -51,37 +57,95 @@ export default async function handler(req, res) {
       if (pw.length < 8 || pw.length > 100) return fail(400, 'password');
       const key = 'user:' + email;
 
-      if (action === 'register') {
-        const salt = randomBytes(16);
-        const rec = JSON.stringify({ salt: salt.toString('hex'), hash: hash(pw, salt).toString('hex') });
-        if ((await redis(['SET', key, rec, 'NX'])) !== 'OK') { strike(ip); return fail(409, 'exists'); }
-        strike(ip);
+      if (useRedis) {
+        if (action === 'register') {
+          const salt = randomBytes(16);
+          const rec = JSON.stringify({ salt: salt.toString('hex'), hash: hash(pw, salt).toString('hex') });
+          if ((await redis(['SET', key, rec, 'NX'])) !== 'OK') { strike(ip); return fail(409, 'exists'); }
+          strike(ip);
+        } else {
+          const raw = await redis(['GET', key]);
+          const u = raw ? JSON.parse(raw) : null;
+          const h = hash(pw, u ? Buffer.from(u.salt, 'hex') : randomBytes(16));
+          if (!u || !timingSafeEqual(h, Buffer.from(u.hash, 'hex'))) { strike(ip); return fail(401, 'credentials'); }
+        }
       } else {
-        const raw = await redis(['GET', key]);
-        const u = raw ? JSON.parse(raw) : null;
-        const h = hash(pw, u ? Buffer.from(u.salt, 'hex') : randomBytes(16));
-        if (!u || !timingSafeEqual(h, Buffer.from(u.hash, 'hex'))) { strike(ip); return fail(401, 'credentials'); }
+        // Mode Local / Mémoire Fallback
+        if (action === 'register') {
+          if (memoryStore.has(email)) { strike(ip); return fail(409, 'exists'); }
+          const salt = randomBytes(16);
+          memoryStore.set(email, { salt: salt.toString('hex'), hash: hash(pw, salt).toString('hex') });
+          strike(ip);
+        } else {
+          const u = memoryStore.get(email);
+          const h = hash(pw, u ? Buffer.from(u.salt, 'hex') : randomBytes(16));
+          if (!u || !timingSafeEqual(h, Buffer.from(u.hash, 'hex'))) { strike(ip); return fail(401, 'credentials'); }
+        }
       }
+
       const token = randomBytes(32).toString('hex');
-      await redis(['SET', 'sess:' + token, email, 'EX', SESSION]);
+      if (useRedis) {
+        await redis(['SET', 'sess:' + token, email, 'EX', SESSION]);
+      } else {
+        memorySessions.set(token, email);
+      }
+
       res.setHeader('Set-Cookie', `sid=${token}; ${cookieFlags(req)}; Max-Age=${SESSION}`);
-      // Return the favorites with the login so the client has one request less that can fail
+      
       let favs = [];
-      if (action === 'login') { try { const raw = await redis(['GET', 'favs:' + email]); favs = raw ? JSON.parse(raw) : []; } catch (e) { console.error(e); } }
+      if (action === 'login') { 
+        try { 
+          if (useRedis) {
+            const raw = await redis(['GET', 'favs:' + email]); 
+            favs = raw ? JSON.parse(raw) : []; 
+          } else {
+            favs = memoryFavs.get(email) || [];
+          }
+        } catch (e) { console.error(e); } 
+      }
       return res.status(200).json({ user: { email }, favs });
     }
 
     if (action === 'logout') {
       const t = cookie(req, 'sid');
-      if (/^[a-f0-9]{64}$/.test(t)) await redis(['DEL', 'sess:' + t]);
+      if (/^[a-f0-9]{64}$/.test(t)) {
+        if (useRedis) {
+          await redis(['DEL', 'sess:' + t]);
+        } else {
+          memorySessions.delete(t);
+        }
+      }
       res.setHeader('Set-Cookie', `sid=; ${cookieFlags(req)}; Max-Age=0`);
       return res.status(200).json({ ok: true });
     }
 
-    const email = await getUser(req);
+    let email = null;
+    if (useRedis) {
+      email = await getUser(req);
+    } else {
+      const t = cookie(req, 'sid');
+      email = memorySessions.get(t) || null;
+    }
+
     if (!email) return fail(401, 'login');
     const fk = 'favs:' + email;
-    const load = async () => { const raw = await redis(['GET', fk]); return raw ? JSON.parse(raw) : []; };
+    
+    const load = async () => { 
+      if (useRedis) {
+        const raw = await redis(['GET', fk]); 
+        return raw ? JSON.parse(raw) : []; 
+      } else {
+        return memoryFavs.get(email) || [];
+      }
+    };
+
+    const save = async (favs) => {
+      if (useRedis) {
+        await redis(['SET', fk, JSON.stringify(favs)]);
+      } else {
+        memoryFavs.set(email, favs);
+      }
+    };
 
     if (action === 'fav_list') return res.status(200).json({ favs: await load() });
     if (action === 'fav_add') {
@@ -91,13 +155,13 @@ export default async function handler(req, res) {
       if (!favs.some(f => f.nom === r.nom)) {
         if (favs.length >= 50) return fail(400, 'full');
         favs.unshift({ id: randomBytes(6).toString('hex'), ...r });
-        await redis(['SET', fk, JSON.stringify(favs)]);
+        await save(favs);
       }
       return res.status(200).json({ favs });
     }
     if (action === 'fav_remove') {
-      const favs = (await load()).filter(f => f.id !== b.id);
-      await redis(['SET', fk, JSON.stringify(favs)]);
+      let favs = (await load()).filter(f => f.id !== b.id);
+      await save(favs);
       return res.status(200).json({ favs });
     }
     return fail(400, 'invalid');
