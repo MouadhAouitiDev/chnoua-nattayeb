@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Recettes tunisiennes à partir des ingrédients du frigo (IA)"
+  "description": "Recettes tunisiennes à partir des ingrédients du frigo (IA)",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
 }
