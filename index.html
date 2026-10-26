@@ -54,7 +54,7 @@ dialog.wide{max-width:640px}
 dialog::backdrop{background:rgba(0,0,0,.55)}
 .tabs{display:flex;gap:6px;margin-bottom:12px}
 #authErr{color:var(--red);min-height:1.5em;font-weight:600}
-.ad{min-height:90px;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;margin:20px 0}
+.feature-section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:22px 0}.feature-section h2{margin:0 0 6px}.feature-sub{color:var(--muted);margin:0 0 14px}.breakfast-tabs,.city-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.breakfast-grid,.cafe-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.breakfast-card,.cafe-card{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--bg)}.breakfast-card h3,.cafe-card h3{margin:0 0 5px}.breakfast-card p,.cafe-card p{margin:4px 0;color:var(--muted)}.stars{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.stars button{font-size:1.8rem;background:transparent;border:0;cursor:pointer;color:var(--gold);padding:0 3px}.review-thanks{color:var(--ok);font-weight:700;min-height:1.5em}#reviewDlg textarea{min-height:90px}.ad{min-height:90px;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;margin:20px 0}
 footer{color:var(--muted);font-size:.85rem}
 h1::before{content:"🍲";margin-inline-end:.3em}
 .tt{display:flex;align-items:center}
@@ -404,6 +404,24 @@ dialog{max-height:90vh;overflow:auto}
     <p class="nutri-note" data-nutri="note">Les calories et protéines sont des estimations par portion. Les besoins dépendent notamment de l’âge, de la taille, de l’activité et de la santé. Pour un objectif médical, demande conseil à un professionnel.</p>
   </details></section>
 
+  <section class="feature-section" id="breakfastSection">
+    <h2 id="breakfastTitle">☀️ Petit-déjeuner</h2>
+    <p class="feature-sub" id="breakfastIntro">Des idées pour chaque matin, et quelques cafés à découvrir en Tunisie.</p>
+    <div class="breakfast-tabs" role="group" aria-label="Type de petit-déjeuner">
+      <button class="pill" type="button" id="dailyBreakfast" aria-pressed="true">Petit-déjeuner quotidien</button>
+      <button class="pill" type="button" id="weekendBreakfast" aria-pressed="false">Brunch du week-end</button>
+    </div>
+    <div id="breakfastGrid" class="breakfast-grid"></div>
+    <h3 id="cafesTitle" style="margin-top:22px">☕ Cafés pour un bon petit-déjeuner en Tunisie</h3>
+    <p class="feature-sub" id="cafesNote">Sélection indicative : vérifie les horaires, le menu et la disponibilité avant de te déplacer.</p>
+    <div class="city-tabs" role="group" aria-label="Ville">
+      <button class="pill" type="button" data-cafe-city="Tunis" aria-pressed="true">Tunis & banlieue</button>
+      <button class="pill" type="button" data-cafe-city="Sousse" aria-pressed="false">Sousse</button>
+      <button class="pill" type="button" data-cafe-city="Sfax" aria-pressed="false">Sfax</button>
+    </div>
+    <div id="cafeGrid" class="cafe-grid"></div>
+  </section>
+
   <section class="premium" id="premiumPack">
     <div><h2 id="premiumTitle">✨ Pack Premium / Pro</h2><p id="premiumDesc">Calculateur de masse, nutrition sportive, menus personnalisés et outils avancés.</p></div>
     <button type="button" class="btn alt" id="premiumBtn"><span class="premium-lock">🔒</span> <span id="premiumBtnText">Créer un compte pour débloquer</span></button>
@@ -419,16 +437,32 @@ dialog{max-height:90vh;overflow:auto}
   </div>
   <form id="authForm" novalidate>
     <label for="authEmail" data-t="email"></label>
-    <input id="authEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="100">
+    <input id="authEmail" type="email" required inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="100">
     <label for="authPw" data-t="pw"></label>
     <div class="pw">
-      <input id="authPw" type="password" maxlength="100" autocomplete="current-password">
+      <input id="authPw" type="password" required minlength="8" maxlength="100" autocomplete="current-password">
       <button type="button" class="link" id="pwToggle"></button>
     </div>
     <div id="authErr" role="alert"></div>
     <button class="btn alt" id="authGo" type="submit"></button>
   </form>
   <p><button type="button" class="link" data-close="authDlg" data-t="close"></button></p>
+</dialog>
+
+<dialog id="reviewDlg" class="wide">
+  <h2 id="reviewTitle">Avant de partir…</h2>
+  <p id="reviewIntro">Ton avis nous aide à améliorer Chnoua Nattayeb.</p>
+  <form id="reviewForm">
+    <label id="reviewRatingLabel">Quelle note donnerais-tu au site ?</label>
+    <div class="stars" role="group" aria-label="Note sur cinq" id="reviewStars">
+      <button type="button" data-rating="1" aria-label="1 étoile">☆</button><button type="button" data-rating="2" aria-label="2 étoiles">☆</button><button type="button" data-rating="3" aria-label="3 étoiles">☆</button><button type="button" data-rating="4" aria-label="4 étoiles">☆</button><button type="button" data-rating="5" aria-label="5 étoiles">☆</button>
+    </div>
+    <label for="reviewText" id="reviewTextLabel">Un commentaire (facultatif)</label>
+    <textarea id="reviewText" maxlength="500" placeholder="Qu’est-ce qu’on pourrait améliorer ?"></textarea>
+    <p id="reviewThanks" class="review-thanks" aria-live="polite"></p>
+    <button class="btn alt" id="reviewSubmit" type="submit">Envoyer mon avis</button>
+  </form>
+  <p><button type="button" class="link" id="reviewLater">Pas maintenant</button></p>
 </dialog>
 
 <dialog id="cookDlg" class="wide">
@@ -816,6 +850,7 @@ function setAuthMode(m) {
 }
 function openAuth(mode, note) {
   $('authPw').type = 'password';
+  $('authEmail').setCustomValidity(''); $('authPw').setCustomValidity('');
   setAuthMode(mode);
   if (note) showAuthMsg(note, true); // a hint, not an error
   $('authDlg').showModal();
@@ -867,6 +902,8 @@ function setLang(l) {
   $('premiumBtnText').textContent = l === 'ar' ? 'اعمل حساب باش تفتحها' : l === 'en' ? 'Create an account to unlock' : 'Créer un compte pour débloquer';
   document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
   document.title = t().page;
+  if (typeof renderBreakfast === 'function') renderBreakfast();
+  if (typeof renderReviewLabels === 'function') renderReviewLabels();
   $('metaDesc').setAttribute('content', t().desc);
   document.querySelectorAll('[data-t]').forEach(e => e.textContent = t()[e.dataset.t]);
   ing.placeholder = t().ph; ing.setAttribute('aria-label', t().free);
@@ -955,6 +992,46 @@ function setNutritionLang(){const tx=nutritionText[lang]||nutritionText.fr;docum
 document.querySelectorAll('.goal-card').forEach(b=>b.addEventListener('click',()=>{nutritionGoal=b.dataset.goal;$('calorieTarget').value=goalCalories[nutritionGoal];renderMeals();}));
 $('dietStyle').addEventListener('change',renderMeals);$('calorieTarget').addEventListener('input',renderMeals);
 
+/* ---------- Breakfast ideas + Tunisia café guide ---------- */
+const breakfastData={
+ daily:[
+  {emoji:'🥚',fr:'Œufs, pain complet & huile d’olive',ar:'بيض، خبز كامل وزيت زيتون',en:'Eggs, wholegrain bread & olive oil',desc:{fr:'Simple, rassasiant et riche en protéines.',ar:'فطور بسيط يشبّع وفيه بروتين.',en:'Simple, filling and protein-rich.'}},
+  {emoji:'🥣',fr:'Yaourt, avoine & fruits de saison',ar:'ياغورت، شوفان وغلة موسمية',en:'Yogurt, oats & seasonal fruit',desc:{fr:'Prêt en 5 minutes, pratique les matins pressés.',ar:'يحضّر في 5 دقايق للصباح المستعجل.',en:'Ready in 5 minutes for busy mornings.'}},
+  {emoji:'🫓',fr:'Mlawi ou tabouna, fromage & tomate',ar:'ملاوي ولا طابونة، جبن وطماطم',en:'Mlawi or tabouna, cheese & tomato',desc:{fr:'Une option tunisienne ; ajoute un fruit et de l’eau.',ar:'اختيار تونسي؛ زيد غلة وماء.',en:'A Tunisian option; add fruit and water.'}},
+  {emoji:'🥛',fr:'Lait, dattes & poignée de noix',ar:'حليب، تمر وشوية مكسرات',en:'Milk, dates & a handful of nuts',desc:{fr:'Facile à emporter et riche en énergie.',ar:'ساهل يتاخذ معاك ويعطي طاقة.',en:'Portable and energy-rich.'}}
+ ],
+ weekend:[
+  {emoji:'🥞',fr:'Crêpes maison, miel & fruits',ar:'كريب دار، عسل وغلة',en:'Homemade pancakes, honey & fruit',desc:{fr:'Pour un brunch gourmand à partager.',ar:'لفطور ويكاند بنين مع العايلة.',en:'A relaxed, shareable weekend brunch.'}},
+  {emoji:'🍳',fr:'Ojja aux œufs & pain tabouna',ar:'عجّة بالبيض وخبز طابونة',en:'Tunisian ojja with eggs & tabouna',desc:{fr:'Une assiette généreuse, à accompagner de salade.',ar:'طبق تونسي يشبّع، تنجم تزيد معاه سلاطة.',en:'A hearty Tunisian plate; add a side salad.'}},
+  {emoji:'🥐',fr:'Viennoiseries, café au lait & jus frais',ar:'كرواسون، قهوة بالحليب وعصير فريش',en:'Pastries, café au lait & fresh juice',desc:{fr:'Classique de café, à garder pour les envies du week-end.',ar:'فطور كلاسيكي متاع قهوة للويكاند.',en:'A café classic for a weekend treat.'}},
+  {emoji:'🧀',fr:'Brunch salé : fromage, olives, œufs & pain',ar:'فطور مالح: جبن، زيتون، بيض وخبز',en:'Savory brunch: cheese, olives, eggs & bread',desc:{fr:'À compléter avec des légumes et une boisson chaude.',ar:'زيد خضرة ومشروب سخون.',en:'Complete it with vegetables and a hot drink.'}}
+ ]
+};
+const cafeData={
+ Tunis:[{name:'Café des Délices',area:'Sidi Bou Saïd',desc:{fr:'Vue connue sur le golfe ; plutôt pour une sortie et un cadre.',ar:'معروف بالإطلالة على الخليج؛ مناسب لخرجة وجوّ باهي.',en:'Known for its gulf view; more of an outing and atmosphere.'}},{name:'Café Saf Saf',area:'La Marsa',desc:{fr:'Adresse historique populaire pour une pause café.',ar:'قهوة معروفة وقديمة في المرسى.',en:'A well-known historic café for a coffee break.'}},{name:'Café Journal',area:'La Marsa',desc:{fr:'Option à considérer pour un café et un petit-déjeuner en banlieue nord.',ar:'اختيار تنجم تشوفو للقهوة والفطور في الضاحية الشمالية.',en:'An option to check for coffee and breakfast in the northern suburbs.'}}],
+ Sousse:[{name:'Café Seles',area:'Sousse',desc:{fr:'À vérifier selon le quartier et les horaires du jour.',ar:'تثبت في العنوان والتوقيت قبل ما تمشي.',en:'Check the exact location and today’s opening hours.'}},{name:'Café des Arts',area:'Sousse',desc:{fr:'Piste locale à vérifier avant de te déplacer.',ar:'اقتراح محلي يلزم تتثبت منو قبل ما تمشي.',en:'A local option to verify before visiting.'}}],
+ Sfax:[{name:'Masmoudi',area:'Sfax',desc:{fr:'Pâtisserie connue ; pratique pour une pause sucrée avec café.',ar:'حلويات معروفة؛ مناسبة لفطور حلو مع قهوة.',en:'Known pastry shop, worth considering for a sweet breakfast and coffee.'}},{name:'Cafés du centre-ville',area:'Centre de Sfax',desc:{fr:'Compare les avis récents et les formules petit-déjeuner près de toi.',ar:'قارن التقييمات الجديدة وعروض الفطور في وسط صفاقس.',en:'Compare recent reviews and breakfast deals in central Sfax.'}}]
+};
+let cafeCity='Tunis', breakfastMode='daily';
+function renderBreakfast(){const ar=lang==='ar',en=lang==='en';$('breakfastTitle').textContent=ar?'☀️ فطور الصباح':en?'☀️ Breakfast ideas':'☀️ Petit-déjeuner';$('breakfastIntro').textContent=ar?'أفكار للفطور كل يوم والويكاند، مع اقتراحات لقهاوي في تونس.':en?'Everyday and weekend breakfast ideas, plus cafés to explore in Tunisia.':'Des idées pour chaque matin, et quelques cafés à découvrir en Tunisie.';$('dailyBreakfast').textContent=ar?'فطور يومي':en?'Everyday breakfast':'Petit-déjeuner quotidien';$('weekendBreakfast').textContent=ar?'فطور الويكاند':en?'Weekend brunch':'Brunch du week-end';$('dailyBreakfast').setAttribute('aria-pressed',String(breakfastMode==='daily'));$('weekendBreakfast').setAttribute('aria-pressed',String(breakfastMode==='weekend'));$('cafesTitle').textContent=ar?'☕ قهاوي للفطور في تونس':en?'☕ Breakfast cafés in Tunisia':'☕ Cafés pour un bon petit-déjeuner en Tunisie';$('cafesNote').textContent=ar?'اقتراحات عامة: تثبّت من التوقيت والمينو والتقييمات الجديدة قبل ما تمشي.':en?'Suggestions only: check current hours, menus and recent reviews before visiting.':'Sélection indicative : vérifie les horaires, le menu et les avis récents avant de te déplacer.';
+ const grid=$('breakfastGrid');grid.innerHTML='';breakfastData[breakfastMode].forEach(x=>{const c=document.createElement('article');c.className='breakfast-card';const h=document.createElement('h3');h.textContent=x.emoji+' '+x[ar?'ar':en?'en':'fr'];const d=document.createElement('p');d.textContent=x.desc[ar?'ar':en?'en':'fr'];c.append(h,d);grid.append(c)});
+ document.querySelectorAll('[data-cafe-city]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.cafeCity===cafeCity));if(ar){b.textContent=({'Tunis':'تونس والضواحي','Sousse':'سوسة','Sfax':'صفاقس'})[b.dataset.cafeCity]}else if(en){b.textContent=({'Tunis':'Tunis & suburbs','Sousse':'Sousse','Sfax':'Sfax'})[b.dataset.cafeCity]}else{b.textContent=({'Tunis':'Tunis & banlieue','Sousse':'Sousse','Sfax':'Sfax'})[b.dataset.cafeCity]}});
+ const cg=$('cafeGrid');cg.innerHTML='';cafeData[cafeCity].forEach(x=>{const c=document.createElement('article');c.className='cafe-card';const h=document.createElement('h3');h.textContent='☕ '+x.name;const area=document.createElement('p');area.textContent='📍 '+x.area;const d=document.createElement('p');d.textContent=x.desc[ar?'ar':en?'en':'fr'];c.append(h,area,d);cg.append(c)});
+}
+$('dailyBreakfast').onclick=()=>{breakfastMode='daily';renderBreakfast()};$('weekendBreakfast').onclick=()=>{breakfastMode='weekend';renderBreakfast()};document.querySelectorAll('[data-cafe-city]').forEach(b=>b.addEventListener('click',()=>{cafeCity=b.dataset.cafeCity;renderBreakfast()}));
+
+/* ---------- Exit-intent review prompt ---------- */
+let reviewRating=0, reviewPromptShown=false;
+function renderReviewLabels(){const ar=lang==='ar',en=lang==='en';$('reviewTitle').textContent=ar?'قبل ما تخرج…':en?'Before you go…':'Avant de partir…';$('reviewIntro').textContent=ar?'رأيك يعاونّا نحسّنوا Chnoua Nattayeb.':en?'Your feedback helps us improve Chnoua Nattayeb.':'Ton avis nous aide à améliorer Chnoua Nattayeb.';$('reviewRatingLabel').textContent=ar?'قدّاش تعطي للموقع من نجمة؟':en?'How would you rate the site?':'Quelle note donnerais-tu au site ?';$('reviewTextLabel').textContent=ar?'تعليق (اختياري)':en?'Comment (optional)':'Un commentaire (facultatif)';$('reviewText').placeholder=ar?'شنوّة نجموا نحسّنوا؟':en?'What could we improve?':'Qu’est-ce qu’on pourrait améliorer ?';$('reviewSubmit').textContent=ar?'ابعث رأيك':en?'Send feedback':'Envoyer mon avis';$('reviewLater').textContent=ar?'موش توّا':en?'Not now':'Pas maintenant';}
+function paintReviewStars(){document.querySelectorAll('#reviewStars button').forEach(b=>{const on=Number(b.dataset.rating)<=reviewRating;b.textContent=on?'★':'☆';b.setAttribute('aria-pressed',String(Number(b.dataset.rating)===reviewRating));});}
+document.querySelectorAll('#reviewStars button').forEach(b=>b.onclick=()=>{reviewRating=Number(b.dataset.rating);paintReviewStars()});
+$('reviewForm').onsubmit=async e=>{e.preventDefault();if(!reviewRating){$('reviewThanks').textContent=lang==='ar'?'اختار عدد النجوم الأول.':lang==='en'?'Please choose a star rating first.':'Choisis une note avant d’envoyer.';return;}const btn=$('reviewSubmit');btn.disabled=true;$('reviewThanks').textContent='…';try{const r=await fetch('/api/auth',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'review',rating:reviewRating,comment:$('reviewText').value.trim().slice(0,500)})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'server');$('reviewThanks').textContent=lang==='ar'?'يعطيك الصحة! وصلنا رأيك.':lang==='en'?'Thank you! Your feedback was received.':'Merci ! Ton avis a bien été envoyé.';setTimeout(()=>$('reviewDlg').close(),1200);}catch(err){$('reviewThanks').textContent=lang==='ar'?'ما نجّمش نبعثو رأيك توّا. عاود جرّب بعد.':lang==='en'?'Could not send feedback right now. Please try again.':'Impossible d’envoyer ton avis pour le moment. Réessaie plus tard.';btn.disabled=false;}};
+$('reviewLater').onclick=()=>$('reviewDlg').close();
+function maybeAskReview(){if(reviewPromptShown)return;let dismissed=false;try{dismissed=sessionStorage.getItem('chnouaReviewDismissed')==='1'}catch(e){}if(dismissed)return;reviewPromptShown=true;renderReviewLabels();$('reviewThanks').textContent='';$('reviewSubmit').disabled=false;reviewRating=0;paintReviewStars();if(!$('reviewDlg').open)$('reviewDlg').showModal();try{sessionStorage.setItem('chnouaReviewDismissed','1')}catch(e){}}
+// Desktop exit intent. On mobile, offer the same prompt when the user returns via browser back.
+document.addEventListener('mouseout',e=>{if(e.clientY<=0&&e.relatedTarget==null&&document.visibilityState==='visible')maybeAskReview()});
+window.addEventListener('popstate',()=>maybeAskReview());try{history.pushState({chnouaStay:true},'','#welcome')}catch(e){}
+
 /* ---------- background music ----------
    Attempts to start the requested YouTube track as soon as the page loads.
    Browsers may block autoplay with sound; in that case, show a one-tap play button. */
@@ -986,6 +1063,7 @@ $('dietStyle').addEventListener('change',renderMeals);$('calorieTarget').addEven
 let savedPantry = null;
 try { savedPantry = JSON.parse(localStorage.getItem('pantry') || 'null'); } catch (e) {}
 setLang(initialLang());
+renderBreakfast(); renderReviewLabels();
 if (savedPantry && savedPantry.lang === lang && savedPantry.text) { ing.value = savedPantry.text; sync(); }
 fetch('/api/chips').then(r => r.ok ? r.json() : null).then(d => {
   if (d && Array.isArray(d.shelf) && d.shelf.length) { SHELF = d.shelf; activeCat = 0; buildShelf(); }
