@@ -29,3 +29,10 @@
 - Added an animated cooking pot in the ingredient area, with steam, lid movement, bubbling ingredients and flames; respects reduced-motion preferences.
 - Added Arabic dialect selection for Tunisian, Algerian, Moroccan, Libyan and Egyptian Arabic. The selected dialect is sent to the recipe API and used in the generation instructions.
 - Added a Premium / Pro pack entry point that requires account creation before continuing. Actual paid-feature access remains locked until a payment provider and subscription verification are integrated; account creation alone does not grant paid access.
+
+## 2026-10-26 — Account UX, breakfast and exit feedback
+- Improved account form validation/autocomplete and reset stale validation messages when opening the dialog.
+- Added daily breakfast and weekend brunch ideas, translated in French, Arabic and English.
+- Added a city selector with indicative café suggestions for Tunis, Sousse and Sfax; visitors are reminded to verify current hours and menus.
+- Added an exit-intent rating/comment prompt and a public review action that stores the latest 100 reviews in Upstash Redis.
+- Account registration and review submission require the existing Upstash Redis environment variables to be configured in Vercel (`UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`, or the compatible `KV_REST_API_*` variables).
