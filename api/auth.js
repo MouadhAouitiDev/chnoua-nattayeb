@@ -42,6 +42,17 @@ export default async function handler(req, res) {
     }
     if (req.method !== 'POST') return fail(405, 'method');
 
+    // Public site feedback: no account required; retain only the latest 100 reviews.
+    if (action === 'review') {
+      const rating = Number(b.rating);
+      const comment = str(b.comment, 500);
+      if (!Number.isInteger(rating) || rating < 1 || rating > 5) return fail(400, 'invalid');
+      const review = JSON.stringify({ rating, comment, createdAt: new Date().toISOString() });
+      await redis(['LPUSH', 'site:reviews', review]);
+      await redis(['LTRIM', 'site:reviews', '0', '99']);
+      return res.status(200).json({ ok: true });
+    }
+
     if (action === 'register' || action === 'login') {
       const ip = clientIp(req);
       if (locked(ip)) return fail(429, 'locked');
