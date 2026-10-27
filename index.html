@@ -248,6 +248,13 @@ dialog{max-height:90vh;overflow:auto}
 .premium{margin:24px 0;padding:20px;border:1px solid #d5ad54;border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,#d5ad54 15%,var(--card)),var(--card));display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.premium h2{margin:0 0 4px}.premium p{margin:0;color:var(--muted)}.premium .btn{width:auto;padding:10px 16px;white-space:nowrap}.premium-lock{font-size:1.5rem}@media(max-width:560px){.premium{grid-template-columns:1fr}.premium .btn{width:100%}}
 @media(prefers-reduced-motion:reduce){.pot-art,.pot-lid,.pot-food span,.pot-steam,.pot-flames{animation:none!important}}
 
+
+/* Real food photography for nutrition cards */
+.meal-visual{position:relative;min-height:155px;overflow:hidden;background:#172c35!important;color:#fff!important;display:flex;align-items:flex-end;justify-content:flex-start;padding:12px!important;font-size:1.5rem!important}
+.meal-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s ease;z-index:0}
+.meal-visual:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(4,16,22,.7));z-index:1;pointer-events:none}
+.meal-card:hover .meal-visual img{transform:scale(1.06)}.meal-visual .meal-emoji{position:relative;z-index:2;text-shadow:0 2px 8px #0008}
+@media(prefers-reduced-motion:reduce){.meal-visual img{transition:none}}
 </style>
 </head>
 <body>
@@ -422,6 +429,7 @@ dialog{max-height:90vh;overflow:auto}
   </section>
   <div class="ad" data-t="ad"></div>
 </main>
+<section class="section local-shopping" style="margin-top:24px"><h2>🛒 Où acheter à Tunis / Grand Tunis ?</h2><p class="muted">Liens officiels et itinéraires vers des grandes surfaces qui vendent des produits alimentaires. Le stock dépend du magasin.</p><div style="display:flex;flex-wrap:wrap;gap:10px"><a class="aziza-link" href="https://www.geantdrive.tn/tunis-city/2-nos-rayons" target="_blank" rel="noopener noreferrer">Géant Drive · Tunis City (catalogue)</a><a class="aziza-link" href="https://www.carrefour.tn/" target="_blank" rel="noopener noreferrer">Carrefour Tunisie · courses en ligne</a><a class="aziza-link" href="https://www.google.com/maps/search/?api=1&query=Carrefour+Market+Centre+Urbain+Nord+Tunis" target="_blank" rel="noopener noreferrer">Carrefour Market · Centre Urbain Nord (carte)</a><a class="aziza-link" href="https://www.google.com/maps/search/?api=1&query=Geant+Tunis+City+Ariana" target="_blank" rel="noopener noreferrer">Géant · Tunis City Ariana (carte)</a><a class="aziza-link" href="https://www.google.com/maps/search/?api=1&query=Carrefour+Market+Ariana+Africa+Mall" target="_blank" rel="noopener noreferrer">Carrefour Market · Ariana (carte)</a></div></section>
 <footer><span data-t="footer"></span> <a href="/privacy.html" data-t="priv" style="color:var(--blue)"></a></footer>
 
 <dialog id="authDlg">
@@ -583,11 +591,12 @@ function setList(items) { ing.value = items.join(lang === 'ar' ? '، ' : ', '); 
 function toggle(n) { const items = list(), i = items.findIndex(x => norm(x) === norm(n)); if (i >= 0) items.splice(i, 1); else items.push(n); setList(items); }
 function addItem(n) { n = n.replace(/[,،<>]/g, ' ').trim().slice(0, 40); if (n && !has(n)) setList([...list(), n]); }
 
-function azizaUrl(name) { return 'https://www.aziza.tn/fr/catalogsearch/result/?q=' + encodeURIComponent(String(name || '').trim()); }
-function azizaLink(name, label) { const a = el('a', label || '🛒 Aziza', 'aziza-link'); a.href = azizaUrl(name); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.title = (lang === 'ar' ? 'ابحث على ' : lang === 'fr' ? 'Chercher chez Aziza : ' : 'Search Aziza for ') + name; return a; }
+function shopUrl(name) { return 'https://www.geantdrive.tn/tunis-city/recherche?controller=search&s=' + encodeURIComponent(String(name || '').trim()); }
+function shopLink(name, label) { const a = el('a', label || '🛒 Géant Drive', 'aziza-link'); a.href = shopUrl(name); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.title = (lang === 'ar' ? 'لوّج على ' : lang === 'fr' ? 'Rechercher ce produit chez Géant Drive : ' : 'Search this item on Géant Drive: ') + name; return a; }
+function azizaLink(name, label) { return shopLink(name, label || '🛒 Géant Drive'); }
 function sync() {
   potItems.innerHTML = '';
-  list().forEach(n => { const wrap = el('span', null, 'pot-tag-wrap'); const b = el('button', n + ' ✕', 'tag'); b.type = 'button'; b.onclick = () => toggle(n); wrap.append(b, azizaLink(n, '🛒')); potItems.appendChild(wrap); });
+  list().forEach(n => { const wrap = el('span', null, 'pot-tag-wrap'); const b = el('button', n + ' ✕', 'tag'); b.type = 'button'; b.onclick = () => toggle(n); wrap.append(b, shopLink(n, '🛒 Géant Drive')); potItems.appendChild(wrap); });
   pot.classList.toggle('full', list().length > 0);
   shelf.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(has(c.dataset.name))));
   try { localStorage.setItem('pantry', JSON.stringify({ lang, text: ing.value })); } catch (e) {}
@@ -705,7 +714,7 @@ function card(r, open = false) {
       cb.onchange = () => { li.classList.toggle('done', cb.checked); if (ordered) updateProgress(); };
       lab.append(cb, el('span', String(x)));
       li.appendChild(lab);
-      if (!ordered) li.appendChild(azizaLink(String(x), lang === 'ar' ? '🛒 تلقاه في عزيزة' : lang === 'fr' ? '🛒 Voir chez Aziza' : '🛒 Find at Aziza'));
+      if (!ordered) li.appendChild(azizaLink(String(x), lang === 'ar' ? '🛒 لوّج في Géant' : lang === 'fr' ? '🛒 Chercher chez Géant' : '🛒 Search Géant Drive'));
       l.appendChild(li);
     });
     return l;
@@ -979,6 +988,7 @@ const nutritionMeals=[
 ];
 let nutritionGoal='sport';
 const goalCalories={lose:1800,gain:2700,sport:2400,healthy:2200};
+function mealPhoto(title){const t=String(title||'').toLowerCase();if(t.includes('poulet')||t.includes('chicken')||t.includes('wrap'))return 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=900&q=85';if(t.includes('salade')||t.includes('salad')||t.includes('pois chiches'))return 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=85';if(t.includes('smoothie')||t.includes('fromage blanc')||t.includes('yaourt'))return 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=85';if(t.includes('toast')||t.includes('avocat')||t.includes('œufs')||t.includes('eggs'))return 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=85';if(t.includes('pâtes')||t.includes('pasta')||t.includes('thon'))return 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=900&q=85';if(t.includes('lablabi')||t.includes('lentilles')||t.includes('lentil'))return 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85';return 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=85';}
 function renderMeals(){
  const tx=nutritionText[lang]||nutritionText.fr, target=Number($('calorieTarget').value);
  const number=target.toLocaleString(lang==='ar'?'ar-TN':lang==='fr'?'fr-FR':'en-US');
@@ -989,7 +999,7 @@ function renderMeals(){
  const meals=nutritionMeals.filter(m=>{const tags=m[3].split(' ');if(style==='med'&&!tags.includes('med'))return false;if(style==='veg'&&!tags.includes('vegetarian'))return false;if(style==='protein'&&!tags.includes('protein'))return false;if(style==='quick'&&!tags.includes('quick'))return false;if(nutritionGoal==='lose'&&m[4]>560)return false;if(nutritionGoal==='gain'&&m[4]<400)return false;if(nutritionGoal==='sport'&&!tags.includes('protein'))return false;return true;});
  $('metricMeals').textContent=meals.length;const grid=$('mealGrid');grid.innerHTML='';
  if(!meals.length){const e=document.createElement('div');e.className='nutri-empty';e.textContent=tx.none;grid.appendChild(e);return;}
- meals.forEach(m=>{const card=document.createElement('article');card.className='meal-card';const visual=document.createElement('div');visual.className='meal-visual';visual.textContent=m[0];visual.setAttribute('aria-hidden','true');const content=document.createElement('div');content.className='meal-content';const title=document.createElement('div');title.className='meal-title';title.textContent=m[1];const desc=document.createElement('div');desc.className='meal-desc';desc.textContent=m[2];const tagsEl=document.createElement('div');tagsEl.className='meal-tags';m[3].split(' ').filter(x=>['med','vegetarian','protein','quick'].includes(x)).slice(0,3).forEach(tag=>{const tagEl=document.createElement('span');tagEl.className='meal-tag';tagEl.textContent=tag==='med'?tx.med:tag==='vegetarian'?tx.veg:tag==='protein'?tx.high:tx.quick;tagsEl.appendChild(tagEl);});const macros=document.createElement('div');macros.className='meal-macros';const kcal=document.createElement('span');kcal.innerHTML='<strong>'+m[4]+'</strong> '+tx.kcal;const protein=document.createElement('span');protein.innerHTML='<strong>'+m[5]+' g</strong> '+tx.protein;const time=document.createElement('span');time.textContent=m[6];macros.append(kcal,protein,time);content.append(title,desc,tagsEl,macros);card.append(visual,content);grid.appendChild(card);});
+ meals.forEach(m=>{const card=document.createElement('article');card.className='meal-card';const visual=document.createElement('div');visual.className='meal-visual';visual.setAttribute('aria-hidden','true');const photo=document.createElement('img');photo.loading='lazy';photo.decoding='async';photo.alt='';photo.src=mealPhoto(m[1]);photo.onerror=()=>photo.remove();const emoji=document.createElement('span');emoji.className='meal-emoji';emoji.textContent=m[0];visual.append(photo,emoji);const content=document.createElement('div');content.className='meal-content';const title=document.createElement('div');title.className='meal-title';title.textContent=m[1];const desc=document.createElement('div');desc.className='meal-desc';desc.textContent=m[2];const tagsEl=document.createElement('div');tagsEl.className='meal-tags';m[3].split(' ').filter(x=>['med','vegetarian','protein','quick'].includes(x)).slice(0,3).forEach(tag=>{const tagEl=document.createElement('span');tagEl.className='meal-tag';tagEl.textContent=tag==='med'?tx.med:tag==='vegetarian'?tx.veg:tag==='protein'?tx.high:tx.quick;tagsEl.appendChild(tagEl);});const macros=document.createElement('div');macros.className='meal-macros';const kcal=document.createElement('span');kcal.innerHTML='<strong>'+m[4]+'</strong> '+tx.kcal;const protein=document.createElement('span');protein.innerHTML='<strong>'+m[5]+' g</strong> '+tx.protein;const time=document.createElement('span');time.textContent=m[6];macros.append(kcal,protein,time);content.append(title,desc,tagsEl,macros);card.append(visual,content);grid.appendChild(card);});
 }
 function setNutritionLang(){const tx=nutritionText[lang]||nutritionText.fr;document.querySelectorAll('[data-nutri]').forEach(e=>{if(tx[e.dataset.nutri])e.textContent=tx[e.dataset.nutri];});document.querySelectorAll('#dietStyle option[data-nutri]').forEach(e=>{if(tx[e.dataset.nutri])e.textContent=tx[e.dataset.nutri];});renderMeals();}
 document.querySelectorAll('.goal-card').forEach(b=>b.addEventListener('click',()=>{nutritionGoal=b.dataset.goal;$('calorieTarget').value=goalCalories[nutritionGoal];renderMeals();}));
