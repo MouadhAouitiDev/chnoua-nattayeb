@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planificateur de repas – Chnoua nattayeb</title>
+<meta name="description" content="Planificateur de repas selon ton budget en Tunisie : programme de la semaine, liste de courses, quantités et anti-gaspillage.">
+<style>
+:root{--bg:#f4f8fc;--ink:#12202f;--card:#fff;--line:#cfdcea;--blue:#1b5fae;--blue-ink:#fff;--red:#b3261e;--gold:#b8790a;--muted:#546579;--ok:#2e7d4f}
+@media (prefers-color-scheme:dark){:root{--bg:#0c1b2e;--ink:#e8eff7;--card:#12283f;--line:#27405d;--blue:#5aa0ee;--blue-ink:#0c1b2e;--red:#ff7a68;--gold:#f0c04a;--muted:#9db1c6;--ok:#6fd49a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+main{max-width:860px;margin:0 auto;padding:20px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer;font:inherit;text-decoration:none}
+.pill[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
+h1{font:700 2rem/1.25 Georgia,"Segoe UI",Tahoma,serif;margin:.6em 0 .2em}
+.sub{color:var(--muted);margin:0 0 1.2em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+label{font-weight:600;display:block}
+input[type=number],input[type=email],input[type=password]{width:100%;margin-top:6px;padding:12px;border:2px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.btn{width:100%;background:linear-gradient(135deg,var(--red),#e0641f);color:#fff;border:0;border-radius:8px;padding:14px;font:700 1.1rem system-ui,Tahoma,sans-serif;cursor:pointer}
+.btn.alt{background:var(--blue);color:var(--blue-ink)}
+.btn:disabled{opacity:.6;cursor:wait}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.banner{border:1px solid #d5ad54;background:color-mix(in srgb,#d5ad54 14%,var(--card));border-radius:12px;padding:14px 16px}
+.banner strong{display:block}
+.err{color:var(--red);font-weight:600}
+.muted{color:var(--muted)}
+.tog{display:flex;gap:8px;align-items:center;font-weight:400;margin-top:10px}
+.day{border-inline-start:5px solid var(--gold);padding:8px 12px;margin:10px 0;background:var(--card);border-radius:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-inline-end:1px solid var(--line)}
+.day h3{margin:0 0 4px;font-size:1.05rem}
+.day p{margin:2px 0}
+.tag{font-size:.8rem;background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok);padding:1px 8px;border-radius:999px;margin-inline-start:6px}
+.shop h3{margin:14px 0 4px}
+.item{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.item label{font-weight:400;display:flex;gap:8px;align-items:center;margin:0}
+.item.done span.n{text-decoration:line-through;opacity:.55}
+.total{display:flex;justify-content:space-between;font-weight:700;font-size:1.15rem;margin-top:12px}
+.bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--ok)}
+.bar.over i{background:var(--red)}
+ul.tips{padding-inline-start:20px;margin:6px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.actions .pill{padding:8px 14px}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);max-width:380px;width:92vw}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+@media print{.top,#form,#access,.actions,footer{display:none!important}body{background:#fff;color:#000}.card{border:0;padding:0}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div class="row" role="group" aria-label="Language">
+      <button type="button" class="pill" data-lang="ar">العربية</button>
+      <button type="button" class="pill" data-lang="fr">Français</button>
+      <button type="button" class="pill" data-lang="en">English</button>
+    </div>
+    <div class="row"><a class="pill" href="/" id="homeLink"></a><span id="acct"></span></div>
+  </div>
+
+  <h1 id="title"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div id="access"></div>
+
+  <form class="card" id="form" novalidate>
+    <div class="grid">
+      <div><label for="budget" id="lBudget"></label><input id="budget" type="number" min="10" max="2000" step="5" value="100" inputmode="numeric"></div>
+      <div><label for="people" id="lPeople"></label><input id="people" type="number" min="1" max="12" value="2" inputmode="numeric"></div>
+      <div><label for="days" id="lDays"></label><input id="days" type="number" min="1" max="14" value="7" inputmode="numeric"></div>
+    </div>
+    <label class="tog"><input type="checkbox" id="veg"><span id="lVeg"></span></label>
+    <p class="muted" id="hint" style="margin:8px 0 12px;font-size:.9rem"></p>
+    <button class="btn" id="go" type="submit"></button>
+    <p id="msg" role="status" aria-live="polite"></p>
+  </form>
+
+  <div id="result"></div>
+  <footer class="muted" style="font-size:.85rem;padding:16px 0" id="foot"></footer>
+</main>
+
+<dialog id="authDlg">
+  <form id="authForm" novalidate>
+    <h2 id="aTitle" style="margin-top:0"></h2>
+    <label for="aEmail" id="lEmail"></label><input id="aEmail" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="100">
+    <label for="aPw" id="lPw" style="margin-top:10px"></label><input id="aPw" type="password" autocomplete="current-password" maxlength="100">
+    <p id="aErr" class="err" role="alert"></p>
+    <button class="btn alt" id="aGo" type="submit"></button>
+    <p style="text-align:center"><button type="button" class="link" id="aSwitch"></button> · <button type="button" class="link" id="aClose"></button></p>
+  </form>
+</dialog>
+
+<script>
+const PRICE_DT = 5;            // keep in sync with PLANNER_PRICE_DT on the server
+const PAY_CONTACT = '';        // e.g. 'https://wa.me/216XXXXXXXX' or 'mailto:you@example.com' : where people send proof of payment (D17 / Flouci / virement)
+
+const T = {
+  fr: {
+    home: '← Chnoua nattayeb', login: 'Connexion', signup: 'Créer un compte', logout: 'Quitter',
+    title: '🧺 Planificateur de repas selon ton budget', sub: 'Dis-nous ton budget : on te sort le programme de la semaine, la liste de courses, les quantités et des idées pour ne rien gaspiller. Prix indicatifs du marché tunisien 2026.',
+    budget: 'Budget total (DT)', people: 'Personnes', days: 'Jours', veg: 'Programme végétarien',
+    hint: 'Exemple : 100 DT pour 2 personnes pendant 7 jours. Les prix sont des moyennes : ils varient selon le marché et la saison.',
+    go: 'Générer mon programme', loading: 'On prépare ton programme… (15-30 s)',
+    guest: 'Connecte-toi pour essayer le planificateur', guestTxt: n => `1 mois gratuit, puis ${PRICE_DT} DT / mois. Sans engagement.`,
+    newT: n => `🎁 ${n} jours gratuits`, newTxt: n => `Active ton mois d'essai gratuit, sans carte bancaire. Ensuite ${PRICE_DT} DT / mois.`, startTrial: 'Commencer l’essai gratuit',
+    trial: d => `Essai gratuit : ${d} jour(s) restant(s)`, trialTxt: `Ensuite : ${PRICE_DT} DT / mois.`,
+    active: d => `Abonnement actif : ${d} jour(s) restant(s)`,
+    expired: 'Ton essai gratuit est terminé', expiredTxt: `Abonnement : ${PRICE_DT} DT pour 1 mois. Paie par D17 / Flouci / virement, puis envoie la preuve : ton compte est activé rapidement.`,
+    pay: 'Je m’abonne', payNo: 'Moyen de paiement bientôt disponible : reviens très vite.',
+    days_: 'Programme', bf: 'Petit-déj', lunch: 'Déjeuner', dinner: 'Dîner', leftover: 'reste de', shop: '🛒 Liste de courses', total: 'Total', budgetL: 'Budget', left: 'Reste', over: 'Dépassement',
+    reuse: '♻️ Anti-gaspillage', tip: '💡 Conseil', print: '🖨️ Imprimer', copy: '📋 Copier la liste', copied: 'Copié ✓', again: '🔄 Autre proposition',
+    e: { login: 'Connecte-toi d’abord.', invalid: 'Vérifie le budget (10 à 2000 DT), les personnes (1-12) et les jours (1-14).', quota: 'Trop de demandes aujourd’hui. Reviens demain.', unavailable: 'Le service est occupé. Réessaie dans un instant.', storage_config: 'Service indisponible pour le moment.', email: 'Email invalide.', password: '8 caractères minimum.', exists: 'Un compte existe déjà avec cet email.', credentials: 'Email ou mot de passe incorrect.', locked: 'Trop d’essais. Réessaie plus tard.', generic: 'Erreur. Réessaie.' },
+    aEmail: 'Email', aPw: 'Mot de passe', toLogin: 'J’ai déjà un compte', toSignup: 'Créer un compte', close: 'Fermer',
+    foot: 'Estimations indicatives : vérifie les prix chez ton commerçant. Ce programme n’est pas un avis médical.'
+  },
+  ar: {
+    home: '← شنوة نطيّب', login: 'دخول', signup: 'اعمل حساب', logout: 'خروج',
+    title: '🧺 مخطّط الماكلة حسب ميزانيتك', sub: 'قولنا قدّاش ميزانيتك ونخرجولك برنامج الأسبوع، قائمة الشرا، الكميات وأفكار باش ما تضيّع شي. الأسعار تقريبية حسب السوق التونسي 2026.',
+    budget: 'الميزانية الجملية (دينار)', people: 'عدد الأشخاص', days: 'عدد الأيام', veg: 'برنامج نباتي',
+    hint: 'مثال: 100 دينار لزوز أشخاص لمدة 7 أيام. الأسعار معدّلات وتتبدّل حسب السوق والموسم.',
+    go: 'اعملّي البرنامج', loading: 'نجهّزو في البرنامج… (15-30 ثانية)',
+    guest: 'ادخل لحسابك باش تجرّب المخطّط', guestTxt: n => `شهر مجاني، وبعدها ${PRICE_DT} دينار في الشهر. بلا التزام.`,
+    newT: n => `🎁 ${n} يوم مجانا`, newTxt: n => `فعّل شهر التجربة المجاني بلا بطاقة بنكية. بعدها ${PRICE_DT} دينار في الشهر.`, startTrial: 'ابدا التجربة المجانية',
+    trial: d => `تجربة مجانية: باقي ${d} يوم`, trialTxt: `بعدها: ${PRICE_DT} دينار في الشهر.`,
+    active: d => `الاشتراك فعّال: باقي ${d} يوم`,
+    expired: 'تجربتك المجانية وفات', expiredTxt: `الاشتراك: ${PRICE_DT} دينار للشهر. اخلص بـ D17 / Flouci / تحويل وابعثلنا الإثبات ونفعّلولك الحساب بسرعة.`,
+    pay: 'نشترك', payNo: 'طريقة الدفع باش تتوفّر قريب.',
+    days_: 'البرنامج', bf: 'فطور', lunch: 'غدا', dinner: 'عشا', leftover: 'من باقي', shop: '🛒 قائمة الشرا', total: 'المجموع', budgetL: 'الميزانية', left: 'الباقي', over: 'زيادة',
+    reuse: '♻️ ما تضيّعش الماكلة', tip: '💡 نصيحة', print: '🖨️ اطبع', copy: '📋 انسخ القائمة', copied: 'تنسخت ✓', again: '🔄 اقتراح آخر',
+    e: { login: 'ادخل لحسابك الأول.', invalid: 'ثبّت في الميزانية (10 إلى 2000 دينار)، الأشخاص (1-12) والأيام (1-14).', quota: 'برشا طلبات اليوم. ارجع غدوة.', unavailable: 'الخدمة مشغولة. عاود بعد شوية.', storage_config: 'الخدمة موش متوفرة توّا.', email: 'الإيميل موش صحيح.', password: '8 حروف على الأقل.', exists: 'فما حساب بهذا الإيميل.', credentials: 'الإيميل ولا كلمة السر غالطين.', locked: 'برشا محاولات. عاود بعد شوية.', generic: 'صار مشكل. عاود.' },
+    aEmail: 'الإيميل', aPw: 'كلمة السر', toLogin: 'عندي حساب', toSignup: 'اعمل حساب', close: 'سكّر',
+    foot: 'أسعار تقريبية: ثبّت عند التاجر. البرنامج موش نصيحة طبية.'
+  },
+  en: {
+    home: '← Chnoua nattayeb', login: 'Log in', signup: 'Create account', logout: 'Log out',
+    title: '🧺 Budget meal planner', sub: 'Tell us your budget: we build the weekly menu, the shopping list, rough quantities and ideas to waste nothing. Indicative Tunisian market prices, 2026.',
+    budget: 'Total budget (DT)', people: 'People', days: 'Days', veg: 'Vegetarian plan',
+    hint: 'Example: 100 DT for 2 people for 7 days. Prices are averages and vary by market and season.',
+    go: 'Generate my plan', loading: 'Preparing your plan… (15-30 s)',
+    guest: 'Log in to try the planner', guestTxt: n => `1 month free, then ${PRICE_DT} DT / month. No commitment.`,
+    newT: n => `🎁 ${n} days free`, newTxt: n => `Start your free trial, no bank card. Then ${PRICE_DT} DT / month.`, startTrial: 'Start free trial',
+    trial: d => `Free trial: ${d} day(s) left`, trialTxt: `Then ${PRICE_DT} DT / month.`,
+    active: d => `Subscription active: ${d} day(s) left`,
+    expired: 'Your free trial has ended', expiredTxt: `Subscription: ${PRICE_DT} DT for 1 month. Pay via D17 / Flouci / bank transfer, then send the proof: your account is activated quickly.`,
+    pay: 'Subscribe', payNo: 'Payment method coming very soon.',
+    days_: 'Plan', bf: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', leftover: 'leftover from', shop: '🛒 Shopping list', total: 'Total', budgetL: 'Budget', left: 'Left', over: 'Over',
+    reuse: '♻️ Zero waste', tip: '💡 Tip', print: '🖨️ Print', copy: '📋 Copy list', copied: 'Copied ✓', again: '🔄 Another plan',
+    e: { login: 'Log in first.', invalid: 'Check budget (10-2000 DT), people (1-12) and days (1-14).', quota: 'Too many requests today. Come back tomorrow.', unavailable: 'Service is busy. Try again shortly.', storage_config: 'Service unavailable right now.', email: 'Invalid email.', password: 'Minimum 8 characters.', exists: 'An account already exists with this email.', credentials: 'Wrong email or password.', locked: 'Too many attempts. Try later.', generic: 'Error. Try again.' },
+    aEmail: 'Email', aPw: 'Password', toLogin: 'I already have an account', toSignup: 'Create account', close: 'Close',
+    foot: 'Indicative estimates: check prices with your grocer. This plan is not medical advice.'
+  }
+};
+
+const $ = id => document.getElementById(id);
+const mk = (tag, text, cls) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; };
+let lang = 'fr', user = null, acc = { status: 'guest' }, authMode = 'login', lastPlan = null, shown = [];
+const t = () => T[lang];
+const fmt = n => (Math.round(n * 10) / 10).toFixed(1).replace(/\.0$/, '');
+
+try { const s = localStorage.getItem('lang'); if (T[s]) lang = s; else if ((navigator.language || '').startsWith('ar')) lang = 'ar'; } catch (e) {}
+
+async function api(path, body) {
+  const r = await fetch(path, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : undefined);
+  let d = {}; try { d = await r.json(); } catch (e) {}
+  if (!r.ok) { const err = new Error(d.error || 'generic'); err.data = d; err.status = r.status; throw err; }
+  return d;
+}
+
+function setLang(l) {
+  lang = l; try { localStorage.setItem('lang', l); } catch (e) {}
+  document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
+  const x = t();
+  $('homeLink').textContent = x.home; $('title').textContent = x.title; $('sub').textContent = x.sub;
+  $('lBudget').textContent = x.budget; $('lPeople').textContent = x.people; $('lDays').textContent = x.days; $('lVeg').textContent = x.veg;
+  $('hint').textContent = x.hint; $('go').textContent = x.go; $('foot').textContent = x.foot;
+  $('lEmail').textContent = x.aEmail; $('lPw').textContent = x.aPw; $('aClose').textContent = x.close;
+  document.title = x.title.replace('🧺 ', '');
+  setAuthMode(authMode); renderAcct(); renderAccess();
+  if (lastPlan) renderPlan(lastPlan);
+}
+
+function renderAcct() {
+  const box = $('acct'); box.textContent = '';
+  if (!user) { const b = mk('button', t().login, 'pill'); b.onclick = () => openAuth('login'); box.appendChild(b); return; }
+  const b = mk('button', user.email + ' · ' + t().logout, 'pill');
+  b.onclick = async () => { try { await api('/api/auth', { action: 'logout' }); } catch (e) {} user = null; acc = { status: 'guest' }; renderAcct(); renderAccess(); };
+  box.appendChild(b);
+}
+
+function renderAccess() {
+  const box = $('access'); box.textContent = '';
+  const x = t(), b = mk('div', undefined, 'banner');
+  const add = (a, c) => { const s = mk('strong', a); b.appendChild(s); if (c) b.appendChild(mk('span', c, 'muted')); };
+  const btn = (label, fn) => { const e = mk('button', label, 'btn alt'); e.style.marginTop = '10px'; e.onclick = fn; b.appendChild(e); };
+  if (!user) { add(x.guest, x.guestTxt()); btn(x.signup, () => openAuth('signup')); }
+  else if (acc.status === 'new') { add(x.newT(30), x.newTxt()); btn(x.startTrial, startTrial); }
+  else if (acc.status === 'trial') add(x.trial(acc.daysLeft), x.trialTxt);
+  else if (acc.status === 'active') add(x.active(acc.daysLeft));
+  else if (acc.status === 'expired') {
+    add(x.expired, x.expiredTxt);
+    btn(PAY_CONTACT ? x.pay : x.payNo, () => { if (PAY_CONTACT) location.href = PAY_CONTACT; });
+    if (!PAY_CONTACT) b.lastChild.disabled = true;
+  } else return;
+  box.appendChild(b);
+}
+
+async function refreshAccess() {
+  try { const d = await api('/api/planner'); acc = d.access; } catch (e) { acc = user ? { status: 'new' } : { status: 'guest' }; }
+  renderAccess();
+}
+async function startTrial() {
+  try { acc = (await api('/api/planner', { action: 'start_trial' })).access; } catch (e) { if (e.data && e.data.access) acc = e.data.access; }
+  renderAccess();
+}
+
+/* ---- auth ---- */
+function setAuthMode(m) {
+  authMode = m; const x = t();
+  $('aTitle').textContent = m === 'login' ? x.login : x.signup;
+  $('aGo').textContent = m === 'login' ? x.login : x.signup;
+  $('aSwitch').textContent = m === 'login' ? x.signup : x.toLogin;
+  $('aPw').autocomplete = m === 'login' ? 'current-password' : 'new-password';
+}
+function openAuth(m) { setAuthMode(m); $('aErr').textContent = ''; if (!$('authDlg').open) $('authDlg').showModal(); $('aEmail').focus(); }
+$('aSwitch').onclick = () => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); $('aErr').textContent = ''; };
+$('aClose').onclick = () => $('authDlg').close();
+$('authForm').onsubmit = async ev => {
+  ev.preventDefault();
+  const email = $('aEmail').value.trim(), pw = $('aPw').value, x = t();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $('aErr').textContent = x.e.email; return; }
+  if (pw.length < 8) { $('aErr').textContent = x.e.password; return; }
+  $('aGo').disabled = true;
+  try {
+    const d = await api('/api/auth', { action: authMode === 'login' ? 'login' : 'register', email, password: pw });
+    user = d.user; $('authDlg').close(); $('aPw').value = ''; renderAcct(); await refreshAccess();
+  } catch (e) { $('aErr').textContent = x.e[e.message] || x.e.generic; }
+  $('aGo').disabled = false;
+};
+
+/* ---- generate ---- */
+$('form').onsubmit = ev => { ev.preventDefault(); generate(false); };
+async function generate(more) {
+  const x = t(), msg = $('msg'); msg.textContent = ''; msg.className = '';
+  if (!user) { openAuth('signup'); return; }
+  if (acc.status === 'new') { await startTrial(); }
+  const body = { action: 'generate', lang, budget: Number($('budget').value), people: Number($('people').value), days: Number($('days').value), veg: $('veg').checked, exclude: more ? shown : [] };
+  $('go').disabled = true; msg.textContent = x.loading;
+  try {
+    const d = await api('/api/planner', body);
+    lastPlan = d.plan; shown = lastPlan.jours.flatMap(j => [j.dejeuner.plat, j.diner.plat]).filter(Boolean).slice(0, 20);
+    msg.textContent = ''; renderPlan(lastPlan);
+    $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (e) {
+    msg.className = 'err';
+    if (e.status === 402) { acc = e.data.access || { status: 'expired' }; renderAccess(); msg.textContent = x.expired; }
+    else if (e.status === 401) { user = null; renderAcct(); renderAccess(); msg.textContent = x.e.login; }
+    else msg.textContent = x.e[e.message] || x.e.generic;
+  }
+  $('go').disabled = false;
+}
+
+function renderPlan(p) {
+  const x = t(), box = $('result'); box.textContent = '';
+  if (p.alerte) { const a = mk('div', p.alerte, 'banner'); box.appendChild(a); }
+
+  const plan = mk('div', undefined, 'card'); plan.appendChild(mk('h2', x.days_, ''));
+  p.jours.forEach(j => {
+    const d = mk('div', undefined, 'day'); d.appendChild(mk('h3', j.jour));
+    const line = (label, m) => {
+      const pr = mk('p'); pr.appendChild(mk('strong', label + ' : '));
+      pr.appendChild(document.createTextNode(typeof m === 'string' ? m : m.plat));
+      if (m.reste_de) pr.appendChild(mk('span', '♻ ' + x.leftover + ' ' + m.reste_de, 'tag'));
+      d.appendChild(pr);
+    };
+    if (j.petit_dej) line(x.bf, j.petit_dej);
+    line(x.lunch, j.dejeuner); line(x.dinner, j.diner);
+    plan.appendChild(d);
+  });
+  box.appendChild(plan);
+
+  const shop = mk('div', undefined, 'card shop'); shop.appendChild(mk('h2', x.shop));
+  p.courses.forEach(c => {
+    shop.appendChild(mk('h3', c.rayon));
+    c.articles.forEach(a => {
+      const it = mk('div', undefined, 'item'), lab = mk('label'), cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.onchange = () => it.classList.toggle('done', cb.checked);
+      lab.appendChild(cb); const n = mk('span', a.nom + (a.quantite ? ' — ' + a.quantite : ''), 'n'); lab.appendChild(n);
+      it.appendChild(lab); it.appendChild(mk('span', fmt(a.cout_dt) + ' DT')); shop.appendChild(it);
+    });
+  });
+  const tot = mk('div', undefined, 'total'); tot.appendChild(mk('span', x.total)); tot.appendChild(mk('span', fmt(p.total_dt) + ' / ' + fmt(p.budget_dt) + ' DT')); shop.appendChild(tot);
+  const bar = mk('div', undefined, 'bar' + (p.total_dt > p.budget_dt ? ' over' : '')), fill = document.createElement('i');
+  fill.style.width = Math.min(100, Math.round(p.total_dt / p.budget_dt * 100)) + '%'; bar.appendChild(fill); shop.appendChild(bar);
+  shop.appendChild(mk('p', p.reste_dt >= 0 ? x.left + ' : ' + fmt(p.reste_dt) + ' DT' : x.over + ' : ' + fmt(-p.reste_dt) + ' DT', 'muted'));
+  box.appendChild(shop);
+
+  if (p.reutilisation.length || p.conseil) {
+    const r = mk('div', undefined, 'card');
+    if (p.reutilisation.length) { r.appendChild(mk('h2', x.reuse)); const ul = mk('ul', undefined, 'tips'); p.reutilisation.forEach(s => ul.appendChild(mk('li', s))); r.appendChild(ul); }
+    if (p.conseil) { r.appendChild(mk('h3', x.tip)); r.appendChild(mk('p', p.conseil)); }
+    box.appendChild(r);
+  }
+
+  const act = mk('div', undefined, 'actions');
+  const pr = mk('button', x.print, 'pill'); pr.onclick = () => print();
+  const cp = mk('button', x.copy, 'pill');
+  cp.onclick = async () => {
+    const text = p.courses.map(c => c.rayon + '\n' + c.articles.map(a => `- ${a.nom} ${a.quantite} (${fmt(a.cout_dt)} DT)`).join('\n')).join('\n\n') + `\n\n${x.total}: ${fmt(p.total_dt)} DT`;
+    try { await navigator.clipboard.writeText(text); cp.textContent = x.copied; setTimeout(() => cp.textContent = x.copy, 1800); } catch (e) {}
+  };
+  const ag = mk('button', x.again, 'pill'); ag.onclick = () => generate(true);
+  act.append(pr, cp, ag); box.appendChild(act);
+}
+
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => setLang(b.dataset.lang));
+setLang(lang);
+api('/api/auth').then(async d => { user = d.user || null; renderAcct(); await refreshAccess(); }).catch(() => refreshAccess());
+</script>
+</body>
+</html>
