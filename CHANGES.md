@@ -36,3 +36,12 @@
 - Added a city selector with indicative café suggestions for Tunis, Sousse and Sfax; visitors are reminded to verify current hours and menus.
 - Added an exit-intent rating/comment prompt and a public review action that stores the latest 100 reviews in Upstash Redis.
 - Account registration and review submission require the existing Upstash Redis environment variables to be configured in Vercel (`UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`, or the compatible `KV_REST_API_*` variables).
+
+## 2026-10-27 — Budget meal planner
+- New page plan.html (AR/FR/EN) + api/planner.js: budget + people + days -> weekly menu, shopping list with quantities and costs, anti-waste tips.
+- Prices come from a Tunisian 2026 reference table in api/planner.js (PRICES): edit it when prices change. The total is recomputed server-side (the model's arithmetic is never trusted); one corrective pass if over budget.
+- Access: account required. 30-day free trial (once per account, no card), then 5 DT / month. Status stored in Redis (planner:<email>).
+- Payment is NOT automated yet. After a confirmed payment (D17 / Flouci / transfer, or a Konnect/Flouci/Paymee webhook), grant a month with:
+  curl -X POST https://<site>/api/planner -H "x-admin-password: $ADMIN_PASSWORD" -H "content-type: application/json" -d '{"action":"activate","email":"user@mail.com","months":1}'
+- Set PAY_CONTACT in plan.html (WhatsApp / mailto) so expired users know where to send proof of payment.
+- Env: PLANNER_PRICE_DT, TRIAL_DAYS, PLANNER_DAILY_LIMIT (default 10 generations/day/user).
