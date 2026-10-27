@@ -102,7 +102,8 @@ main{background:color-mix(in srgb,var(--bg) 64%,transparent);backdrop-filter:blu
 @keyframes sunp{50%{transform:scale(1.14)}}
 @keyframes lid{50%{transform:translateY(-3px)}}
 .kitchen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
- .kitchen video.on{opacity:1}
+.kitchen video.on{opacity:1}
+.pot-tag-wrap{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;margin:3px}.aziza-link{display:inline-flex;align-items:center;gap:4px;margin-inline-start:8px;padding:3px 8px;border-radius:999px;background:#e7f4e9;color:#17633b;text-decoration:none;font-size:.78rem;font-weight:750;white-space:nowrap}.aziza-link:hover{background:#cdebd5;text-decoration:underline}.recipe li .aziza-link{margin-top:5px;margin-bottom:4px}
 
 /* Realistic cooking overlay while the original YouTube background keeps playing */
 #realisticPotOverlay{position:fixed;z-index:1;left:50%;top:46%;transform:translate(-50%,-50%);width:min(66vw,760px);height:auto;max-height:60vh;object-fit:contain;pointer-events:none;filter:drop-shadow(0 18px 30px rgba(0,0,0,.32));opacity:.96}
@@ -582,9 +583,11 @@ function setList(items) { ing.value = items.join(lang === 'ar' ? '، ' : ', '); 
 function toggle(n) { const items = list(), i = items.findIndex(x => norm(x) === norm(n)); if (i >= 0) items.splice(i, 1); else items.push(n); setList(items); }
 function addItem(n) { n = n.replace(/[,،<>]/g, ' ').trim().slice(0, 40); if (n && !has(n)) setList([...list(), n]); }
 
+function azizaUrl(name) { return 'https://www.aziza.tn/fr/catalogsearch/result/?q=' + encodeURIComponent(String(name || '').trim()); }
+function azizaLink(name, label) { const a = el('a', label || '🛒 Aziza', 'aziza-link'); a.href = azizaUrl(name); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.title = (lang === 'ar' ? 'ابحث على ' : lang === 'fr' ? 'Chercher chez Aziza : ' : 'Search Aziza for ') + name; return a; }
 function sync() {
   potItems.innerHTML = '';
-  list().forEach(n => { const b = el('button', n + ' ✕', 'tag'); b.type = 'button'; b.onclick = () => toggle(n); potItems.appendChild(b); });
+  list().forEach(n => { const wrap = el('span', null, 'pot-tag-wrap'); const b = el('button', n + ' ✕', 'tag'); b.type = 'button'; b.onclick = () => toggle(n); wrap.append(b, azizaLink(n, '🛒')); potItems.appendChild(wrap); });
   pot.classList.toggle('full', list().length > 0);
   shelf.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(has(c.dataset.name))));
   try { localStorage.setItem('pantry', JSON.stringify({ lang, text: ing.value })); } catch (e) {}
@@ -701,7 +704,9 @@ function card(r, open = false) {
       cb.type = 'checkbox';
       cb.onchange = () => { li.classList.toggle('done', cb.checked); if (ordered) updateProgress(); };
       lab.append(cb, el('span', String(x)));
-      li.appendChild(lab); l.appendChild(li);
+      li.appendChild(lab);
+      if (!ordered) li.appendChild(azizaLink(String(x), lang === 'ar' ? '🛒 تلقاه في عزيزة' : lang === 'fr' ? '🛒 Voir chez Aziza' : '🛒 Find at Aziza'));
+      l.appendChild(li);
     });
     return l;
   };
