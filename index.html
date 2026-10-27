@@ -422,6 +422,12 @@ dialog{max-height:90vh;overflow:auto}
     <div id="cafeGrid" class="cafe-grid"></div>
   </section>
 
+  <section class="feature-section" id="plannerPromo">
+    <h2 id="plannerTitle">🧺 Planificateur de repas</h2>
+    <p class="feature-sub" id="plannerDesc"></p>
+    <a class="btn alt" id="plannerBtn" href="/plan.html" style="display:block;text-align:center;text-decoration:none"></a>
+  </section>
+
   <section class="premium" id="premiumPack">
     <div><h2 id="premiumTitle">✨ Pack Premium / Pro</h2><p id="premiumDesc">Calculateur de masse, nutrition sportive, menus personnalisés et outils avancés.</p></div>
     <button type="button" class="btn alt" id="premiumBtn"><span class="premium-lock">🔒</span> <span id="premiumBtnText">Créer un compte pour débloquer</span></button>
@@ -900,6 +906,9 @@ function setLang(l) {
   $('premiumTitle').textContent = l === 'ar' ? '✨ الباقة المدفوعة Premium / Pro' : l === 'en' ? '✨ Premium / Pro Pack' : '✨ Pack Premium / Pro';
   $('premiumDesc').textContent = l === 'ar' ? 'حاسبة الكتلة العضلية، تغذية رياضية، برامج أكل وأدوات متقدمة.' : l === 'en' ? 'Muscle-gain calculator, sports nutrition, personalized meal plans and advanced tools.' : 'Calculateur de masse musculaire, nutrition sportive, menus personnalisés et outils avancés.';
   $('premiumBtnText').textContent = l === 'ar' ? 'اعمل حساب باش تفتحها' : l === 'en' ? 'Create an account to unlock' : 'Créer un compte pour débloquer';
+  $('plannerTitle').textContent = l === 'ar' ? '🧺 مخطّط الماكلة حسب الميزانية' : l === 'en' ? '🧺 Budget meal planner' : '🧺 Planificateur de repas selon ton budget';
+  $('plannerDesc').textContent = l === 'ar' ? 'قولنا ميزانيتك (مثلا 100 دينار لزوز أشخاص) ونخرجولك برنامج الأسبوع، قائمة الشرا والكميات. شهر مجاني وبعدها 5 دينار في الشهر.' : l === 'en' ? 'Tell us your budget (e.g. 100 DT for 2 people) and get a weekly menu, shopping list and quantities. 1 month free, then 5 DT / month.' : 'Donne ton budget (ex : 100 DT pour 2 personnes) : programme de la semaine, liste de courses et quantités. 1 mois gratuit, puis 5 DT / mois.';
+  $('plannerBtn').textContent = l === 'ar' ? 'جرّب مجانا' : l === 'en' ? 'Try it free' : 'Essayer gratuitement';
   document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
   document.title = t().page;
   if (typeof renderBreakfast === 'function') renderBreakfast();
