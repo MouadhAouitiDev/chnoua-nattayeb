@@ -45,3 +45,13 @@
   curl -X POST https://<site>/api/planner -H "x-admin-password: $ADMIN_PASSWORD" -H "content-type: application/json" -d '{"action":"activate","email":"user@mail.com","months":1}'
 - Set PAY_CONTACT in plan.html (WhatsApp / mailto) so expired users know where to send proof of payment.
 - Env: PLANNER_PRICE_DT, TRIAL_DAYS, PLANNER_DAILY_LIMIT (default 10 generations/day/user).
+## Breakfast music and UX update
+- Added a responsive breakfast music panel using the YouTube link provided by the site owner.
+- Embedded playback uses visible controls and does not autoplay; added a direct YouTube link as fallback.
+- Refined card styling, spacing, mobile layout, focus and reduced-motion handling.
+- Music panel labels are translated in Arabic, French and English.
+
+
+## Breakfast background + Aziza ingredient links
+- Breakfast page uses the same full-screen YouTube background approach as index.html with the user-provided track (e6KzjUOfmBk); audio autoplay may be blocked by browser settings, so a play fallback is shown.
+- Added official Aziza Tunisia catalog-search links beside ingredients in breakfast recipes, selected pantry ingredients, and recipe extra-ingredient lists. Search links help find items but do not guarantee product availability or price.
