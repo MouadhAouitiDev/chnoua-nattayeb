@@ -2,7 +2,7 @@
 // Needs the environment variable GEMINI_API_KEY (Vercel > Settings > Environment Variables).
 // Optional: GEMINI_MODEL (default gemini-3.6-flash, fallback gemini-3.5-flash-lite).
 
-import { hasStorage, redis, getUser, clientIp } from './_lib.js';
+import { hasStorage, redis, getUser, clientIp, track } from './_lib.js';
 
 const GUEST_DAILY = Number(process.env.GUEST_DAILY_LIMIT || 3);
 const MEMBER_DAILY = Number(process.env.MEMBER_DAILY_LIMIT || 15);
@@ -195,6 +195,7 @@ export default async function handler(req, res) {
             } catch (e) { console.error(e); }
           }
           if (!ok.length && bad.length) { last = model + ': cuisine mismatch'; break; } // try the next model instead of returning nothing
+          await track('recipes');
           return res.status(200).json({ recettes: ok.slice(0, 3) });
         } catch (e) { last = model + ': invalid JSON'; break; }
       }
