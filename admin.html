@@ -6,19 +6,63 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Admin – Chnoua nattayeb</title>
 <style>
-:root{--bg:#f4f8fc;--ink:#12202f;--card:#fff;--line:#cfdcea;--blue:#1b5fae;--blue-ink:#fff;--red:#b3261e;--muted:#546579}
-@media (prefers-color-scheme:dark){:root{--bg:#0c1b2e;--ink:#e8eff7;--card:#12283f;--line:#27405d;--blue:#5aa0ee;--blue-ink:#0c1b2e;--red:#ff7a68;--muted:#9db1c6}}
+:root{--bg:#f4f8fc;--ink:#12202f;--card:#fff;--line:#cfdcea;--grid:#e3ebf4;--blue:#1b5fae;--blue-ink:#fff;--bar:#2a6fc0;--bar-hi:#174f91;--red:#b3261e;--ok:#1e7a3c;--gold:#b7791f;--muted:#546579;--soft:#eaf1f9}
+@media (prefers-color-scheme:dark){:root{--bg:#0c1b2e;--ink:#e8eff7;--card:#12283f;--line:#27405d;--grid:#1d344f;--blue:#5aa0ee;--blue-ink:#0c1b2e;--bar:#5d9fe6;--bar-hi:#8cbcf2;--red:#ff7a68;--ok:#5ccf86;--gold:#f0b54a;--muted:#9db1c6;--soft:#183250}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
-main{max-width:900px;margin:0 auto;padding:20px}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
 h1{font-size:1.5rem;margin:.4em 0}
-input{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;width:100%;min-width:0}
+h2{font-size:1.1rem;margin:0 0 10px}
+input,select,textarea{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;width:100%;min-width:0}
 button{background:var(--blue);color:var(--blue-ink);border:0;border-radius:6px;padding:8px 14px;cursor:pointer;font:inherit}
+button:disabled{opacity:.6;cursor:default}
 button.ghost,button.mv,button.del,button.grip{background:transparent;color:var(--ink);border:1px solid var(--line);padding:6px 10px}
 button.del{color:var(--red)}
 button.grip{cursor:grab;touch-action:none}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-.hide{display:none}
+.hide{display:none!important}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 18px;border-bottom:1px solid var(--line)}
+.tabs button{background:transparent;color:var(--muted);border-radius:6px 6px 0 0;padding:8px 14px;border-bottom:3px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--blue);font-weight:700}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:0 0 16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi .v{font-size:1.7rem;font-weight:750;line-height:1.2;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--muted);font-size:.85rem}
+.kpi .s{color:var(--muted);font-size:.8rem}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.row2{grid-template-columns:1fr}}
+.chart-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:transparent;color:var(--ink);border-radius:0;padding:5px 10px;font-size:.88rem}
+.seg button[aria-pressed="true"]{background:var(--blue);color:var(--blue-ink)}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:220px;overflow:visible}
+.chart .tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:.82rem;padding:5px 8px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-110%);opacity:0;transition:opacity .1s}
+.axis{fill:var(--muted);font-size:11px}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--grid);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.barcell span{display:block}
+.barcell i{display:block;height:4px;margin-top:4px;border-radius:2px;background:var(--bar)}
+.big{font-size:2.2rem;font-weight:750;line-height:1.1}
+.review{border-bottom:1px solid var(--grid);padding:10px 0;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start}
+.review:last-child{border-bottom:0}
+.stars{color:var(--gold);letter-spacing:1px;white-space:nowrap}
+.meta{color:var(--muted);font-size:.82rem}
+.empty{color:var(--muted);padding:12px 0}
+.dist{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:.9rem}
+.dist .track{height:10px;background:var(--soft);border-radius:5px;overflow:hidden}
+.dist .track i{display:block;height:100%;background:var(--gold);border-radius:5px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.filters select{width:auto}
+.check{display:flex;gap:8px;align-items:center}.check input{width:auto}
+.diag li{margin:4px 0}.good{color:var(--ok);font-weight:700}.bad{color:var(--red);font-weight:700}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
+.inline{display:flex;gap:8px;flex-wrap:wrap;align-items:end}.inline>*{flex:1 1 180px}.inline button{flex:0 0 auto}
+/* ingredient editor (unchanged) */
 .cat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:14px 0;transition:box-shadow .15s}
 .cat.over{box-shadow:0 0 0 3px var(--blue)}
 .cat.dragging,.row.dragging{opacity:.4}
@@ -36,23 +80,98 @@ button.grip{cursor:grab;touch-action:none}
 </head>
 <body>
 <main>
-  <h1>Admin : ingrédients</h1>
+  <div class="top">
+    <h1>Admin · Chnoua nattayeb</h1>
+    <div id="topActions" class="hide"><button id="refresh" class="ghost" type="button">↻ Actualiser</button></div>
+  </div>
+
+  <div id="msg" role="status" aria-live="polite"></div>
   <div id="login">
     <label for="pw">Mot de passe admin</label>
     <input id="pw" type="password" autocomplete="current-password">
     <p><button id="loginBtn">Entrer</button></p>
   </div>
 
-  <div id="editor" class="hide">
-    <p class="hint">Glisse la poignée ⠿ pour réordonner : un ingrédient peut être déposé sur une autre ligne ou sur une autre catégorie, et une catégorie sur une autre catégorie. Sur téléphone, utilise les flèches ↑ ↓. Pas de virgule dans les noms (40 caractères max).</p>
-    <div id="cats"></div>
-    <div class="bar">
-      <button id="addCat" class="ghost">+ Catégorie</button>
-      <button id="reset" class="ghost">Liste par défaut</button>
-      <button id="save">Enregistrer</button>
+  <div id="app" class="hide">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="stats" aria-selected="true">📊 Statistiques</button>
+      <button role="tab" data-tab="reviews" aria-selected="false">⭐ Avis</button>
+      <button role="tab" data-tab="accounts" aria-selected="false">👤 Comptes</button>
+      <button role="tab" data-tab="editor" aria-selected="false">🥕 Ingrédients</button>
+      <button role="tab" data-tab="diag" aria-selected="false">🩺 Diagnostic</button>
     </div>
+
+    <section id="tab-stats">
+      <div class="kpis" id="kpis"></div>
+      <div class="panel">
+        <div class="chart-head">
+          <h2 id="chartTitle">Vues par jour</h2>
+          <div class="filters">
+            <div class="seg" id="metricSeg" role="group" aria-label="Mesure">
+              <button data-m="views" aria-pressed="true">Vues</button>
+              <button data-m="visitors" aria-pressed="false">Visiteurs</button>
+              <button data-m="recipes" aria-pressed="false">Recettes</button>
+              <button data-m="signups" aria-pressed="false">Inscriptions</button>
+            </div>
+            <select id="range" aria-label="Période"><option value="7">7 jours</option><option value="30" selected>30 jours</option><option value="90">90 jours</option></select>
+          </div>
+        </div>
+        <div class="chart" id="chart"></div>
+        <details><summary class="hint">Voir les chiffres en tableau</summary><div id="chartTable"></div></details>
+      </div>
+      <div class="row2">
+        <div class="panel"><h2>Pages les plus vues</h2><div id="pages"></div></div>
+        <div class="panel"><h2>D’où viennent les visiteurs</h2><div id="refs"></div><p class="hint" id="device"></p></div>
+      </div>
+      <p class="check hint"><input type="checkbox" id="noTrack"><label for="noTrack">Ne pas compter mes propres visites sur cet appareil</label></p>
+    </section>
+
+    <section id="tab-reviews" class="hide">
+      <div class="row2">
+        <div class="panel"><h2>Note moyenne</h2><div id="revSummary"></div></div>
+        <div class="panel"><h2>Répartition des notes</h2><div id="revDist"></div></div>
+      </div>
+      <div class="panel">
+        <div class="chart-head"><h2>Derniers avis</h2>
+          <div class="filters">
+            <select id="revFilter" aria-label="Filtrer par note"><option value="0">Toutes les notes</option><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select>
+            <label class="check hint"><input type="checkbox" id="revWithText"> Avec commentaire</label>
+          </div>
+        </div>
+        <div id="revList"></div>
+      </div>
+    </section>
+
+    <section id="tab-accounts" class="hide">
+      <div class="panel"><h2>Dernières inscriptions</h2><div id="signupList"></div></div>
+      <div class="panel">
+        <h2>Activer le planificateur (après paiement confirmé)</h2>
+        <form id="activateForm" class="inline">
+          <div><label for="actEmail">E-mail du compte</label><input id="actEmail" type="email" required></div>
+          <div style="flex:0 1 120px"><label for="actMonths">Mois</label><input id="actMonths" type="number" min="1" max="12" value="1"></div>
+          <button type="submit">Activer</button>
+        </form>
+        <p id="actMsg" class="hint" role="status"></p>
+      </div>
+    </section>
+
+    <section id="tab-editor" class="hide">
+      <div id="editor">
+        <p class="hint">Glisse la poignée ⠿ pour réordonner : un ingrédient peut être déposé sur une autre ligne ou sur une autre catégorie, et une catégorie sur une autre catégorie. Sur téléphone, utilise les flèches ↑ ↓. Pas de virgule dans les noms (40 caractères max).</p>
+        <div id="cats"></div>
+        <div class="bar">
+          <button id="addCat" class="ghost">+ Catégorie</button>
+          <button id="reset" class="ghost">Liste par défaut</button>
+          <button id="save">Enregistrer</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-diag" class="hide">
+      <div class="panel"><h2>Base de données (comptes, avis, statistiques)</h2><ul class="diag" id="diagList"></ul><div id="diagHelp"></div>
+        <p><button id="diagBtn" class="ghost" type="button">Relancer le test</button></p></div>
+    </section>
   </div>
-  <div id="msg" role="status" aria-live="polite"></div>
 </main>
 <script>
 const DEFAULT_SHELF = [{"ar": "خضرة وغلة", "fr": "Légumes & fruits", "en": "Vegetables & fruits", "items": [{"ar": "بطاطا", "fr": "pommes de terre", "en": "potatoes"}, {"ar": "طماطم", "fr": "tomates", "en": "tomatoes"}, {"ar": "بصل", "fr": "oignon", "en": "onion"}, {"ar": "ثوم", "fr": "ail", "en": "garlic"}, {"ar": "فلفل", "fr": "poivron", "en": "peppers"}, {"ar": "جزر", "fr": "carottes", "en": "carrots"}, {"ar": "كوسة", "fr": "courgettes", "en": "zucchini"}, {"ar": "باذنجان", "fr": "aubergine", "en": "eggplant"}, {"ar": "قرنابيط", "fr": "chou-fleur", "en": "cauliflower"}, {"ar": "سلاطة", "fr": "laitue", "en": "lettuce"}, {"ar": "ليمون", "fr": "citron", "en": "lemon"}, {"ar": "فطر", "fr": "champignons", "en": "mushrooms"}]}, {"ar": "لحم وحوت", "fr": "Viandes & poissons", "en": "Meat & fish", "items": [{"ar": "دجاج", "fr": "poulet", "en": "chicken"}, {"ar": "لحم مفروم", "fr": "viande hachée", "en": "minced meat"}, {"ar": "لحم علوش", "fr": "agneau", "en": "lamb"}, {"ar": "لحم بقري", "fr": "bœuf", "en": "beef"}, {"ar": "تن", "fr": "thon", "en": "tuna"}, {"ar": "حوت", "fr": "poisson", "en": "fish"}, {"ar": "قمبري", "fr": "crevettes", "en": "shrimp"}, {"ar": "مرڨاز", "fr": "merguez", "en": "merguez"}]}, {"ar": "بيض وحليب", "fr": "Œufs & laitages", "en": "Eggs & dairy", "items": [{"ar": "بيض", "fr": "œufs", "en": "eggs"}, {"ar": "جبن", "fr": "fromage", "en": "cheese"}, {"ar": "حليب", "fr": "lait", "en": "milk"}, {"ar": "زبدة", "fr": "beurre", "en": "butter"}, {"ar": "ياغورت", "fr": "yaourt", "en": "yogurt"}, {"ar": "كريمة", "fr": "crème", "en": "cream"}]}, {"ar": "كرموس وقطاني", "fr": "Féculents & légumineuses", "en": "Grains & legumes", "items": [{"ar": "رز", "fr": "riz", "en": "rice"}, {"ar": "مقرونة", "fr": "pâtes", "en": "pasta"}, {"ar": "سميد", "fr": "semoule", "en": "semolina"}, {"ar": "عدس", "fr": "lentilles", "en": "lentils"}, {"ar": "حمص", "fr": "pois chiches", "en": "chickpeas"}, {"ar": "فاصوليا", "fr": "haricots", "en": "beans"}, {"ar": "خبز", "fr": "pain", "en": "bread"}, {"ar": "فرينة", "fr": "farine", "en": "flour"}]}, {"ar": "توابل وعولة", "fr": "Épices & garde-manger", "en": "Spices & pantry", "items": [{"ar": "هريسة", "fr": "harissa", "en": "harissa"}, {"ar": "كمون", "fr": "cumin", "en": "cumin"}, {"ar": "كروية", "fr": "carvi", "en": "caraway"}, {"ar": "زيتون", "fr": "olives", "en": "olives"}, {"ar": "معجون طماطم", "fr": "concentré de tomate", "en": "tomato paste"}, {"ar": "زيت زيتون", "fr": "huile d’olive", "en": "olive oil"}, {"ar": "سكر", "fr": "sucre", "en": "sugar"}, {"ar": "عسل", "fr": "miel", "en": "honey"}]}];
@@ -153,16 +272,11 @@ function render() {
   shelf.forEach((c, ci) => box.appendChild(catCard(c, ci)));
 }
 
-$('loginBtn').onclick = async () => {
-  password = $('pw').value; say('…');
-  try {
-    const r = await call('POST', { action: 'login' });
-    const d = await call('GET');
-    shelf = d.shelf && d.shelf.length ? d.shelf : clone(DEFAULT_SHELF);
-    $('login').classList.add('hide'); $('editor').classList.remove('hide');
-    render(); say(r.storage ? '' : ERR.storage, !r.storage);
-  } catch (e) { say(e.message, true); }
-};
+async function loadEditor() {
+  const d = await call('GET');
+  shelf = d.shelf && d.shelf.length ? d.shelf : clone(DEFAULT_SHELF);
+  render();
+}
 $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
 $('addCat').onclick = () => { shelf.push({ ar: '', fr: '', en: '', items: [] }); render(); };
 $('reset').onclick = () => { shelf = clone(DEFAULT_SHELF); render(); say('Liste par défaut chargée. Clique sur Enregistrer pour la publier.'); };
@@ -178,6 +292,199 @@ $('save').onclick = async () => {
     shelf = clean; render();
     say('Enregistré (' + d.count + ' ingrédients). Visible sur le site dans moins d’une minute.');
   } catch (e) { say(e.message, true); }
+};
+
+/* ================= dashboard ================= */
+Object.assign(ERR, { not_found: 'Avis introuvable (déjà supprimé ?).', email: 'E-mail invalide.', storage_config: ERR.storage });
+let dash = null, metric = 'views';
+const fmtN = n => Number(n || 0).toLocaleString('fr-FR');
+const fmtD = (iso, withYear) => new Date(iso + (iso.length === 10 ? 'T12:00:00Z' : '')).toLocaleDateString('fr-FR', withYear ? { day: 'numeric', month: 'short', year: 'numeric' } : { day: 'numeric', month: 'short' });
+const fmtDT = iso => new Date(iso).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const mk = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+const PAGE_NAMES = { '/': 'Accueil (recettes)', '/plan': 'Planificateur budget', '/breakfast': 'Petit-déjeuner', '/privacy': 'Confidentialité', other: 'Autres' };
+const METRICS = { views: 'Vues par jour', visitors: 'Visiteurs uniques par jour', recipes: 'Recettes générées par jour', signups: 'Inscriptions par jour' };
+
+async function api(path, body) {
+  const r = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json', 'x-admin-password': password }, body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(ERR[d.error] || ERR.server); e.code = d.error; throw e; }
+  return d;
+}
+
+function kpi(label, value, sub) {
+  const k = mk('div', null, 'kpi'); k.append(mk('div', label, 'l'), mk('div', value, 'v')); if (sub) k.append(mk('div', sub, 's')); return k;
+}
+const sum = a => a.reduce((s, x) => s + x, 0);
+
+function renderKpis() {
+  const d = dash, n = d.days.length, box = $('kpis'); box.innerHTML = '';
+  const last = a => a[a.length - 1] || 0;
+  box.append(
+    kpi('Vues aujourd’hui', fmtN(last(d.views)), fmtN(last(d.visitors)) + ' visiteurs'),
+    kpi('Vues · ' + n + ' jours', fmtN(sum(d.views)), fmtN(d.totals.visitorsPeriod) + ' visiteurs uniques'),
+    kpi('Vues depuis le début', fmtN(d.totals.views)),
+    kpi('Note moyenne', d.reviewStats.count ? d.reviewStats.avg.toFixed(1).replace('.', ',') + ' / 5' : '—', fmtN(d.reviewStats.count) + ' avis'),
+    kpi('Comptes créés', fmtN(d.totals.accounts), '+' + fmtN(sum(d.signups)) + ' sur ' + n + ' jours'),
+    kpi('Recettes générées', fmtN(sum(d.recipes)), fmtN(d.totals.recipes) + ' au total')
+  );
+}
+
+function renderChart() {
+  const d = dash, vals = d[metric], days = d.days, box = $('chart');
+  $('chartTitle').textContent = METRICS[metric];
+  document.querySelectorAll('#metricSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === metric)));
+  box.innerHTML = '';
+  const W = Math.max(320, box.clientWidth || 600), H = 220, L = 36, R = 6, T = 10, B = 24;
+  const max = Math.max(1, ...vals);
+  const step = Math.pow(10, Math.floor(Math.log10(max))), nice = Math.ceil(max / step) * step;
+  const top = nice / max > 1.6 ? Math.ceil(max / (step / 2)) * (step / 2) : nice;
+  const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', METRICS[metric] + ' : total ' + sum(vals));
+  const s = (tag, a) => { const e = document.createElementNS(ns, tag); for (const k in a) e.setAttribute(k, a[k]); svg.appendChild(e); return e; };
+  const y = v => T + (H - T - B) * (1 - v / top);
+  for (let i = 0; i <= 4; i++) {
+    const v = top / 4 * i, yy = y(v);
+    s('line', { x1: L, x2: W - R, y1: yy, y2: yy, stroke: 'var(--grid)', 'stroke-width': 1 });
+    const t = s('text', { x: L - 6, y: yy + 4, 'text-anchor': 'end', class: 'axis' }); t.textContent = Number.isInteger(v) ? fmtN(v) : v.toFixed(1);
+  }
+  const bw = (W - L - R) / vals.length, gap = Math.min(4, bw * .25);
+  const tip = mk('div', '', 'tip'); box.appendChild(tip);
+  const every = Math.ceil(vals.length / Math.max(2, Math.floor((W - L) / 64)));
+  vals.forEach((v, i) => {
+    const x = L + i * bw, h = (H - T - B) - (y(v) - T), w = Math.max(1, bw - gap);
+    if (v > 0) {
+      const r = Math.min(4, w / 2, h);
+      s('path', { d: `M${x + gap / 2},${y(0)} v${-(h - r)} q0,${-r} ${r},${-r} h${w - 2 * r} q${r},0 ${r},${r} v${h - r} z`, fill: i === vals.length - 1 ? 'var(--bar-hi)' : 'var(--bar)' });
+    }
+    if (i % every === 0 || i === vals.length - 1) { const t = s('text', { x: x + bw / 2, y: H - 6, 'text-anchor': 'middle', class: 'axis' }); t.textContent = fmtD(days[i]); }
+    const hit = s('rect', { x, y: T, width: bw, height: H - T - B, fill: 'transparent' });
+    const show = () => { tip.textContent = fmtD(days[i], true) + ' · ' + fmtN(v); tip.style.left = (x + bw / 2) / W * 100 + '%'; tip.style.top = (y(v) / H * 220) + 'px'; tip.style.opacity = 1; };
+    hit.addEventListener('mouseenter', show); hit.addEventListener('touchstart', show, { passive: true });
+    hit.addEventListener('mouseleave', () => { tip.style.opacity = 0; });
+  });
+  box.appendChild(svg);
+  // table view (accessibility + exact numbers)
+  const tb = mk('table'), hr = tb.insertRow();
+  ['Jour', 'Vues', 'Visiteurs', 'Recettes', 'Inscriptions'].forEach(h => hr.appendChild(mk('th', h)));
+  days.slice().reverse().forEach((day, j) => { const i = days.length - 1 - j, r = tb.insertRow(); r.insertCell().textContent = fmtD(day, true); ['views', 'visitors', 'recipes', 'signups'].forEach(m => { const c = r.insertCell(); c.className = 'n'; c.textContent = fmtN(d[m][i]); }); });
+  $('chartTable').innerHTML = ''; $('chartTable').appendChild(tb);
+}
+
+function rankTable(obj, names, empty) {
+  const rows = Object.entries(obj).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  if (!rows.length) return mk('p', empty, 'empty');
+  const max = rows[0][1], total = sum(rows.map(r => r[1])), tb = mk('table');
+  rows.forEach(([k, v]) => {
+    const r = tb.insertRow(), c = r.insertCell(); c.className = 'barcell';
+    const bar = mk('i'); bar.style.width = (v / max * 100) + '%'; c.append(mk('span', names ? (names[k] || k) : k), bar);
+    const n = r.insertCell(); n.className = 'n'; n.textContent = fmtN(v);
+    const p = r.insertCell(); p.className = 'n meta'; p.textContent = Math.round(v / total * 100) + ' %';
+  });
+  return tb;
+}
+
+function renderStats() {
+  renderKpis(); renderChart();
+  $('pages').innerHTML = ''; $('pages').appendChild(rankTable(dash.pages, PAGE_NAMES, 'Aucune vue pour l’instant.'));
+  $('refs').innerHTML = ''; $('refs').appendChild(rankTable(dash.refs, null, 'Pas encore de site référent (visites directes uniquement).'));
+  const dv = dash.device, tot = (dv.mobile || 0) + (dv.desktop || 0);
+  $('device').textContent = tot ? `Téléphone ${Math.round((dv.mobile || 0) / tot * 100)} % · Ordinateur ${Math.round((dv.desktop || 0) / tot * 100)} %` : '';
+}
+
+function renderReviews() {
+  const st = dash.reviewStats, box = $('revSummary'); box.innerHTML = '';
+  if (!st.count) box.appendChild(mk('p', 'Aucun avis pour l’instant.', 'empty'));
+  else box.append(mk('div', st.avg.toFixed(1).replace('.', ',') + ' / 5', 'big'), mk('div', stars(Math.round(st.avg)), 'stars'), mk('p', fmtN(st.count) + ' avis au total', 'meta'));
+  const dist = $('revDist'); dist.innerHTML = ''; const g = mk('div', null, 'dist');
+  const mx = Math.max(1, ...[1, 2, 3, 4, 5].map(k => st.dist[k] || 0));
+  [5, 4, 3, 2, 1].forEach(k => { const v = st.dist[k] || 0, tr = mk('div', null, 'track'), i = mk('i'); i.style.width = (v / mx * 100) + '%'; tr.appendChild(i); g.append(mk('span', k + ' ★'), tr, mk('span', fmtN(v), 'meta')); });
+  dist.appendChild(g);
+  const f = Number($('revFilter').value), txt = $('revWithText').checked, list = $('revList'); list.innerHTML = '';
+  const items = dash.reviews.filter(r => (!f || r.rating === f) && (!txt || r.comment));
+  if (!items.length) { list.appendChild(mk('p', dash.reviews.length ? 'Aucun avis avec ces filtres.' : 'Aucun avis pour l’instant.', 'empty')); return; }
+  items.forEach(r => {
+    const row = mk('div', null, 'review'), body = mk('div');
+    body.append(mk('div', r.comment || '(sans commentaire)', r.comment ? '' : 'meta'),
+      mk('div', [fmtDT(r.createdAt), r.page && (PAGE_NAMES[r.page.replace(/\.html$/, '')] || r.page), r.lang && r.lang.toUpperCase()].filter(Boolean).join(' · '), 'meta'));
+    const del = mk('button', 'Supprimer', 'del');
+    del.onclick = async () => {
+      if (!confirm('Supprimer cet avis ?')) return;
+      del.disabled = true;
+      try { await api('/api/stats', { action: 'delete_review', id: r.id }); await load(); say('Avis supprimé.'); } catch (e) { del.disabled = false; say(e.message, true); }
+    };
+    row.append(mk('div', stars(r.rating), 'stars'), body, del); list.appendChild(row);
+  });
+}
+
+function renderAccounts() {
+  const box = $('signupList'); box.innerHTML = '';
+  box.appendChild(mk('p', fmtN(dash.totals.accounts) + ' comptes au total.', 'hint'));
+  if (!dash.latestSignups.length) { box.appendChild(mk('p', 'Les nouvelles inscriptions apparaîtront ici (les comptes créés avant cette mise à jour sont comptés mais pas listés).', 'empty')); return; }
+  const tb = mk('table'), hr = tb.insertRow(); ['E-mail', 'Inscrit le', ''].forEach(h => hr.appendChild(mk('th', h)));
+  dash.latestSignups.forEach(s => {
+    const r = tb.insertRow(); r.insertCell().textContent = s.email; r.insertCell().textContent = fmtDT(s.at);
+    const c = r.insertCell(), b = mk('button', 'Activer…', 'ghost'); b.onclick = () => { $('actEmail').value = s.email; $('actMonths').focus(); }; c.appendChild(b);
+  });
+  box.appendChild(tb);
+}
+
+async function load() {
+  dash = await api('/api/stats', { action: 'dashboard', days: Number($('range').value) });
+  renderStats(); renderReviews(); renderAccounts();
+}
+
+async function runDiag() {
+  const ul = $('diagList'), help = $('diagHelp'); ul.innerHTML = '<li>…</li>'; help.innerHTML = '';
+  let d;
+  try { d = await api('/api/stats', { action: 'diag' }); } catch (e) { ul.innerHTML = ''; ul.appendChild(mk('li', e.message, 'bad')); return d; }
+  ul.innerHTML = '';
+  const line = (ok, t) => { const li = mk('li'); li.append(mk('span', ok ? '✔ ' : '✖ ', ok ? 'good' : 'bad'), document.createTextNode(t)); ul.appendChild(li); };
+  line(d.storage, d.storage ? 'Variables Redis trouvées (' + d.source + ')' : 'Aucune variable Redis Upstash trouvée');
+  if (d.storage) { line(d.reachable, d.reachable ? 'Redis répond' : 'Redis ne répond pas'); line(d.writable, d.writable ? 'Écriture OK : la création de compte peut fonctionner' : 'Écriture impossible'); }
+  if (d.error) ul.appendChild(mk('li', 'Erreur : ' + d.error, 'meta'));
+  const p = html => { const e = document.createElement('div'); e.className = 'hint'; e.innerHTML = html; help.appendChild(e); };
+  if (!d.storage && d.unsupported) p(`La variable <code>${d.unsupported}</code> existe mais ce n’est pas une base Upstash : le site parle à Redis en HTTP (API REST Upstash). Dans Vercel → Storage, crée une base <b>Upstash for Redis</b> et connecte-la au projet, puis redéploie.`);
+  else if (!d.storage) p('Dans Vercel → ton projet → <b>Storage</b> → <b>Upstash for Redis</b> → Connect Project (Production + Preview). Cela ajoute <code>KV_REST_API_URL</code> et <code>KV_REST_API_TOKEN</code>. Puis <b>Deployments → Redeploy</b> : les variables ne sont prises en compte qu’au déploiement suivant.');
+  else if (!d.reachable) p('Les variables existent mais Redis refuse : vérifie que l’URL commence par <code>https://</code> et que le token n’est pas le token « read only », puis redéploie.');
+  else if (!d.writable) p('Le token semble être en lecture seule (<code>KV_REST_API_READ_ONLY_TOKEN</code>) : utilise le token complet.');
+  return d;
+}
+
+function showTab(name) {
+  document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+  ['stats', 'reviews', 'accounts', 'editor', 'diag'].forEach(t => $('tab-' + t).classList.toggle('hide', t !== name));
+  if (name === 'stats' && dash) renderChart();
+  try { sessionStorage.setItem('adminTab', name); } catch (e) {}
+}
+document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+document.querySelectorAll('#metricSeg button').forEach(b => b.onclick = () => { metric = b.dataset.m; renderChart(); });
+$('range').onchange = () => load().catch(e => say(e.message, true));
+$('revFilter').onchange = renderReviews; $('revWithText').onchange = renderReviews;
+$('refresh').onclick = () => { say('…'); load().then(() => say('')).catch(e => say(e.message, true)); };
+$('diagBtn').onclick = runDiag;
+let rsz; addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(() => dash && renderChart(), 150); });
+try { $('noTrack').checked = localStorage.getItem('chnouaNoTrack') === '1'; } catch (e) {}
+$('noTrack').onchange = () => { try { if ($('noTrack').checked) localStorage.setItem('chnouaNoTrack', '1'); else localStorage.removeItem('chnouaNoTrack'); } catch (e) {} };
+$('activateForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('actMsg'); m.textContent = '…';
+  try { const d = await api('/api/planner', { action: 'activate', email: $('actEmail').value.trim(), months: Number($('actMonths').value) }); m.textContent = 'Activé jusqu’au ' + fmtD(d.paidUntil.slice(0, 10), true) + '.'; }
+  catch (err) { m.textContent = err.message; }
+};
+
+$('loginBtn').onclick = async () => {
+  password = $('pw').value; say('…'); $('loginBtn').disabled = true;
+  try {
+    await api('/api/stats', { action: 'login' }); // checks the password (and returns the diagnostics)
+    $('login').classList.add('hide'); $('app').classList.remove('hide'); $('topActions').classList.remove('hide');
+    let tab = 'stats'; try { tab = sessionStorage.getItem('adminTab') || 'stats'; } catch (e) {}
+    const diag = await runDiag();
+    if (diag && diag.storage && diag.writable) { await load(); showTab(tab); say(''); }
+    else { showTab('diag'); say('La base de données n’est pas prête : c’est pour ça que les comptes et les avis ne marchent pas. Suis les étapes de l’onglet Diagnostic.', true); }
+    loadEditor().catch(e => say(e.message, true));
+  } catch (e) { say(e.message, true); }
+  $('loginBtn').disabled = false;
 };
 </script>
 </body>
