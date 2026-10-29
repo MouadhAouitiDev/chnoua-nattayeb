@@ -322,5 +322,9 @@ document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => setLang(
 setLang(lang);
 api('/api/auth').then(async d => { user = d.user || null; renderAcct(); await refreshAccess(); }).catch(() => refreshAccess());
 </script>
+<script>
+/* page view counter for admin.html (no cookie; the admin can exclude their own device from admin.html) */
+(function(){try{if(localStorage.getItem('chnouaNoTrack')==='1')return}catch(e){}try{fetch('/api/stats',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'hit',page:location.pathname,ref:document.referrer}),keepalive:true}).catch(function(){})}catch(e){}})();
+</script>
 </body>
 </html>
