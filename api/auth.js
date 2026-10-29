@@ -3,7 +3,7 @@
 // Actions: register, login, logout, me, fav_list, fav_add, fav_remove
 // Needs the Redis (Upstash) connected in Vercel. Passwords are hashed with scrypt, never stored in clear.
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
-import { hasStorage, redis, cookie, getUser, clientIp } from './_lib.js';
+import { hasStorage, redis, pipeline, cookie, getUser, clientIp, today } from './_lib.js';
 
 const SESSION = 30 * 86400;
 // 'Secure' only over https, otherwise the cookie is dropped on http://localhost and login "succeeds" without a session
@@ -28,12 +28,12 @@ function cleanRecipe(r) {
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  // Do not pretend signup/login succeeded when persistent storage is missing.
-  if (!hasStorage()) return res.status(503).json({ error: 'storage_config' });
-
-  const b = req.method === 'POST' ? (req.body || {}) : {};
+  const b = req.method === 'POST' && req.body && typeof req.body === 'object' ? req.body : {};
   const action = req.method === 'POST' ? b.action : 'me';
   const fail = (code, error) => res.status(code).json({ error });
+  // Do not pretend signup/login succeeded when persistent storage is missing.
+  // GET still answers 200 so the page can tell "not configured" apart from "server down".
+  if (!hasStorage()) return action === 'me' ? res.status(200).json({ storage: false, user: null }) : fail(503, 'storage_config');
 
   try {
     if (action === 'me') {
@@ -42,14 +42,21 @@ export default async function handler(req, res) {
     }
     if (req.method !== 'POST') return fail(405, 'method');
 
-    // Public site feedback: no account required; retain only the latest 100 reviews.
+    // Public site feedback: no account required; the latest 200 reviews are kept, plus all-time totals for the admin page.
     if (action === 'review') {
       const rating = Number(b.rating);
-      const comment = str(b.comment, 500);
+      const comment = str(b.comment, 500).replace(/[\u0000-\u0008\u000b-\u001f]/g, '');
       if (!Number.isInteger(rating) || rating < 1 || rating > 5) return fail(400, 'invalid');
-      const review = JSON.stringify({ rating, comment, createdAt: new Date().toISOString() });
-      await redis(['LPUSH', 'site:reviews', review]);
-      await redis(['LTRIM', 'site:reviews', '0', '99']);
+      // max 5 reviews per IP per day, so one person cannot push every real review out of the list
+      const rk = `revlimit:${clientIp(req)}:${today()}`;
+      const [n] = await pipeline([['INCR', rk], ['EXPIRE', rk, 90000]]);
+      if (n > 5) return fail(429, 'rate');
+      const page = str(b.page, 60);
+      const review = JSON.stringify({ id: randomBytes(6).toString('hex'), rating, comment, page, lang: str(b.lang, 5), createdAt: new Date().toISOString() });
+      await pipeline([
+        ['LPUSH', 'site:reviews', review], ['LTRIM', 'site:reviews', '0', '199'],
+        ['INCR', 'reviews:count'], ['INCRBY', 'reviews:sum', rating], ['HINCRBY', 'reviews:dist', String(rating), 1]
+      ]);
       return res.status(200).json({ ok: true });
     }
 
@@ -67,6 +74,11 @@ export default async function handler(req, res) {
         const rec = JSON.stringify({ salt: salt.toString('hex'), hash: hash(pw, salt).toString('hex') });
         if ((await redis(['SET', key, rec, 'NX'])) !== 'OK') { strike(ip); return fail(409, 'exists'); }
         strike(ip);
+        const day = 'stats:signups:' + today();
+        try {
+          await pipeline([['INCR', 'stats:users'], ['INCR', day], ['EXPIRE', day, 120 * 86400],
+            ['LPUSH', 'site:signups', JSON.stringify({ email, at: new Date().toISOString() })], ['LTRIM', 'site:signups', '0', '49']]);
+        } catch (e) { console.error(e); }
       } else {
         const raw = await redis(['GET', key]);
         const u = raw ? JSON.parse(raw) : null;
